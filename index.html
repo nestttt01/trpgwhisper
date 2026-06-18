@@ -1312,8 +1312,7 @@ ${flagsText}
                 if(jsonMatch) {
                     rawText = jsonMatch[0];
                 } else {
-                    rawText = rawText.replace(/```json/g, "").replace(/
-```/g, "").trim();
+                    rawText = rawText.replace(/```json/g, "").replace(/```/g, "").trim();
                 }
                 
                 const parsedData = JSON.parse(rawText);
