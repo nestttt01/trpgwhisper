@@ -263,15 +263,15 @@
     <div id="tutorial-modal" class="modal-overlay">
         <div id="status-modal-content" style="max-width: 500px; margin-top: 10vh;">
             <div class="modal-header-sticky">
-                <h3 style="border:none; margin:0; padding:0;">💡 系統指南與遊玩須知</h3>
+                <h3 style="border:none; margin:0; padding:0;">系統指南與遊玩須知</h3>
             </div>
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">🔑 1. 核心啟動 (API Key)</p>
+            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">1. 核心啟動 (API Key)</p>
             <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">請至 Google AI Studio 免費申請 Gemini API 金鑰。本系統完全在你的設備上運行，絕不會收集你的金鑰。</p>
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">🎲 2. 自由行動與擲骰</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">這裡沒有固定的按鈕選項！你可以直接對話，或是用括號表示動作（例如：<code>(拔出長劍擋在前方)</code>）。不知道結果時，點擊「🎲 擲骰」按鈕，讓命運與 DM 決定！</p>
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">📊 3. 六圍數值與判定機制</p>
+            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">2. 自由行動與擲骰</p>
+            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">這裡沒有固定的按鈕選項！你可以直接對話，或是用括號表示動作（例如：<code>(拔出長劍擋在前方)</code>）。不知道結果時，點擊「擲骰」按鈕，讓命運與 DM 決定！</p>
+            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">3. 六圍數值與判定機制</p>
             <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">AI 會根據你的基礎屬性（力量、敏捷、智力等）來判定行動成功率。若力量太低卻想強行搬開巨石，就算骰出高點數，也可能被判定為受傷。</p>
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">🎭 4. 面板與記憶標籤 (Flags)</p>
+            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">4. 面板與記憶標籤 (Flags)</p>
             <p style="font-size:12px; color:var(--text-sub); margin-bottom:20px; font-weight:600; line-height:1.5;">點擊遊戲畫面側邊的「角色面板」，可以隨時查看背包道具、NPC 好感度，以及「永久事件標籤」。你的每一個重大決定，都會被寫入 AI 的長期記憶中。</p>
             <button class="btn" onclick="closeTutorialModal()" style="background: var(--border-dark); color: #fff; width: 100%; font-size: 14px; padding: 12px;">我瞭解了，關閉說明</button>
         </div>
@@ -294,7 +294,7 @@
             🔒 <b>隱私保證</b>：設定、照片與對話進度，均僅儲存於設備本地端。<br>
             ⚠️ <b>免責聲明</b>：本工具僅提供介面，請妥善保管 API Key 並留意使用額度。AI 生成內容屬隨機演算，不代表開發者立場。存檔依賴瀏覽器，清除快取將導致資料遺失。
         </p>
-        <button class="btn" onclick="openTutorialModal()" style="margin-bottom: 15px; background: transparent; border: 2px dashed var(--border-dark); width: 100%;">💡 新手教學與系統指南</button>
+        <button class="btn" onclick="openTutorialModal()" style="margin-bottom: 15px; background: transparent; border: 2px dashed var(--border-dark); width: 100%;">新手教學與系統指南</button>
 
         <div id="model-selection-area">
             <p style="color: var(--text-main); font-weight: 900; font-size: 13px; margin-bottom: 12px;">驗證成功。請選擇大腦核心：</p>
@@ -481,7 +481,7 @@
                 },
                 {
                     name: '現實世界',
-                    lore: '現代都市。大家受到法律與現代社會常識限制。',
+                    lore: '現代都市。大家受到法律與現代社會常識限制。通常會是退出遊戲與現實切換時會使用到此情境，例如人物拿起手邊的開水飲用等描述，或是銜接關閉遊戲後各自回到現實生活等情境。',
                     npcRoles: '三高是極度專注的專業攝影師。亞里莎是毒舌的化妝師。',
                     playerRole: '被死線追殺的設計師，壓力極大。'
                 }
