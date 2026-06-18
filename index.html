@@ -281,8 +281,8 @@
         <img id="setup-pic" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" title="點擊上傳首頁照片" onclick="document.getElementById('pic-input').click();">
         <input type="file" id="pic-input" accept="image/*" style="display:none" onchange="loadPic(this)">
 
-        <h2>攻略模擬器 (完全自訂開局版)</h2>
-        <p style="color: var(--text-sub); text-align: center; font-size: 11px; margin-bottom: 25px; letter-spacing: 2px; font-weight: 800;"> A C H R O M A T O P S i A </p>
+        <h2>TRPG模擬器 (測試)</h2>
+        <p style="color: var(--text-sub); text-align: center; font-size: 11px; margin-bottom: 25px; letter-spacing: 2px; font-weight: 800;">W H I S P E R</p>
         
         <input type="password" id="api-key" class="key-input" placeholder="請貼上你的 API Key">
         
@@ -450,39 +450,39 @@
         /* ======= 劇本配置系統 ======= */
         const defaultPreset = {
             id: 'default',
-            presetName: '預設：TRPG 雙重宇宙 (完全自訂開局版)',
+            presetName: '預設：TRPG 雙重宇宙 (範例)',
             playerName: '小島秀芙',
             playerAvatar: emptyAvatar,
             playerStats: { str: 8, dex: 13, con: 15, int: 13, wis: 14, cha: 15 },
             statsLocked: true, 
-            playerPersona: '【專長】說服、威嚇、洞察。\n【性格與外觀】\n白髮雙辮貓女。性格直率，打架很凶但PVE常迷路。',
+            playerPersona: '【專長】說服、威嚇、洞察。\n【性格與外觀】\n白髮雙辮貓女。性格直率，打架很凶但PVE常迷路。現實生活是加班社畜。',
             npcs: [
                 {
                     id: 'npc_1',
                     name: '宮崎三高',
                     avatar: emptyAvatar,
                     affection: 0,
-                    persona: '【通用屬性】\n體質(高)：能扛沉重攝影器材或副本死刑。\n智力(高)：精通攝影光影與副本機制。\n力量(高)：能單手把秀芙拎過機制邊界。\n專長：生存、察覺、運動。\n\n【性格與外觀】\n面部有淡淡傷疤，氣質禁慾，極度內斂。就算玩家搞砸，他也只會默默扛下一切，說話極度精簡（例如：「退後」）。冷靜、邊界感清晰，帶著淡淡疏離感與隱晦的保護慾。'
+                    persona: '【通用屬性】\n體質(高)：能扛沉重攝影器材或副本死刑。\n智力(高)：精通攝影光影與副本機制。\n力量(高)：能單手把秀芙拎過機制邊界。\n專長：生存、察覺、運動。\n\n【性格與外觀】\n面部有淡淡傷疤，氣質禁慾，極度內斂。就算玩家搞砸，他也只會默默扛下一切，說話極度精簡（例如：「好」）。冷靜、邊界感清晰，帶著淡淡疏離感與隱晦的保護慾，但偶爾會出現有點幽默的行為。現實生活是攝影師，遊戲以外的時間很喜歡看動物迷因。'
                 },
                 {
                     id: 'npc_2',
-                    name: '亞里莎 (範本)',
+                    name: 'SY(範本)',
                     avatar: emptyAvatar,
                     affection: 0,
-                    persona: '【通用屬性】\n智力(高)、敏捷(高)。\n\n【性格與外觀】\n毒舌的精靈法師。性格傲嬌，雖然嘴上一直抱怨玩家或三高，但在危險時絕對不會拋下隊友。經常和三高鬥嘴，但其實對他的實力很信任。'
+                    persona: '【通用屬性】\n智力(高)、敏捷(高)。\n\n【性格與外觀】\n有點遲鈍的機工士。性格單純，雖然感覺對什麼事情都沒反應，但在危險時絕對不會拋下隊友。擁有聽力敏銳度兔耳朵，經常遲到，但實力堅強。現實生活是個擅長打扮的男性。'
                 }
             ],
             scenarios: [
                 {
                     name: '艾歐澤亞 (FFXIV)',
                     lore: '充滿魔法與劍的奇幻虛擬世界。大家擁有技能與血量設定，一起推進高難度副本。',
-                    npcRoles: '三高是硬核賢者補師(H2)，負責走位與扛傷。亞里莎是暴力遠程輸出。',
+                    npcRoles: '三高是硬核賢者補師(H2)，負責補血。SY是暴力遠程輸出。',
                     playerRole: '熱衷 PVP 但對高難副本一竅不通的坦克。'
                 },
-                {
+                             {
                     name: '現實世界',
-                    lore: '現代都市。大家受到法律與現代社會常識限制。通常會是退出遊戲與現實切換時會使用到此情境，例如人物拿起手邊的開水飲用等描述，或是銜接關閉遊戲後各自回到現實生活等情境。',
-                    npcRoles: '三高是極度專注的專業攝影師。亞里莎是毒舌的化妝師。',
+                    lore: '現代都市。大家受到法律與現代社會常識限制。通常會是退出遊戲與現實切換時會使用到此情境，例如人物拿起手邊的開水飲用、或是玩家在DC聊天或是傳訊息等描述，用於銜接關閉遊戲後各自回到現實生活等情境。\n請邏輯推斷目前的劇本該如何進行。',
+                    npcRoles: '三高是極度專注的專業攝影師。SY是個性非常單純的化妝師。',
                     playerRole: '被死線追殺的設計師，壓力極大。'
                 }
             ]
