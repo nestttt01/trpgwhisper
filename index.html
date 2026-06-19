@@ -1101,6 +1101,34 @@
         .u-inline-077 { text-align:center; color:var(--text-sub); font-size:13px; font-weight:bold; }
         .u-inline-078 { margin-top:5px; }
         /* ===== End consolidated inline styles ===== */
+
+
+        /* 角色動態狀態：核心設定不受 AI 覆寫 */
+        .dynamic-state-panel { grid-column: 1 / -1; margin-top: 6px; padding: 12px 12px 10px; background: #eee8ea; border-left: 4px solid var(--accent-neon); border-radius: 0 6px 6px 0; }
+        .dynamic-state-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 10px; }
+        .dynamic-state-heading strong { color: var(--text-main); font-size: 13px; }
+        .dynamic-state-heading span { color: var(--text-sub); font-size: 10px; font-weight: 700; text-align: right; }
+        .dynamic-state-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; }
+        .dynamic-state-field.full { grid-column: 1 / -1; }
+        .dynamic-state-field label { display: block; margin-bottom: 3px; color: #555; font-size: 11px; font-weight: 900; }
+        .dynamic-state-field input, .dynamic-state-field textarea { width: 100%; min-height: 38px; box-sizing: border-box; background: #fff; border: 1px solid #bbb; border-radius: 5px; padding: 8px 10px; color: var(--text-main); font: inherit; font-size: 12px; resize: vertical; }
+        .dynamic-state-field input:focus, .dynamic-state-field textarea:focus { outline: 2px solid var(--accent-neon); border-color: var(--border-dark); }
+        .dynamic-state-reason { margin: 8px 0 0; color: #777; font-size: 10px; font-weight: 700; line-height: 1.5; }
+        @media screen and (max-width: 600px) {
+            .dynamic-state-panel { padding: 10px; }
+            .dynamic-state-heading { align-items: flex-start; flex-direction: column; gap: 2px; }
+            .dynamic-state-heading span { text-align: left; }
+            .dynamic-state-grid { grid-template-columns: 1fr; }
+            .dynamic-state-field.full { grid-column: auto; }
+        }
+
+
+        .dynamic-state-preview { min-width: 0; margin-left: auto; color: #c9bdc2; font-size: 10px; font-weight: 700; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .player-dynamic-preview { margin: -2px 0 10px; color: #756a6e; font-size: 11px; font-weight: 800; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        @media screen and (max-width: 600px) {
+            .dynamic-state-preview { max-width: 34%; font-size: 9px; }
+            .player-dynamic-preview { font-size: 10px; }
+        }
     </style>
 </head>
 <body>
@@ -1919,6 +1947,140 @@
             }[ch]));
         }
 
+
+        function createEmptyDynamicState() {
+            return { mood: '', condition: '', relationship: '', goal: '', recentChange: '', lastReason: '', updatedAt: '' };
+        }
+
+        function normalizeDynamicState(state) {
+            const source = state && typeof state === 'object' ? state : {};
+            return {
+                mood: valueToText(source.mood),
+                condition: valueToText(source.condition),
+                relationship: valueToText(source.relationship),
+                goal: valueToText(source.goal),
+                recentChange: valueToText(source.recentChange || source.development),
+                lastReason: valueToText(source.lastReason),
+                updatedAt: valueToText(source.updatedAt)
+            };
+        }
+
+        function getDynamicStatePreview(state) {
+            const dynamic = normalizeDynamicState(state);
+            return [dynamic.mood, dynamic.condition].filter(Boolean).join(' · ');
+        }
+
+        function renderDynamicStateEditor(prefix, state) {
+            const dynamic = normalizeDynamicState(state);
+            const reason = dynamic.lastReason
+                ? `<p class="dynamic-state-reason">最近更新：${escapeStatusHtml(dynamic.lastReason)}${dynamic.updatedAt ? ` · ${escapeStatusHtml(dynamic.updatedAt)}` : ''}</p>`
+                : '';
+            return `
+                <div class="dynamic-state-panel">
+                    <div class="dynamic-state-heading">
+                        <strong>動態狀態</strong>
+                        <span>AI 可隨劇情更新，也可手動修改；核心人設不受影響</span>
+                    </div>
+                    <div class="dynamic-state-grid">
+                        <div class="dynamic-state-field"><label>當前情緒</label><input type="text" id="${prefix}-mood" value="${escapeStatusHtml(dynamic.mood)}"></div>
+                        <div class="dynamic-state-field"><label>身體／外觀狀態</label><input type="text" id="${prefix}-condition" value="${escapeStatusHtml(dynamic.condition)}"></div>
+                        <div class="dynamic-state-field"><label>對玩家／隊伍的態度</label><input type="text" id="${prefix}-relationship" value="${escapeStatusHtml(dynamic.relationship)}"></div>
+                        <div class="dynamic-state-field"><label>當前目標</label><input type="text" id="${prefix}-goal" value="${escapeStatusHtml(dynamic.goal)}"></div>
+                        <div class="dynamic-state-field full"><label>近期變化</label><textarea id="${prefix}-recentChange" rows="2">${escapeStatusHtml(dynamic.recentChange)}</textarea></div>
+                    </div>
+                    ${reason}
+                </div>`;
+        }
+
+        function syncDynamicStateFromDom(prefix, existingState) {
+            const previous = normalizeDynamicState(existingState);
+            const next = { ...previous };
+            let changed = false;
+            ['mood', 'condition', 'relationship', 'goal', 'recentChange'].forEach(key => {
+                const input = document.getElementById(`${prefix}-${key}`);
+                if (!input) return;
+                const value = input.value.trim();
+                if (value !== previous[key]) {
+                    next[key] = value;
+                    changed = true;
+                }
+            });
+            if (changed) {
+                next.lastReason = '玩家手動修改';
+                next.updatedAt = new Date().toLocaleString();
+            }
+            return next;
+        }
+
+        function formatDynamicStateForPrompt(state) {
+            const dynamic = normalizeDynamicState(state);
+            return `[當前情緒]: ${dynamic.mood || '未特別標記'}\n[身體/外觀狀態]: ${dynamic.condition || '正常'}\n[對玩家/隊伍的態度]: ${dynamic.relationship || '尚未形成'}\n[當前目標]: ${dynamic.goal || '未設定'}\n[近期變化]: ${dynamic.recentChange || '無'}`;
+        }
+
+        function applyDynamicStatePatch(existingState, update) {
+            const state = normalizeDynamicState(existingState);
+            const changes = update?.changes && typeof update.changes === 'object'
+                ? update.changes
+                : (update?.state && typeof update.state === 'object' ? update.state : {});
+            const changedLabels = [];
+            const labels = { mood: '情緒', condition: '身體狀態', relationship: '關係態度', goal: '當前目標', recentChange: '近期變化' };
+            Object.keys(labels).forEach(key => {
+                const value = valueToText(changes[key]);
+                if (!value || value === state[key]) return;
+                state[key] = value;
+                changedLabels.push(labels[key]);
+            });
+            if (changedLabels.length) {
+                state.lastReason = valueToText(update?.reason, '劇情推進');
+                state.updatedAt = new Date().toLocaleString();
+            }
+            return { state, changedLabels };
+        }
+
+        function findNpcByName(name) {
+            const cleanName = valueToText(name).replace(/^[「『\"']+|[」』\"']+$/g, '').trim();
+            if (!cleanName || !currentScenario?.npcs) return null;
+            return currentScenario.npcs.find(npc => valueToText(npc.name) === cleanName) || null;
+        }
+
+        function isBlankNpcPlaceholder(npc) {
+            if (!npc || valueToText(npc.name) !== '新角色') return false;
+            const details = npc.details || {};
+            return ['age', 'speech', 'likes', 'dislikes', 'app', 'bg'].every(key => !valueToText(details[key]));
+        }
+
+        function ensureNpcForSpeaker(name, { announce = true } = {}) {
+            const cleanName = valueToText(name).replace(/^[「『\"']+|[」』\"']+$/g, '').trim();
+            if (!cleanName || cleanName === currentScenario?.playerName) return null;
+            if (['旁白', '系統', 'DM', '遊戲引擎', '玩家'].includes(cleanName)) return null;
+            const existing = findNpcByName(cleanName);
+            if (existing) return existing;
+
+            let npc = currentScenario.npcs.find(isBlankNpcPlaceholder);
+            if (npc) {
+                npc.name = cleanName;
+                npc.dynamic = normalizeDynamicState(npc.dynamic);
+                npc.dynamic.recentChange = `於「${currentScenario.scenarios?.[currentScenarioIndex]?.name || '目前情境'}」首次登場。`;
+            } else {
+                npc = {
+                    id: `npc_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+                    name: cleanName,
+                    avatar: emptyAvatar,
+                    affection: 0,
+                    details: { age: '', speech: '', likes: '', dislikes: '', app: '', bg: '' },
+                    dynamic: {
+                        ...createEmptyDynamicState(),
+                        recentChange: `於「${currentScenario.scenarios?.[currentScenarioIndex]?.name || '目前情境'}」首次登場。`
+                    }
+                };
+                currentScenario.npcs.push(npc);
+            }
+            npc.dynamic.lastReason = 'AI 在劇情中引入新角色';
+            npc.dynamic.updatedAt = new Date().toLocaleString();
+            if (announce) createSystemAlert(`— 新登場 NPC [ ${cleanName} ] 已加入角色面板 —`);
+            return npc;
+        }
+
         function getAffectionToneClass(value) {
             const score = Number(value ?? 0);
             if (score < -30) return 'affection-hostile';
@@ -2411,6 +2573,7 @@
             if (ePapp) currentScenario.playerDetails.app = ePapp.value;
             const ePbg = document.getElementById('edit-p-bg');
             if (ePbg) currentScenario.playerDetails.bg = ePbg.value;
+            currentScenario.playerDynamic = syncDynamicStateFromDom('edit-p-state', currentScenario.playerDynamic);
 
             // 同步 NPCs
             currentScenario.npcs.forEach((n, idx) => {
@@ -2429,6 +2592,7 @@
                 if (eNapp) n.details.app = eNapp.value;
                 const eNbg = document.getElementById(`edit-n-bg-${idx}`);
                 if (eNbg) n.details.bg = eNbg.value;
+                n.dynamic = syncDynamicStateFromDom(`edit-n-state-${idx}`, n.dynamic);
             });
 
             // 同步 Scenarios
@@ -2547,6 +2711,9 @@
             
             const pStats = currentScenario.playerStats || {str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10};
             let pDet = currentScenario.playerDetails || { age: '', speech: '', likes: '', dislikes: '', app: '', bg: currentScenario.playerPersona || '' };
+            currentScenario.playerDynamic = normalizeDynamicState(currentScenario.playerDynamic);
+            const pDynamic = currentScenario.playerDynamic;
+            const pDynamicPreview = getDynamicStatePreview(pDynamic);
 
                         let rCount = savesData[currentSaveId].respecCount !== undefined ? savesData[currentSaveId].respecCount : 3;
             // 改為單純的骷髏頭按鈕，長按或游標懸停會顯示剩餘次數
@@ -2562,6 +2729,7 @@
                     <span class="u-inline-070">${respecBtnHtml}</span>
                 </div>
 
+                ${pDynamicPreview ? `<div class="player-dynamic-preview">目前：${escapeStatusHtml(pDynamicPreview)}</div>` : ''}
                 <div class="u-inline-071">
                     <span>[力量STR: ${pStats.str}]</span>
                     <span>[敏捷DEX: ${pStats.dex}]</span>
@@ -2585,6 +2753,7 @@
                     <div><label>討厭的事物</label><input type="text" id="edit-p-dislikes" value="${pDet.dislikes}"></div>
                     <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="edit-p-app" rows="1" oninput="autoResize(this)">${pDet.app}</textarea></div>
                     <div class="full"><label>核心性格 / 背景故事</label><textarea id="edit-p-bg" rows="1" oninput="autoResize(this)">${pDet.bg}</textarea></div>
+                    ${renderDynamicStateEditor('edit-p-state', pDynamic)}
                 </div>
             </details>\n`;
             
@@ -2598,6 +2767,9 @@
             currentScenario.npcs.forEach((n, idx) => {
                 const aff = n.affection !== undefined ? n.affection : 0;
                 let nDet = n.details || { age: '', speech: '', likes: '', dislikes: '', app: '', bg: n.persona || '' };
+                n.dynamic = normalizeDynamicState(n.dynamic);
+                const nDynamic = n.dynamic;
+                const nDynamicPreview = getDynamicStatePreview(nDynamic);
                 
                 statsHtml += `
                 <details class="dark-card">
@@ -2605,6 +2777,7 @@
                         <div class="summary-left">
                             <span class="summary-name">${n.name}</span>
                             <span class="summary-tag">♥好感: ${aff}</span>
+                            ${nDynamicPreview ? `<span class="dynamic-state-preview" title="${escapeStatusHtml(nDynamicPreview)}">${escapeStatusHtml(nDynamicPreview)}</span>` : ''}
                         </div>
                     </summary>
                     <div class="dark-card-content">
@@ -2619,6 +2792,7 @@
                             <div><label>討厭的事物</label><input type="text" id="edit-n-dislikes-${idx}" value="${nDet.dislikes}"></div>
                             <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="edit-n-app-${idx}" rows="1" oninput="autoResize(this)">${nDet.app}</textarea></div>
                             <div class="full"><label>核心性格 / 背景故事</label><textarea id="edit-n-bg-${idx}" rows="1" oninput="autoResize(this)">${nDet.bg}</textarea></div>
+                            ${renderDynamicStateEditor(`edit-n-state-${idx}`, nDynamic)}
                         </div>
                     </div>
                 </details>\n`;
@@ -2853,12 +3027,17 @@
                 return `[年齡/體型]: ${d.age || '未知'}\n[外貌穿搭]: ${d.app || '未知'}\n[說話習慣]: ${d.speech || '未知'}\n[喜歡的事物]: ${d.likes || '未知'}\n[討厭的事物]: ${d.dislikes || '未知'}\n[背景與性格]: ${d.bg || '未知'}`;
             };
 
-            const npcDescriptions = currentScenario.npcs.map(n => `[NPC - ${n.name}]：\n(當前好感度): ${n.affection !== undefined ? n.affection : 0}\n${formatDetails(n.details)}`).join('\n\n');
+            const npcDescriptions = currentScenario.npcs.map(n => {
+                n.dynamic = normalizeDynamicState(n.dynamic);
+                return `[NPC - ${n.name}]：\n(當前好感度): ${n.affection !== undefined ? n.affection : 0}\n【核心人設：禁止自動改寫】\n${formatDetails(n.details)}\n【可流動的當前狀態】\n${formatDynamicStateForPrompt(n.dynamic)}`;
+            }).join('\n\n');
             const sceneNpcRole = currentScen.npcRoles || currentScen.targetRole || "無特殊設定";
 
             const pStats = currentScenario.playerStats || {str:10, dex:10, con:10, int:10, wis:10, cha:10};
             const statsStr = `力量(STR):${pStats.str}, 敏捷(DEX):${pStats.dex}, 體質(CON):${pStats.con}, 智力(INT):${pStats.int}, 感知(WIS):${pStats.wis}, 魅力(CHA):${pStats.cha}`;
             const pDetailsStr = formatDetails(currentScenario.playerDetails);
+            currentScenario.playerDynamic = normalizeDynamicState(currentScenario.playerDynamic);
+            const pDynamicStr = formatDynamicStateForPrompt(currentScenario.playerDynamic);
             const languageInstruction = getLanguageInstruction(currentScenario.languageMode || 'zh-tw');
 
             return `\n【輸出語言規則】\n${languageInstruction}\n
@@ -2889,7 +3068,8 @@ ${npcDescriptions}
 【玩家角色設定 (數值已被鎖定)】
 [玩家 - ${currentScenario.playerName}]：
 (基礎六圍數值) ${statsStr}
-(動漫設定案) \n${pDetailsStr}
+【核心人設：禁止自動改寫】\n${pDetailsStr}
+【可流動的當前狀態】\n${pDynamicStr}
 (當下情境身分) ${currentScen.playerRole}
 
 【🚨 群像劇 NPC 互動與發言邏輯】
@@ -2925,10 +3105,12 @@ ${flagsText}
 2. 【事件對數值的影響】：若玩家遭遇重大事件，請主動利用 "new_flags" 發放「狀態標籤」(例：["右臂骨折", "被通緝"])。未來所有的擲骰判定，都必須將這些狀態標籤納入考量！
 3. 【道具與消耗品聯動】：若玩家「使用、食用或消耗」了某個道具，請 DM 自動判斷該道具的效果，並直接將其反映在 "hp_change" (補血/扣血) 或 "san_change" (回復理智/驚嚇) 欄位中。若是將道具「贈送」給 NPC，請判斷該 NPC 的喜好，並反映在 "npc_love_change" 中！
 
-【🚨 動態人設與好感度演進機制 (極重要)】
-1. 若玩家的行為符合某位 NPC 的喜好、提供實質幫助或展現魅力，請增加其好感度。若惹惱對方則減少。
-2. 當某位 NPC 的好感度突破【50】或【80】時，請【主動在 narrative 中觸發專屬的特殊事件或私密對話】，並發放代表該階段的 "new_flags"。
-3. 如果當前的劇情發生重大轉折（例如某個角色獲得了新武器、受了永久性傷害、得知了某個震撼真相、心態發生了改變），DM 必須透過 "npc_persona_updates" 或 "player_persona_update" 來修改並更新該角色的人設！
+【🚨 角色動態狀態與好感度演進機制 (極重要)】
+1. 核心人設（年齡、背景、性格、語氣、喜好與厭惡）由玩家建立，絕對不可自動改寫或摘要覆蓋。
+2. 只有劇情造成實際變化時，才使用 npc_state_updates / player_state_update 更新「動態狀態」。只回傳本回合真正改變的欄位，未改變的欄位必須省略。
+3. mood 是當前情緒；condition 是傷勢、裝備或外觀狀態；relationship 是對玩家/隊伍的當前態度；goal 是目前目標；recentChange 是本次重要變化的簡短摘要。
+4. 短暫且無意義的動作不必更新。重大心境轉折、受傷、換裝、關係改變、獲得新目標時才更新，並用 reason 說明原因。
+5. 若玩家的行為符合某位 NPC 的喜好、提供實質幫助或展現魅力，請增加其好感度；惹惱對方則減少。好感度突破 50 或 80 時，可主動觸發專屬事件。
 
 【回傳 JSON 格式與嚴格規定 (支援多人)】
 - "hp_change": 整數。若需扣除或恢復體力填寫此欄位 (例: -10)。
@@ -2937,8 +3119,8 @@ ${flagsText}
 - "new_items": 字串陣列 [Array]。若玩家獲得新道具寫入此處。
 - "lost_items": 字串陣列 [Array]。若玩家消耗或失去道具寫入此處。
 - "new_flags": 字串陣列 [Array]。若玩家獲得長期 Buff/Debuff 或解鎖重要承諾/事件寫入此處。(注意：標籤名稱不要加「狀態：」前綴，直接寫名稱即可)
-- "npc_persona_updates": 物件陣列 [Array of Objects]。若劇情導致某個NPC的心態、裝備、外觀發生【永久性重大改變】，請回傳更新後的人設。格式範例：[{"name": "宮崎三高", "new_persona": "原本的屬性... 新增：右眼受傷，對玩家極度信任..."}]。無改變請回傳 []。
-- "player_persona_update": 字串 (String)。若玩家角色設定發生永久轉變，回傳更新後的完整人設文字。無改變請回傳 ""。
+- "npc_state_updates": 物件陣列 [Array of Objects]。只增量更新 NPC 的動態狀態。格式：[{"name":"宮崎三高","changes":{"mood":"警戒","relationship":"開始信任玩家","goal":"護送玩家離開"},"reason":"玩家替他擋下攻擊"}]。無變動回傳 []。
+- "player_state_update": 物件 (Object)。只增量更新玩家的動態狀態。格式：{"changes":{"condition":"右臂擦傷","recentChange":"在遺跡中受傷"},"reason":"陷阱判定失敗"}。無變動回傳 {}。
 - "adventure_log": 字串 (String)。請以字串格式回傳，利用 \\n 換行。保留舊有重要日誌，並往下新增最新進展，上限 1000 字。
 - "narrative": 第三方旁白視角。進行情境描寫、NPC之間的動作、判定結果宣告。
 - "dialogues": 物件陣列 (Array of Objects)。只有真正開口說話的 NPC 才列入此陣列！名稱必須完全符合上述 NPC 列表。格式範例：[{"speaker": "宮崎三高", "text": "退後。"}]。如果沒人講話，回傳 []。
@@ -3362,7 +3544,7 @@ ${flagsText}
             try {
                 return JSON.parse(extractJsonText(rawText));
             } catch (firstError) {
-                const repairPrompt = `請把以下 AI 回覆修正成「合法 JSON 物件」。不要新增解釋，不要使用 Markdown，只輸出 JSON。必須保留這些欄位名稱：hp_change, san_change, npc_love_change, new_items, lost_items, new_flags, npc_persona_updates, player_persona_update, adventure_log, narrative, dialogues, options。\n\n原始任務摘要：\n${fullPrompt.slice(0, 3500)}\n\n需要修正的回覆：\n${rawText.slice(0, 12000)}`;
+                const repairPrompt = `請把以下 AI 回覆修正成「合法 JSON 物件」。不要新增解釋，不要使用 Markdown，只輸出 JSON。必須保留這些欄位名稱：hp_change, san_change, npc_love_change, new_items, lost_items, new_flags, npc_state_updates, player_state_update, adventure_log, narrative, dialogues, options。\n\n原始任務摘要：\n${fullPrompt.slice(0, 3500)}\n\n需要修正的回覆：\n${rawText.slice(0, 12000)}`;
                 const repairedText = await requestAIText(repairPrompt);
                 try {
                     return JSON.parse(extractJsonText(repairedText));
@@ -3449,21 +3631,34 @@ ${flagsText}
                     }
                 }
 
-                if (parsedData.npc_persona_updates && Array.isArray(parsedData.npc_persona_updates)) {
-                    parsedData.npc_persona_updates.forEach(update => {
-                        const foundNpc = currentScenario.npcs.find(n => n.name === update.name);
-                        if (foundNpc && update.new_persona && update.new_persona.trim() !== "") {
-                            if (!foundNpc.details) foundNpc.details = { bg: '' };
-                            foundNpc.details.bg = update.new_persona;
-                            createSystemAlert(`— NPC [ ${update.name} ] 的人物設定已根據劇情發生改變 —`);
-                        }
+                if (parsedData.npc_state_updates && Array.isArray(parsedData.npc_state_updates)) {
+                    parsedData.npc_state_updates.forEach(update => {
+                        const npcName = valueToText(update?.name);
+                        const foundNpc = findNpcByName(npcName) || ensureNpcForSpeaker(npcName);
+                        if (!foundNpc) return;
+                        const result = applyDynamicStatePatch(foundNpc.dynamic, update);
+                        foundNpc.dynamic = result.state;
                     });
                 }
 
-                if (parsedData.player_persona_update && typeof parsedData.player_persona_update === "string" && parsedData.player_persona_update.trim() !== "") {
-                    if (!currentScenario.playerDetails) currentScenario.playerDetails = { bg: '' };
-                    currentScenario.playerDetails.bg = parsedData.player_persona_update.trim();
-                    createSystemAlert(`— 玩家 [ ${currentScenario.playerName} ] 的人物設定已根據劇情發生改變 —`);
+                if (parsedData.player_state_update && typeof parsedData.player_state_update === 'object') {
+                    const result = applyDynamicStatePatch(currentScenario.playerDynamic, parsedData.player_state_update);
+                    currentScenario.playerDynamic = result.state;
+                }
+
+                // 舊模型若仍回傳舊欄位，只記入「近期變化」，絕不覆寫核心人設。
+                if (parsedData.npc_persona_updates && Array.isArray(parsedData.npc_persona_updates)) {
+                    parsedData.npc_persona_updates.forEach(update => {
+                        const foundNpc = findNpcByName(update?.name) || ensureNpcForSpeaker(update?.name);
+                        const legacyText = valueToText(update?.new_persona);
+                        if (!foundNpc || !legacyText) return;
+                        const result = applyDynamicStatePatch(foundNpc.dynamic, { changes: { recentChange: legacyText }, reason: '舊格式的劇情更新' });
+                        foundNpc.dynamic = result.state;
+                    });
+                }
+                if (typeof parsedData.player_persona_update === 'string' && parsedData.player_persona_update.trim()) {
+                    const result = applyDynamicStatePatch(currentScenario.playerDynamic, { changes: { recentChange: parsedData.player_persona_update }, reason: '舊格式的劇情更新' });
+                    currentScenario.playerDynamic = result.state;
                 }
 
                 if(parsedData.hp_change) { currentHp += parseInt(parsedData.hp_change); if(currentHp > 100) currentHp = 100; if(currentHp < 0) currentHp = 0; document.getElementById('ui-hp').innerText = currentHp; }
@@ -3517,12 +3712,14 @@ ${flagsText}
                     parsedData.dialogues.forEach(d => {
                         const normalized = normalizeDialogueEntry(d);
                         if (!normalized) return;
+                        ensureNpcForSpeaker(normalized.speaker);
                         chatScripts[currentChatPageIndex].push(`${normalized.speaker}：${normalized.text}`);
                         appendMessage(normalized.speaker, normalized.text);
                     });
                 } else {
                     const singleDialogue = normalizeDialogueEntry(parsedData.dialogue);
                     if (singleDialogue) {
+                        ensureNpcForSpeaker(singleDialogue.speaker);
                         chatScripts[currentChatPageIndex].push(`${singleDialogue.speaker}：${singleDialogue.text}`);
                         appendMessage(singleDialogue.speaker, singleDialogue.text);
                     }
