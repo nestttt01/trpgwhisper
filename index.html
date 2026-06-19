@@ -62,12 +62,27 @@
         details.foldable-card summary { background: var(--border-dark); color: #fff; padding: 12px 15px; font-size: 14px; font-weight: 800; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; border-radius: 6px;}
         details.foldable-card[open] summary { border-bottom-left-radius: 0; border-bottom-right-radius: 0; }
         details.foldable-card summary::-webkit-details-marker { display: none; }
-        details.foldable-card summary::after { content: "▼ 展開"; font-size: 11px; color: var(--border-dark); background: var(--accent-neon); padding: 4px 8px; border-radius: 6px; font-weight: 900;}
-        details.foldable-card[open] summary::after { content: "▲ 收起"; color: #fff; background: rgba(255,255,255,0.2); }
+                /* 移除底框，改為純文字並套用對話框的粉灰色與灰色 */
+        details.dark-card summary::after { 
+            content: "▼ 展開"; 
+            font-size: 13px; 
+            color: var(--accent-gray); /* 對話框使用的粉灰色 */
+            background: transparent;   /* 拿掉螢光黃底框 */
+            padding: 0;                /* 移除內距 */
+            font-weight: 900; 
+            margin-left: 10px; 
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+        details.dark-card[open] summary::after { 
+            content: "▲ 收起"; 
+            color: var(--text-sub);    /* 對話框使用的灰色 */
+            background: transparent;   /* 拿掉灰色底框 */
+        }
         details.foldable-card[open] { box-shadow: 4px 4px 0px var(--border-dark); transform: translate(-2px, -2px); }
         .foldable-content { padding: 15px; position: relative; display: flex; flex-direction: column; gap: 8px;}
 
-        /* ======= 遊戲內：新版深色卡片 UI ======= */
+                /* ======= 遊戲內：新版深色卡片 UI ======= */
         details.dark-card { background: #fff; border: 2px solid var(--border-dark); border-radius: 8px; margin-bottom: 12px; overflow: hidden; box-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
         details.dark-card summary { background: #333; color: #fff; padding: 12px 15px; font-size: 15px; font-weight: 800; cursor: pointer; list-style: none; display: flex; justify-content: space-between; align-items: center; user-select: none; transition: background 0.2s; }
         details.dark-card summary::-webkit-details-marker { display: none; }
@@ -77,8 +92,23 @@
         .summary-name { font-size: 15px; font-weight: 900;}
         .summary-tag { color: var(--accent-neon); font-size: 12px; font-weight: 900; letter-spacing: 1px;}
         
-        details.dark-card summary::after { content: "▼ 展開"; font-size: 12px; color: var(--border-dark); background: var(--accent-neon); padding: 6px 12px; border-radius: 6px; font-weight: 900; margin-left: 10px; transition: all 0.2s;}
-        details.dark-card[open] summary::after { content: "▲ 收起"; color: #fff; background: #666; }
+        /* 這裡把展開與收起的按鈕底框拿掉，改用文字顏色 */
+        details.dark-card summary::after { 
+            content: "▼ 展開"; 
+            font-size: 13px; 
+            color: var(--accent-gray); /* 粉灰色 */
+            background: transparent;   /* 透明底色 */
+            padding: 0;                /* 移除內邊距 */
+            font-weight: 900; 
+            margin-left: 10px; 
+            transition: all 0.2s;
+            letter-spacing: 1px;
+        }
+        details.dark-card[open] summary::after { 
+            content: "▲ 收起"; 
+            color: var(--text-sub);    /* 灰色 */
+            background: transparent;   /* 透明底色 */
+        }
         
         .dark-card-content { padding: 15px; background: #fff; position: relative; }
 
@@ -109,14 +139,21 @@
             padding: 20px 10px; 
         }
         
-        #status-modal-content { 
-            background: var(--bg-main); width: 100%; max-width: 600px; 
-            margin: 0 auto; 
-            height: auto; 
-            border-radius: 12px; border: 3px solid var(--border-dark); 
-            padding: 20px; display: flex; flex-direction: column; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
+        /* 修改這一段，把 #mid-modal-content 也加進去 */
+#status-modal-content, #tutorial-modal-content, #mid-modal-content { 
+    background: var(--bg-main); 
+    width: 90%; 
+    max-width: 600px; 
+    margin: 10px auto; 
+    border-radius: 12px; 
+    border: 3px solid var(--border-dark); 
+    padding: 20px 20px 15px 20px; 
+    display: flex; 
+    flex-direction: column; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    max-height: 85vh; 
+    overflow: hidden; 
+}
 
         .modal-header-sticky {
             position: sticky; top: -20px; 
@@ -308,7 +345,7 @@
     </div>
 
     <div id="midgame-scen-modal" class="modal-overlay">
-        <div id="status-modal-content" style="max-width: 400px; margin-top: 10vh;">
+        <div id="mid-modal-content" style="max-width: 400px; margin-top: 10vh;">
             <div class="modal-header-sticky">
                 <h3 style="border:none; margin:0; padding:0;">🗺️ 發現新情境 / 切換空間</h3>
             </div>
@@ -326,7 +363,7 @@
     </div>
 
     <div id="status-modal" class="modal-overlay">
-        <div id="status-modal-content">
+                <div id="status-modal-content">
             <div class="modal-header-sticky">
                 <h3 style="border:none; margin:0; padding:0;">玩家狀態與面板</h3>
                 <div style="display:flex; gap: 10px;">
@@ -335,60 +372,68 @@
                 </div>
             </div>
             
-            <p style="font-size:12px; color:var(--text-main); font-weight:900; margin-bottom:4px; margin-top:5px;">永久事件標籤 (長期記憶 Flag)</p>
-            <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px; font-weight:800;">達成特定成就時，AI會自動解鎖。你也可以手動增刪，強行給自己掛Buff/Debuff！</p>
-            <div id="ui-flags-container"></div>
-            <div id="flag-input-area">
-                <input type="text" id="new-flag-input" placeholder="輸入你想植入的狀態 (如: 右臂骨折)...">
-                <button class="btn" onclick="manualAddFlag()" style="padding:6px 12px; font-size:12px;">寫入</button>
-            </div>
-            
-            <p style="font-size:12px; color:var(--text-main); font-weight:900; margin-bottom:4px;">玩家背包與道具</p>
-            <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px; font-weight:800;">遊戲過程中獲得或消耗的物品會顯示於此。</p>
-            <div id="ui-items-container"></div>
-            
-            <p style="font-size:12px; color:var(--text-main); font-weight:900; margin-bottom:4px;">事件日誌 (AI 條列式記憶)</p>
-            <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px; font-weight:800;">AI 每次行動都會更新此欄位。若 AI 遺忘了小細節，你可以直接手動修改並儲存。</p>
-            <textarea id="ui-adventure-log" oninput="autoResize(this)"></textarea>
-            
-            <div id="ui-stats-display" style="margin-top: 10px;">
+            ⁠<div style="flex: 1; overflow-y: auto; padding-right: 5px; min-height: 0;">⁠
+                <p style="font-size:12px; color:var(--text-main); font-weight:900; margin-bottom:4px; margin-top:5px;">永久事件標籤 (長期記憶 Flag)</p>
+                <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px; font-weight:800;">達成特定成就時，AI會自動解鎖。你也可以手動增刪，強行給自己掛Buff/Debuff！</p>
+                <div id="ui-flags-container"></div>
+                <div id="flag-input-area">
+                    <input type="text" id="new-flag-input" placeholder="輸入你想植入的狀態 (如: 右臂骨折)...">
+                    <button class="btn" onclick="manualAddFlag()" style="padding:6px 12px; font-size:12px;">寫入</button>
                 </div>
+                
+                <p style="font-size:12px; color:var(--text-main); font-weight:900; margin-bottom:4px;">玩家背包與道具</p>
+                <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px; font-weight:800;">遊戲過程中獲得或消耗的物品會顯示於此。</p>
+                <div id="ui-items-container"></div>
+                
+                <p style="font-size:12px; color:var(--text-main); font-weight:900; margin-bottom:4px;">事件日誌 (AI 條列式記憶)</p>
+                <p style="font-size:11px; color:var(--text-sub); margin-bottom:8px; font-weight:800;">AI 每次行動都會更新此欄位。若 AI 遺忘了小細節，你可以直接手動修改並儲存。</p>
+                <textarea id="ui-adventure-log" oninput="autoResize(this)"></textarea>
+                
+                <div id="ui-stats-display" style="margin-top: 10px;"></div>
+            </div>
         </div>
     </div>
 
-    <div id="tutorial-modal" class="modal-overlay">
-        <div id="status-modal-content" style="max-width: 500px; margin-top: 10vh;">
-            <div class="modal-header-sticky">
+        <div id="tutorial-modal" class="modal-overlay" style="display: none; align-items: center; justify-content: center;">
+        
+        <div id="tutorial-modal-content" style="max-width: 500px; width: 90%; max-height: 85vh; margin: auto; padding: 20px 20px 15px 20px; display: flex; flex-direction: column; overflow: hidden; border-radius: 12px;">
+            
+            <div class="modal-header-sticky" style="margin-bottom: 10px;">
                 <h3 style="border:none; margin:0; padding:0;">系統指南與遊玩須知</h3>
             </div>
             
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">1. 核心啟動 (API Key)</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">請至 Google AI Studio 申請金鑰。系統完全在你的設備上運行，金鑰不會傳輸至外部。</p>
-            
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">2. 多重宇宙與情境切換</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">你可以建立多個情境分頁（如「艾歐澤亞」與「現實生活」）。切換分頁時，AI 會自動調整身份定位與環境法則。即使世界觀改變，你的核心人設與記憶依然持續累積。</p>
-            
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">3. 自由行動與擲骰判定</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">直接輸入對話或動作指令（如 <code>(嘗試說服對方)</code>）。若行動伴隨風險，請善用「擲骰」按鈕，系統將自動根據你的六圍屬性進行檢定。</p>
-            
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">4. 角色面板與事件記憶 (Flags)</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">透過「角色面板」查看道具與好感度。重大決策將轉化為「永久事件標籤」，影響後續世界的發展。</p>
-
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">5. 生存機制 (HP 與 SAN)</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">遊戲過程中沒有絕對的 Game Over，但遭遇攻擊或精神打擊時，會扣除生命 (HP) 或理智 (SAN) 值。若數值歸零，可能會觸發昏迷、崩潰或隊友救援等特殊劇情。</p>
-
-            <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:12px;">6. 存檔與命運重鑄</p>
-            <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">遊戲進度會自動儲存於獨立的紀錄檔中，不會蓋掉你大廳的初始劇本配置。若對開局的六圍屬性不滿意，在遊戲內面板中，每個存檔都有 3 次找「守墓人」重新洗點的機會。</p>
-
-            <div style="background: var(--card-bg); border: 2px dashed var(--border-dark); border-radius: 8px; padding: 12px; margin-bottom: 20px;">
-                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">💡 提示：玩家即是神 (手動覆寫)</p>
-                <p style="font-size:12px; color:var(--text-sub); margin-bottom:10px; font-weight:600; line-height:1.5;">如果 AI 忘記了某個設定，或是你想強行推進劇情，隨時可以打開「角色面板」，手動修改事件日誌、增刪背包道具，甚至直接改寫 NPC 的好感度與人設背景。</p>
+            <div style="flex: 1; overflow-y: auto; padding-right: 5px; margin-bottom: 15px; min-height: 0;">⁠
+                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">1. 核心啟動 (API Key)</p>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">請至 Google AI Studio 申請金鑰。系統完全在你的設備上運行，金鑰不會傳輸至外部。</p>
                 
-                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">💡 提示：若感覺情境錯亂</p>
-                <p style="font-size:12px; color:var(--text-sub); margin-bottom:0; font-weight:600; line-height:1.5;">如果 AI 混淆了空間設定，試著在「事件日誌」中手動補充當下的環境限制，或透過切換分頁重置對話上下文，這能幫助 AI 迅速找回當下劇本的焦點。</p>
+                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">2. 多重宇宙與情境切換</p>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">你可以建立多個情境分頁（如「艾歐澤亞」與「現實生活」）。切換分頁時，AI 會自動調整身份定位與環境法則。即使世界觀改變，你的核心人設與記憶依然持續累積。</p>
+                
+                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">3. 自由行動與擲骰判定</p>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">直接輸入對話或動作指令（如 <code>(嘗試說服對方)</code>）。若行動伴隨風險，請善用「擲骰」按鈕，系統將自動根據你的六圍屬性進行檢定。</p>
+                
+                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">4. 角色面板與事件記憶 (Flags)</p>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">透過「角色面板」查看道具與好感度。重大決策將轉化為「永久事件標籤」，影響後續世界的發展。</p>
+
+                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">5. 生存機制 (HP 與 SAN)</p>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">遊戲過程中沒有絕對的 Game Over，但遭遇攻擊或精神打擊時，會扣除生命 (HP) 或理智 (SAN) 值。若數值歸零，可能會觸發昏迷、崩潰或隊友救援等特殊劇情。</p>
+
+                <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">6. 存檔與命運重鑄</p>
+                <p style="font-size:12px; color:var(--text-sub); margin-bottom:12px; font-weight:600; line-height:1.5;">遊戲進度會自動儲存於獨立的紀錄檔中，不會蓋掉你大廳的初始劇本配置。若對開局的六圍屬性不滿意，在遊戲內面板中，每個存檔都有 3 次找「守墓人」重新洗點的機會。</p>
+
+                <div style="background: #f9f9f9; border: 2px dashed #ccc; border-radius: 8px; padding: 12px; margin-bottom: 5px;">
+                    <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">💡 提示：玩家即是神 (手動覆寫)</p>
+                    <p style="font-size:12px; color:var(--text-sub); margin-bottom:10px; font-weight:600; line-height:1.5;">如果 AI 忘記了某個設定，或是你想強行推進劇情，隨時可以打開「角色面板」，手動修改事件日誌、增刪背包道具，甚至直接改寫 NPC 的好感度與人設背景。</p>
+                    
+                    <p style="font-size:13px; color:var(--text-main); font-weight:900; margin-bottom:4px;">💡 提示：若感覺情境錯亂</p>
+                    <p style="font-size:12px; color:var(--text-sub); margin-bottom:0; font-weight:600; line-height:1.5;">如果 AI 混淆了空間設定，試著在「事件日誌」中手動補充當下的環境限制，或透過切換分頁重置對話上下文，這能幫助 AI 迅速找回當下劇本的焦點。</p>
+                </div>
             </div>
 
-            <button class="btn" onclick="closeTutorialModal()" style="background: var(--border-dark); color: #fff; width: 100%; font-size: 14px; padding: 12px; font-weight: 900; letter-spacing: 1px;">我瞭解了</button>
+            <div style="flex-shrink: 0; border-top: 1px solid #ddd; padding-top: 12px;">
+                <button class="btn" onclick="closeTutorialModal()" style="background: var(--border-dark); color: #fff; width: 100%; font-size: 14px; padding: 12px; font-weight: 900; letter-spacing: 1px;">我瞭解了</button>
+            </div>
+            
         </div>
     </div>
 
@@ -502,7 +547,7 @@
         
         <div class="action-buttons" style="width: 100%; margin-top: 15px;">
             <button class="btn" onclick="deleteCurrentPreset()" style="border-color: #ff4444; color: #ff4444;">刪除配置</button>
-            <button class="btn" onclick="restoreDefaultPreset()">恢復預設</button>
+            <button class="btn" onclick="restoreDefaultPreset()">清空欄位</button>
         </div>
         <div class="action-buttons" style="width: 100%; margin-top: 10px;">
             <button class="btn" onclick="saveCurrentPreset()" style="background: var(--accent-neon);">儲存變更</button>
@@ -591,21 +636,21 @@
             playerStats: { str: 8, dex: 13, con: 15, int: 13, wis: 14, cha: 15 },
             isLocked: false, 
             statsLocked: true, 
-            playerDetails: { age: '24歲 / 152cm', speech: '直率、偶爾會吐槽。', likes: '薪水、睡眠、PVP打架。', dislikes: '加班、高難度副本機制。', app: '在艾歐澤亞內是白髮貓魅族，喜歡待在係船廠。', bg: '打架很凶但PVE常迷路。現實生活是被死線追殺的社畜設計師，經常穿無彩度寬鬆的休閒服。專長：說服、威嚇、洞察。' },
+            playerDetails: { age: '24歲 / 152cm', speech: '直率、偶爾會吐槽。', likes: '薪水、睡眠、PVP打架。', dislikes: '加班、高難度副本機制。', app: '在艾歐澤亞內是白髮貓魅族，喜歡待在係船廠。現實生活是被死線追殺的社畜設計師，經常穿無彩度寬鬆的休閒服。', bg: '打架很凶但PVE常迷路。專長：敏銳心靈、耐性、洞察。' },
             npcs: [
                 {
                     id: 'npc_1',
                     name: '宮崎三高',
                     avatar: emptyAvatar,
                     affection: 0,
-                    details: { age: '26歲 / 185cm', speech: '極度精簡(例如：「好」)，語氣冷靜。', likes: '動物迷因、觀察人類。', dislikes: '沒有特別討厭的。', app: '在艾歐澤亞是精靈，面部有淡淡傷疤，氣質禁慾，常穿黑襯衫。', bg: '極度內斂。就算玩家搞砸也會默默扛下一切。現實生活是攝影師，同樣喜歡穿黑襯衫。專長：生存、察覺、運動。' }
+                    details: { age: '26歲 / 185cm', speech: '極度精簡(例如：「好」)，語氣冷靜。', likes: '動物迷因、觀察人類。', dislikes: '沒有特別討厭的。', app: '在艾歐澤亞是精靈，面部有淡淡傷疤，氣質禁慾，常穿黑襯衫。', bg: '極度內斂。就算玩家搞砸也會默默扛下一切。專長：治癒師、演員、觀察力。' }
                 },
                 {
                     id: 'npc_2',
                     name: 'SY',
                     avatar: emptyAvatar,
                     affection: 0,
-                    details: { age: '26歲 / 175cm', speech: '有點遲鈍，沒什麼情緒起伏。', likes: '打扮、機械零件。', dislikes: '早起。', app: '在艾歐澤亞，擁有敏銳的兔耳朵。', bg: '有點遲鈍的機工士。雖然感覺對什麼事情都沒反應，但在危險時絕對不會拋下隊友。現實中是擅長打扮的男性，經常遲到但化妝實力堅強。' }
+                    details: { age: '26歲 / 175cm', speech: '有點遲鈍，沒什麼情緒起伏。', likes: '打扮、在家組模型。', dislikes: '早起。', app: '在艾歐澤亞，擁有敏銳的兔耳朵。現實中是擅長打扮的男性，經常遲到但化妝實力堅強。', bg: '有點遲鈍的機工士。對什麼事情都沒有太大的反應。專長：幸運、神射手、武器大師。' }
                 }
             ],
             scenarios: [
@@ -1074,9 +1119,23 @@
         }
 
         function restoreDefaultPreset() {
-            if(confirm("確定要把當前的輸入框資料，覆蓋回系統的完美預設嗎？照片也會被清空喔。")) {
-                Object.keys(defaultPreset).forEach(k => { if(k !== 'id') scenarioPresets[activePresetId][k] = JSON.parse(JSON.stringify(defaultPreset[k])); });
-                loadPresetToForm(activePresetId); alert("已成功載入預設資料，請點擊下方的「儲存」來保存變更！");
+            if(confirm("確定要清空當前所有輸入框的資料嗎？這將讓你獲得一張白紙來重新填寫！\n(尚未點擊儲存前，原本的配置不會被覆蓋)")) {
+                const blankPreset = {
+                    presetName: '空白配置',
+                    playerName: '',
+                    playerAvatar: emptyAvatar,
+                    playerStats: { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 },
+                    isLocked: false, 
+                    statsLocked: false,
+                    playerDetails: { age: '', speech: '', likes: '', dislikes: '', app: '', bg: '' },
+                    npcs: [{ id: 'npc_1', name: '新角色', avatar: emptyAvatar, details: { age: '', speech: '', likes: '', dislikes: '', app: '', bg: '' }, affection: 0 }],
+                    scenarios: [{name: '主情境', lore: '', npcRoles: '', playerRole: ''}]
+                };
+                Object.keys(blankPreset).forEach(k => { 
+                    scenarioPresets[activePresetId][k] = JSON.parse(JSON.stringify(blankPreset[k])); 
+                });
+                loadPresetToForm(activePresetId); 
+                alert("已清空所有欄位！請開始你的創作，完成後記得點擊「儲存變更」或「另存新檔」。");
             }
         }
 
@@ -1312,19 +1371,21 @@
             const pStats = currentScenario.playerStats || {str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10};
             let pDet = currentScenario.playerDetails || { age: '', speech: '', likes: '', dislikes: '', app: '', bg: currentScenario.playerPersona || '' };
 
-            let rCount = savesData[currentSaveId].respecCount !== undefined ? savesData[currentSaveId].respecCount : 3;
+                        let rCount = savesData[currentSaveId].respecCount !== undefined ? savesData[currentSaveId].respecCount : 3;
+            // 改為單純的骷髏頭按鈕，長按或游標懸停會顯示剩餘次數
             let respecBtnHtml = rCount > 0 
-                ? `<button class="btn" onclick="modalRespecStats()" style="background: var(--border-dark); color: #fff; padding: 5px 13px; font-size: 12px; border-radius: 8px; border:none; cursor:pointer; font-weight:900; letter-spacing:1px; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); transition: all 0.2s;">💀 守墓人洗點 (剩餘 ${rCount} 次)</button>` 
-                : `<span style="font-size:12px; color:var(--text-sub); font-weight:bold;">💀 洗點次數已用盡</span>`;
+                ? `<button onclick="modalRespecStats()" title="找守墓人洗點 (剩餘 ${rCount} 次)" style="background: var(--border-dark); color: #fff; padding: 4px 10px; font-size: 15px; border-radius: 8px; border:none; cursor:pointer; box-shadow: 2px 2px 0px rgba(0,0,0,0.2); transition: all 0.2s;">💀</button>` 
+                : `<span title="洗點次數已用盡" style="font-size: 18px; filter: grayscale(100%); opacity: 0.4; cursor: not-allowed;">💀</span>`;
 
-            // Player Section 完美還原圖3排版
+                        // Player Section 完美還原圖3排版
             let statsHtml = `
             <div style="background: #e6e6e6; border-radius: 8px; padding: 18px; margin-bottom: 15px; box-shadow: inset 0 2px 4px rgba(0,0,0,0.05);">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; padding-bottom: 12px;">
-                    <span style="font-size: 16px; font-weight: 900; color: var(--text-main); letter-spacing: 1px;">玩家：${currentScenario.playerName}</span>
-                    ${respecBtnHtml}
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; flex-wrap:wrap; gap:10px; margin-bottom:12px; padding-bottom: 12px; border-bottom: 1px dashed #ccc;">
+                    <span style="font-size: 16px; font-weight: 900; color: var(--text-main); letter-spacing: 1px; word-break: break-all; flex: 1;">玩家：${currentScenario.playerName}</span>
+                    <span style="flex-shrink: 0;">${respecBtnHtml}</span>
                 </div>
-                <div style="font-size:12px; letter-spacing:1px; font-weight: 400; display: grid; grid-template-columns: auto auto auto; gap: 4px 15px; justify-content: start;">
+
+                <div style="font-size:11px; font-weight: 400; color: var(--text-main); display: grid; grid-template-columns: 1fr 1fr; gap: 8px 10px; letter-spacing: 0.5px;">
                     <span>[力量STR: ${pStats.str}]</span>
                     <span>[敏捷DEX: ${pStats.dex}]</span>
                     <span>[體質CON: ${pStats.con}]</span>
@@ -1334,7 +1395,7 @@
                 </div>
             </div>
             
-            <details class="dark-card" style="margin-top:10px; border-color: var(--text-sub);">
+            <details class="dark-card" style="margin-top:10px;">
                 <summary>
                     <div class="summary-left">
                         <span class="summary-name">編輯玩家細節設定</span>
@@ -1612,7 +1673,7 @@
 你是一個「TRPG 沉浸式群像劇引擎」與「DM(地下城主)」。
 
 【語言風格核心守則：拒絕直譯、追求日系翻譯文學感】
-1. 【口吻要求】對話台詞保持日文語感，依照日本人說話的習慣與邏輯。
+1. 【口吻要求】對話台詞保持日文語感，依照日本人說話的習慣與邏輯（例如：善用省略主語、弦外之音的暗示、以及讀空氣的留白，避免將內心想法全部直白地說出口）。
 2. 【口吻轉換】：
    - 角色說話時，請融入「日文文學/日系翻譯文學」的優雅與留白。
    - 避免直接把英文直譯。例如，不用「我感覺到很憤怒」，改用「一股燥熱在胸口蔓延」。
@@ -1620,6 +1681,8 @@
 3. 【修辭調整】：
    - 描寫場景時，多描寫感官細節（氣味、光影、氣氛），而不是單純描述動作。
    - 動作描寫與對話之間要透過「心境轉折」連結，讓角色講出的每一句話都有其動機與內在掙扎。
+4. 【節奏掌控 (防呆機制)】：
+   - 請視當下情境的節奏動態調整描寫比例。日常閒聊或緊急戰鬥時應「簡短俐落」；關鍵劇情或情緒轉折時再著重「感官與內心描寫」，避免敘事過於拖沓黏膩。
 
 【目前場景與多重世界連貫性 (極重要)】
 目前場景 / 支線：【${currentScen.name}】
@@ -1659,6 +1722,7 @@ ${flagsText}
    - 🟢 屬性優勢 / 正向狀態 (如：玩家力量STR高於14且判定搬重物)：DM 可自動將原本的「失敗(如8點)」強行判定為「驚險成功」，或將「成功」升級為「大成功」。
    - 🔴 屬性劣勢 / 負面狀態 (如：玩家力量STR低於10，或身上有骨折標籤)：DM 必須無情地將原本的「成功(如13點)」降級為「失敗」，甚至引發嚴重後果。
 2. 【事件對數值的影響】：若玩家遭遇重大事件，請主動利用 "new_flags" 發放「狀態標籤」(例：["右臂骨折", "被通緝"])。未來所有的擲骰判定，都必須將這些狀態標籤納入考量！
+3. 【道具與消耗品聯動】：若玩家「使用、食用或消耗」了某個道具，請 DM 自動判斷該道具的效果，並直接將其反映在 "hp_change" (補血/扣血) 或 "san_change" (回復理智/驚嚇) 欄位中。若是將道具「贈送」給 NPC，請判斷該 NPC 的喜好，並反映在 "npc_love_change" 中！
 
 【🚨 動態人設與好感度演進機制 (極重要)】
 1. 若玩家的行為符合某位 NPC 的喜好、提供實質幫助或展現魅力，請增加其好感度。若惹惱對方則減少。
@@ -1963,8 +2027,19 @@ ${flagsText}
                 
                 if(parsedData.adventure_log) { let logData = parsedData.adventure_log; if (Array.isArray(logData)) { currentAdventureLog = logData.join('\n'); } else if (typeof logData === 'string' && logData.trim() !== "") { currentAdventureLog = logData.trim(); } }
                 
-                if(parsedData.new_items && Array.isArray(parsedData.new_items) && parsedData.new_items.length > 0) { parsedData.new_items.forEach(item => { if(!currentItems.includes(item)) { currentItems.push(item); createSystemAlert(`— 獲得道具 [ ${item} ] —`); } }); }
-                if(parsedData.lost_items && Array.isArray(parsedData.lost_items) && parsedData.lost_items.length > 0) { parsedData.lost_items.forEach(item => { const idx = currentItems.indexOf(item); if(idx > -1) { currentItems.splice(idx, 1); createSystemAlert(`— 失去/消耗道具 [ ${item} ] —`); } }); }
+                            if(parsedData.new_items && Array.isArray(parsedData.new_items) && parsedData.new_items.length > 0) { parsedData.new_items.forEach(item => { if(!currentItems.includes(item)) { currentItems.push(item); createSystemAlert(`— 獲得道具 [ ${item} ] —`); } }); }
+                
+                if(parsedData.lost_items && Array.isArray(parsedData.lost_items) && parsedData.lost_items.length > 0) { 
+                    parsedData.lost_items.forEach(aiItem => { 
+                        // 模糊比對：只要背包裡的道具名包含 AI 說的字，或 AI 說的字包含背包裡的道具，就算命中
+                        const idx = currentItems.findIndex(invItem => invItem.includes(aiItem) || aiItem.includes(invItem)); 
+                        if(idx > -1) { 
+                            const removedName = currentItems[idx]; // 抓出背包裡的真正全名
+                            currentItems.splice(idx, 1); 
+                            createSystemAlert(`— 失去/消耗道具 [ ${removedName} ] —`); 
+                        } 
+                    }); 
+                }
                 
                 if(parsedData.new_flags && Array.isArray(parsedData.new_flags) && parsedData.new_flags.length > 0) { 
                     parsedData.new_flags.forEach(flag => { 
