@@ -1032,6 +1032,16 @@
         #setup-screen { display: flex; position: relative; }
         #pic-input { display:none; }
         .u-inline-026 { color: var(--text-sub); text-align: center; font-size: 11px; margin-bottom: 25px; letter-spacing: 2px; font-weight: 800; }
+        .api-key-retention { width: 100%; max-width: 400px; margin: -3px auto 14px; display: flex; align-items: flex-start; gap: 9px; text-align: left; cursor: pointer; }
+        .api-key-retention input { position: absolute; opacity: 0; pointer-events: none; }
+        .api-key-switch { position: relative; flex: 0 0 34px; width: 34px; height: 20px; margin-top: 1px; border: 2px solid var(--border-dark); border-radius: 10px; background: #c8c3c5; transition: background 0.18s ease; }
+        .api-key-switch::after { content: ''; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px; border-radius: 50%; background: #fff; transition: transform 0.18s ease; }
+        .api-key-retention input:checked + .api-key-switch { background: var(--accent-neon); }
+        .api-key-retention input:checked + .api-key-switch::after { transform: translateX(14px); background: var(--border-dark); }
+        .api-key-retention input:focus-visible + .api-key-switch { outline: 3px solid rgba(232, 255, 68, 0.5); outline-offset: 2px; }
+        .api-key-retention-copy { min-width: 0; color: var(--text-main); line-height: 1.35; }
+        .api-key-retention-copy strong { display: block; font-size: 12px; }
+        .api-key-retention-copy small { display: block; margin-top: 2px; color: var(--text-sub); font-size: 10px; font-weight: 700; }
         .u-inline-027 { display: flex; gap: 10px; justify-content: center; width: 100%; max-width: 400px; margin: 0 auto 15px auto; }
         #verify-btn { flex: 1; background: var(--border-dark); color: #fff; }
         .u-inline-028 { font-size: 11px; color: var(--text-main); text-align: left; font-weight: 800; margin-bottom: 15px; line-height: 1.6; background: #e2e2e2; padding: 12px; border-radius: 8px; border-left: 4px solid var(--accent-neon); }
@@ -1289,19 +1299,19 @@
             
             <div class="u-inline-018">⁠
                 <p class="u-inline-019">1. 核心啟動 (API Key)</p>
-                <p class="u-inline-020">請至 Google AI Studio 或 OpenRouter 申請金鑰。系統完全在你的設備上運行，金鑰不會傳輸至外部。</p>
+                <p class="u-inline-020">請至 Google AI Studio 或 OpenRouter 申請金鑰。金鑰只會送往目前選擇的 AI 供應商驗證，且不會包含在匯出備份中。</p>
                 
                 <p class="u-inline-019">2. 多重宇宙與情境切換</p>
                 <p class="u-inline-020">你可以建立多個情境分頁（如「艾歐澤亞」與「現實生活」）。切換分頁時，AI 會自動調整身份定位與環境法則。即使世界觀改變，你的核心人設與記憶依然持續累積。</p>
                 
                 <p class="u-inline-019">3. 自由行動與擲骰判定</p>
-                <p class="u-inline-020">直接輸入對話或動作指令（如 <code>(嘗試說服對方)</code>）。AI 選項若標有「DEX 檢定」等文字，送出後會自動擲骰；沒有檢定標記的選項可直接送出，也可由玩家自行按「擲骰」挑戰。自由擲骰時，AI 會在背後判斷適用屬性與難度，程式隨機擲出 D20 並算定結果。</p>
+                <p class="u-inline-020">直接輸入對話或動作指令（如 <code>(嘗試說服對方)</code>）。AI 選項若標有「DEX 檢定」等文字，送出後會自動擲骰；沒有檢定標記的選項也可自由選擇是否擲骰。判定採 D20 加上六圍加值，總和大於或等於難度 DC 即成功；天然 20 為大成功、天然 1 為大失敗。</p>
                 
                 <p class="u-inline-019">4. 角色面板與事件記憶 (Flags)</p>
                 <p class="u-inline-020">透過「角色面板」查看道具與好感度。重大決策將轉化為「永久事件標籤」，影響後續世界的發展。</p>
 
                 <p class="u-inline-019">5. 生存機制 (HP 與 SAN)</p>
-                <p class="u-inline-020">遭遇攻擊或精神打擊時會扣除 HP 或 SAN。標準模式沒有 Game Over，歸零會觸發救援；困難模式會降低檢定門檻，歸零可能導致 Game Over；極限模式更加嚴苛，歸零必定演出壞結局。遊戲難度在劇本與創角配置中選擇。</p>
+                <p class="u-inline-020">遭遇攻擊或精神打擊時會扣除 HP 或 SAN。標準模式沒有 Game Over，歸零會觸發救援；困難模式會提高檢定 DC，歸零可能導致 Game Over；極限模式更加嚴苛，歸零必定演出壞結局。遊戲難度在劇本與創角配置中選擇。</p>
 
                 <p class="u-inline-019">6. 存檔與命運重鑄</p>
                 <p class="u-inline-020">遊戲進度會自動儲存於獨立的紀錄檔中，遊玩過程中新增的內容不會蓋掉已鎖定的角色配置，可解鎖覆蓋檔案或是善用另存新檔增加喜歡的配置。若對開局的六圍屬性不滿意，在遊戲內面板中，每個存檔都有 3 次找「守墓人」重新洗點的機會。</p>
@@ -1334,14 +1344,23 @@
             <option value="openrouter">OpenRouter</option>
         </select>
         <input type="password" id="api-key" class="key-input" placeholder="請貼上你的 API Key">
+
+        <label class="api-key-retention">
+            <input type="checkbox" id="remember-api-key" onchange="setRememberApiKey(this.checked)">
+            <span class="api-key-switch" aria-hidden="true"></span>
+            <span class="api-key-retention-copy">
+                <strong>在這台裝置保留金鑰</strong>
+                <small>未開啟時只在本次頁面使用；共用裝置請勿開啟。</small>
+            </span>
+        </label>
         
         <div class="u-inline-027">
             <button class="btn" id="verify-btn" onclick="fetchAvailableModels()">驗證金鑰</button>
         </div>
 
         <p class="u-inline-028">
-            🔒 <b>隱私保證</b>：API Key、設定、照片與對話進度，均僅儲存於設備本地端。<br>
-            ⚠️ <b>免責聲明</b>：本工具僅提供介面，請妥善保管 API Key 並留意使用額度。AI 生成內容屬隨機演算，不代表開發者立場。存檔依賴瀏覽器，清除快取將導致資料遺失。
+            🔒 <b>隱私說明</b>：API Key 只會送往目前選擇的 AI 供應商；開啟上方選項時，才會保留在這台裝置的瀏覽器中。匯出備份不包含 API Key。<br>
+            ⚠️ <b>資料提醒</b>：角色設定與對話內容會隨請求傳給該 AI 供應商；照片與遊戲進度保存在本機。請妥善保管金鑰並留意使用額度。
         </p>
         
         <div id="model-selection-area">
@@ -1361,7 +1380,7 @@
                 <button id="delete-key-btn" onclick="deleteAllData()">清除設備所有資料</button>
             </div>
         </div>
-        <p class="setup-version">測試版 v0.13 · 2026/06/20</p>
+        <p class="setup-version">測試版 v0.17 · 2026/06/21</p>
     </div>
 
     <div id="edit-scenario-screen">
@@ -1442,7 +1461,7 @@
                         <option value="nightmare">極限模式</option>
                     </select>
                 </div>
-                <p class="game-difficulty-note">困難模式：檢定門檻 -2，歸零可能 Game Over。極限模式：檢定門檻 -4，歸零必定 Game Over。</p>
+                <p class="game-difficulty-note">困難模式：檢定 DC +2，歸零可能 Game Over。極限模式：檢定 DC +4，歸零必定 Game Over。</p>
                 
             </div>
 
@@ -1524,9 +1543,13 @@
         /* ======= 系統核心變數 ======= */
         let apiProvider = "google";
         let apiKey = "";
+        const sessionApiKeys = {};
+        let rememberApiKey = false;
         let selectedModel = "";
         const MAX_RECENT_CHAT_LINES = 24;
         const MAX_AI_OUTPUT_TOKENS = 1800;
+        const MAX_ADVENTURE_LOG_PROMPT_CHARS = 6000;
+        let storageWarningShown = false;
         const DICE_STATS = {
             str: { code: 'STR', label: '力量' },
             dex: { code: 'DEX', label: '敏捷' },
@@ -1536,15 +1559,15 @@
             cha: { code: 'CHA', label: '魅力' }
         };
         const DICE_DIFFICULTIES = {
-            easy: { label: '簡單', modifier: 4 },
-            normal: { label: '普通', modifier: 0 },
-            hard: { label: '困難', modifier: -4 },
-            extreme: { label: '極難', modifier: -8 }
+            easy: { label: '簡單', dc: 8 },
+            normal: { label: '普通', dc: 10 },
+            hard: { label: '困難', dc: 14 },
+            extreme: { label: '極難', dc: 18 }
         };
         const GAME_DIFFICULTIES = {
-            standard: { label: '標準模式', targetModifier: 0, gameOver: 'none' },
-            hard: { label: '困難模式', targetModifier: -2, gameOver: 'possible' },
-            nightmare: { label: '極限模式', targetModifier: -4, gameOver: 'forced' }
+            standard: { label: '標準模式', dcModifier: 0, gameOver: 'none' },
+            hard: { label: '困難模式', dcModifier: 2, gameOver: 'possible' },
+            nightmare: { label: '極限模式', dcModifier: 4, gameOver: 'forced' }
         };
         const AUTO_SURVIVAL_FLAGS = {
             hpCritical: '重傷（HP 20 以下）',
@@ -1569,7 +1592,7 @@
         let pendingMetaPrompt = ""; 
         let pendingDiceSummary = null;
         let activeStatusTab = "state";
-        let apiUsageStats = loadApiUsageStats(); 
+        let apiUsageStats = {}; 
 
         const emptyAvatar = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
 
@@ -1624,28 +1647,187 @@
         let editingNpcs = [];
         let editingScenarios = [];
 
-        window.onload = () => {
+        const GAME_DB_NAME = 'sanko_trpg_storage';
+        const GAME_DB_VERSION = 1;
+        const GAME_DB_STORE = 'game_data';
+        const INDEXED_DATA_KEYS = new Set([
+            'sanko_saves_v8',
+            'sanko_scenario_presets_v2',
+            'sanko_api_usage_stats_v1',
+            'sanko_home_pic'
+        ]);
+        const INDEXED_JSON_KEYS = new Set([
+            'sanko_saves_v8',
+            'sanko_scenario_presets_v2',
+            'sanko_api_usage_stats_v1'
+        ]);
+        let gameDatabasePromise = null;
+        let indexedDatabaseReady = false;
+        let indexedWriteQueue = Promise.resolve();
+
+        function clonePersistentValue(value) {
+            if (typeof structuredClone === 'function') return structuredClone(value);
+            return value === undefined ? undefined : JSON.parse(JSON.stringify(value));
+        }
+
+        function openGameDatabase() {
+            if (gameDatabasePromise) return gameDatabasePromise;
+            gameDatabasePromise = new Promise((resolve, reject) => {
+                if (!window.indexedDB) { reject(new Error('此瀏覽器不支援 IndexedDB')); return; }
+                const request = indexedDB.open(GAME_DB_NAME, GAME_DB_VERSION);
+                request.onupgradeneeded = () => {
+                    const database = request.result;
+                    if (!database.objectStoreNames.contains(GAME_DB_STORE)) database.createObjectStore(GAME_DB_STORE);
+                };
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error('IndexedDB 開啟失敗'));
+                request.onblocked = () => reject(new Error('IndexedDB 被其他分頁阻擋'));
+            });
+            return gameDatabasePromise;
+        }
+
+        async function readIndexedValue(key) {
+            const database = await openGameDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = database.transaction(GAME_DB_STORE, 'readonly');
+                const request = transaction.objectStore(GAME_DB_STORE).get(key);
+                request.onsuccess = () => resolve(request.result);
+                request.onerror = () => reject(request.error || new Error('IndexedDB 讀取失敗'));
+            });
+        }
+
+        async function writeIndexedValue(key, value) {
+            const database = await openGameDatabase();
+            return new Promise((resolve, reject) => {
+                const transaction = database.transaction(GAME_DB_STORE, 'readwrite');
+                transaction.objectStore(GAME_DB_STORE).put(value, key);
+                transaction.oncomplete = () => resolve(true);
+                transaction.onerror = () => reject(transaction.error || new Error('IndexedDB 寫入失敗'));
+                transaction.onabort = () => reject(transaction.error || new Error('IndexedDB 寫入已中止'));
+            });
+        }
+
+        async function clearIndexedGameData() {
             try {
+                const database = await openGameDatabase();
+                await new Promise((resolve, reject) => {
+                    const transaction = database.transaction(GAME_DB_STORE, 'readwrite');
+                    transaction.objectStore(GAME_DB_STORE).clear();
+                    transaction.oncomplete = () => resolve(true);
+                    transaction.onerror = () => reject(transaction.error || new Error('IndexedDB 清除失敗'));
+                    transaction.onabort = () => reject(transaction.error || new Error('IndexedDB 清除已中止'));
+                });
+            } catch (error) {
+                console.warn('IndexedDB 清除失敗，將繼續清除舊資料。', error);
+            }
+        }
+
+        function handleIndexedWriteError(label, error) {
+            console.error(`${label}儲存失敗`, error);
+            if (!storageWarningShown) {
+                storageWarningShown = true;
+                alert(`${label}無法寫入瀏覽器資料庫。請先匯出備份，並確認瀏覽器沒有封鎖本機儲存。`);
+            }
+        }
+
+        function queueIndexedWrite(key, value, label = '資料') {
+            const snapshot = clonePersistentValue(value);
+            indexedWriteQueue = indexedWriteQueue
+                .then(() => writeIndexedValue(key, snapshot))
+                .then(() => { storageWarningShown = false; })
+                .catch(error => handleIndexedWriteError(label, error));
+            return true;
+        }
+
+        async function initializePersistentStorage() {
+            try {
+                await openGameDatabase();
+                for (const key of INDEXED_DATA_KEYS) {
+                    const storedValue = await readIndexedValue(key);
+                    if (storedValue !== undefined) {
+                        localStorage.removeItem(key);
+                        continue;
+                    }
+                    const legacyValue = localStorage.getItem(key);
+                    if (legacyValue === null) continue;
+                    let migratedValue = legacyValue;
+                    if (INDEXED_JSON_KEYS.has(key)) {
+                        try { migratedValue = JSON.parse(legacyValue); }
+                        catch (error) { console.warn(`略過損毀的舊資料：${key}`, error); continue; }
+                    }
+                    await writeIndexedValue(key, migratedValue);
+                    localStorage.removeItem(key);
+                }
+                indexedDatabaseReady = true;
+                return true;
+            } catch (error) {
+                indexedDatabaseReady = false;
+                console.warn('IndexedDB 無法使用，暫時退回 localStorage。', error);
+                return false;
+            }
+        }
+
+        async function readPersistentValue(key, fallbackValue) {
+            if (indexedDatabaseReady && INDEXED_DATA_KEYS.has(key)) {
+                try {
+                    const value = await readIndexedValue(key);
+                    return value === undefined ? fallbackValue : value;
+                } catch (error) {
+                    console.warn(`IndexedDB 讀取失敗：${key}`, error);
+                }
+            }
+            const legacyValue = localStorage.getItem(key);
+            if (legacyValue === null) return fallbackValue;
+            if (!INDEXED_JSON_KEYS.has(key)) return legacyValue;
+            try { return JSON.parse(legacyValue); }
+            catch (error) { return fallbackValue; }
+        }
+
+        function persistLargeValue(storageKey, value, label = '資料') {
+            if (indexedDatabaseReady && INDEXED_DATA_KEYS.has(storageKey)) return queueIndexedWrite(storageKey, value, label);
+            try {
+                localStorage.setItem(storageKey, value);
+                return true;
+            } catch (error) {
+                handleIndexedWriteError(label, error);
+                return false;
+            }
+        }
+
+        window.onload = async () => {
+            try {
+                await initializePersistentStorage();
+                apiUsageStats = await loadApiUsageStats();
                 apiProvider = localStorage.getItem('sanko_api_provider') || 'google';
                 const providerSelect = document.getElementById('api-provider');
                 if (providerSelect) providerSelect.value = apiProvider;
 
-                const savedKey = getStoredApiKey(apiProvider);
-                if (savedKey) { 
-                    document.getElementById('api-key').value = savedKey; 
+                const hasPersistedKey = Boolean(getPersistedApiKey('google') || getPersistedApiKey('openrouter'));
+                const savedRememberPreference = localStorage.getItem('sanko_remember_api_key');
+                rememberApiKey = savedRememberPreference === null ? hasPersistedKey : savedRememberPreference === 'true';
+                localStorage.setItem('sanko_remember_api_key', String(rememberApiKey));
+                if (!rememberApiKey) removePersistedApiKeys();
+                const rememberToggle = document.getElementById('remember-api-key');
+                if (rememberToggle) rememberToggle.checked = rememberApiKey;
+
+                const savedKey = rememberApiKey ? getPersistedApiKey(apiProvider) : '';
+                if (savedKey) {
+                    sessionApiKeys[apiProvider] = savedKey;
+                    apiKey = savedKey;
+                    document.getElementById('api-key').value = savedKey;
                     document.getElementById('delete-key-btn').style.display = 'inline-block';
                 }
                 selectedModel = localStorage.getItem(getModelStorageKey(apiProvider)) || '';
                 
-                const savedPic = localStorage.getItem('sanko_home_pic');
+                const savedPic = await readPersistentValue('sanko_home_pic', '');
                 if (savedPic) { document.getElementById('setup-pic').src = savedPic; }
 
-                const localSaves = localStorage.getItem('sanko_saves_v8');
-                if (localSaves) { savesData = JSON.parse(localSaves); }
+                const storedSaves = await readPersistentValue('sanko_saves_v8', {});
+                savesData = storedSaves && typeof storedSaves === 'object' && !Array.isArray(storedSaves) ? storedSaves : {};
 
-                const savedPresets = localStorage.getItem('sanko_scenario_presets_v2');
-                if (savedPresets) {
-                    scenarioPresets = JSON.parse(savedPresets);
+                const savedPresets = await readPersistentValue('sanko_scenario_presets_v2', null);
+                if (savedPresets && typeof savedPresets === 'object' && !Array.isArray(savedPresets)) {
+                    scenarioPresets = savedPresets;
                     for(let k in scenarioPresets) {
                         if(!scenarioPresets[k].playerStats) {
                             scenarioPresets[k].playerStats = { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 };
@@ -1684,7 +1866,7 @@
                     }
                 } else {
                     scenarioPresets = { 'default': defaultPreset };
-                    localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+                    persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
                 }
 
                 activePresetId = localStorage.getItem('sanko_active_preset_id') || 'default';
@@ -1794,7 +1976,7 @@
             if(confirm("【系統提示：靈魂重鑄】\n\n「命運的絲線又糾纏在一起了嗎...？」\n\n確定要重新洗點嗎？原本被鎖定的基礎六圍將會強制解鎖！")) {
                 if (p) {
                     p.statsLocked = false;
-                    localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+                    persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
                 }
                 const statInputs = document.querySelectorAll('.stat-input');
                 statInputs.forEach(input => input.disabled = false);
@@ -1937,8 +2119,7 @@
 
             if (cropTargetRole === 'home') {
                 document.getElementById('setup-pic').src = finalBase64;
-                try { localStorage.setItem('sanko_home_pic', finalBase64); }
-                catch (err) { alert('儲存失敗，空間可能已滿，請先清除不需要的備份資料。'); }
+                persistLargeValue('sanko_home_pic', finalBase64, '首頁頭像');
             } else if (cropTargetRole === 'player') {
                 document.getElementById('preview-player').src = finalBase64;
             } else if (cropTargetRole.startsWith('npc-')) {
@@ -1987,22 +2168,19 @@
             if (modalSelect && modalSelect.value !== nextMode) modalSelect.value = nextMode;
             if (activePresetId && scenarioPresets[activePresetId]) {
                 scenarioPresets[activePresetId].languageMode = nextMode;
-                localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+                persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
             }
             saveCurrentProgress();
         }
 
         function getTodayKey() { return new Date().toISOString().slice(0, 10); }
         function getMonthKey() { return new Date().toISOString().slice(0, 7); }
-        function loadApiUsageStats() {
-            try {
-                return JSON.parse(localStorage.getItem('sanko_api_usage_stats_v1')) || {};
-            } catch (e) {
-                return {};
-            }
+        async function loadApiUsageStats() {
+            const storedStats = await readPersistentValue('sanko_api_usage_stats_v1', {});
+            return storedStats && typeof storedStats === 'object' && !Array.isArray(storedStats) ? storedStats : {};
         }
         function saveApiUsageStats() {
-            localStorage.setItem('sanko_api_usage_stats_v1', JSON.stringify(apiUsageStats));
+            return persistJson('sanko_api_usage_stats_v1', apiUsageStats, 'API 使用統計');
         }
         function ensureApiUsageBucket() {
             const today = getTodayKey();
@@ -2067,6 +2245,69 @@
                 '"': '&quot;',
                 "'": '&#39;'
             }[ch]));
+        }
+
+        function normalizeSurvivalValue(value, fallback = 100) {
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? Math.max(0, Math.min(100, Math.round(parsed))) : fallback;
+        }
+
+        function parseNumericDelta(value) {
+            if (value === null || value === undefined || value === '') return 0;
+            const parsed = Number(value);
+            return Number.isFinite(parsed) ? Math.trunc(parsed) : 0;
+        }
+
+        function applySurvivalDelta(currentValue, deltaValue) {
+            const current = normalizeSurvivalValue(currentValue, 100);
+            return normalizeSurvivalValue(current + parseNumericDelta(deltaValue), current);
+        }
+
+        function normalizeAdventureLogKey(line) {
+            return valueToText(line)
+                .replace(/^\s*(?:[-•*]|\d+[.)、])\s*/, '')
+                .replace(/\s+/g, ' ')
+                .trim()
+                .toLowerCase();
+        }
+
+        function splitAdventureLog(value) {
+            return valueToText(value)
+                .split(/\n+/)
+                .map(line => line.trim())
+                .filter(Boolean);
+        }
+
+        function mergeAdventureLog(existingLog, incomingLog) {
+            const merged = splitAdventureLog(existingLog);
+            const seen = new Set(merged.map(normalizeAdventureLogKey).filter(Boolean));
+            splitAdventureLog(incomingLog).forEach(line => {
+                const key = normalizeAdventureLogKey(line);
+                if (!key || seen.has(key)) return;
+                seen.add(key);
+                merged.push(line);
+            });
+            return merged.join('\n') || '1. 故事剛開始，目前尚無重大事件發生。';
+        }
+
+        function getAdventureLogForPrompt(log = currentAdventureLog) {
+            const text = valueToText(log, '尚無重大事件。');
+            if (text.length <= MAX_ADVENTURE_LOG_PROMPT_CHARS) return text;
+            const headLength = 1400;
+            const tailLength = MAX_ADVENTURE_LOG_PROMPT_CHARS - headLength - 80;
+            return `${text.slice(0, headLength)}\n（中段較舊紀錄僅保留於本機面板）\n${text.slice(-tailLength)}`;
+        }
+
+        function persistJson(storageKey, data, label = '資料') {
+            if (indexedDatabaseReady && INDEXED_DATA_KEYS.has(storageKey)) return queueIndexedWrite(storageKey, data, label);
+            try {
+                localStorage.setItem(storageKey, JSON.stringify(data));
+                storageWarningShown = false;
+                return true;
+            } catch (error) {
+                handleIndexedWriteError(label, error);
+                return false;
+            }
         }
 
 
@@ -2296,20 +2537,22 @@
                 .sort((a, b) => (b.requests || 0) - (a.requests || 0))
                 .slice(0, 8)
                 .map(entry => {
-                    const provider = entry.provider === 'openrouter' ? 'OpenRouter' : (entry.provider === 'google' ? 'Google' : entry.provider);
-                    const repairs = entry.repairRequests ? ` / 修復 ${entry.repairRequests}` : '';
-                    return `<div class="api-model-row"><span><b>${escapeStatusHtml(entry.displayName || entry.model)}</b><small>${provider}</small></span><strong>${entry.requests || 0}${repairs}</strong></div>`;
+                    const provider = entry.provider === 'openrouter' ? 'OpenRouter' : (entry.provider === 'google' ? 'Google' : valueToText(entry.provider, '未知'));
+                    const requestCount = Math.max(0, Number.parseInt(entry.requests, 10) || 0);
+                    const repairCount = Math.max(0, Number.parseInt(entry.repairRequests, 10) || 0);
+                    const repairs = repairCount ? ` / 修復 ${repairCount}` : '';
+                    return `<div class="api-model-row"><span><b>${escapeStatusHtml(entry.displayName || entry.model)}</b><small>${escapeStatusHtml(provider)}</small></span><strong>${requestCount}${repairs}</strong></div>`;
                 }).join('') || '<p class="api-stat-note">尚未有模型使用紀錄。</p>';
             target.innerHTML = `
                 <div class="api-stat-grid">
-                    <div class="api-stat-box"><div class="api-stat-label">今日呼叫</div><div class="api-stat-value">${day.requests}</div></div>
-                    <div class="api-stat-box"><div class="api-stat-label">本月呼叫</div><div class="api-stat-value">${mon.requests}</div></div>
-                    <div class="api-stat-box"><div class="api-stat-label">JSON 修復</div><div class="api-stat-value">${mon.repairRequests}</div></div>
-                    <div class="api-stat-box"><div class="api-stat-label">總呼叫</div><div class="api-stat-value">${total.requests}</div></div>
+                    <div class="api-stat-box"><div class="api-stat-label">今日呼叫</div><div class="api-stat-value">${Math.max(0, Number.parseInt(day.requests, 10) || 0)}</div></div>
+                    <div class="api-stat-box"><div class="api-stat-label">本月呼叫</div><div class="api-stat-value">${Math.max(0, Number.parseInt(mon.requests, 10) || 0)}</div></div>
+                    <div class="api-stat-box"><div class="api-stat-label">JSON 修復</div><div class="api-stat-value">${Math.max(0, Number.parseInt(mon.repairRequests, 10) || 0)}</div></div>
+                    <div class="api-stat-box"><div class="api-stat-label">總呼叫</div><div class="api-stat-value">${Math.max(0, Number.parseInt(total.requests, 10) || 0)}</div></div>
                 </div>
                 <p class="u-inline-016">模型使用次數</p>
                 <div class="api-model-list">${modelRows}</div>
-                <p class="api-stat-note">目前供應商：${providerText}<br>目前模型：${escapeStatusHtml(getModelDisplayName(selectedModel) || '尚未選擇')}<br>最後使用：${apiUsageStats.lastUsedAt || '尚未使用'}<br>實際費用仍以 OpenRouter / Google 後台為準。</p>
+                <p class="api-stat-note">目前供應商：${providerText}<br>目前模型：${escapeStatusHtml(getModelDisplayName(selectedModel) || '尚未選擇')}<br>最後使用：${escapeStatusHtml(apiUsageStats.lastUsedAt || '尚未使用')}<br>實際費用仍以 OpenRouter / Google 後台為準。</p>
                 <div class="api-stat-actions">
                     <button class="btn u-inline-057" onclick="resetApiUsageStats()">重設統計</button>
                 </div>
@@ -2332,8 +2575,41 @@
 
         function getKeyStorageKey(provider = apiProvider) { return `sanko_api_key_${provider}`; }
         function getModelStorageKey(provider = apiProvider) { return `sanko_selected_model_${provider}`; }
-        function getStoredApiKey(provider = apiProvider) {
+        function getPersistedApiKey(provider = apiProvider) {
             return localStorage.getItem(getKeyStorageKey(provider)) || (provider === 'google' ? localStorage.getItem('sanko_api_key') : '');
+        }
+
+        function getStoredApiKey(provider = apiProvider) {
+            if (Object.prototype.hasOwnProperty.call(sessionApiKeys, provider)) return sessionApiKeys[provider];
+            return rememberApiKey ? getPersistedApiKey(provider) : '';
+        }
+
+        function persistApiKey(provider, key) {
+            if (!key) return;
+            localStorage.setItem(getKeyStorageKey(provider), key);
+            if (provider === 'google') localStorage.setItem('sanko_api_key', key);
+        }
+
+        function removePersistedApiKeys() {
+            Object.keys(localStorage)
+                .filter(key => key === 'sanko_api_key' || key.startsWith('sanko_api_key_'))
+                .forEach(key => localStorage.removeItem(key));
+        }
+
+        function setRememberApiKey(enabled) {
+            rememberApiKey = Boolean(enabled);
+            localStorage.setItem('sanko_remember_api_key', String(rememberApiKey));
+
+            const provider = document.getElementById('api-provider')?.value || apiProvider || 'google';
+            const visibleKey = document.getElementById('api-key')?.value.trim() || getStoredApiKey(provider);
+            sessionApiKeys[provider] = visibleKey || '';
+            if (provider === apiProvider) apiKey = sessionApiKeys[provider];
+
+            if (rememberApiKey) {
+                persistApiKey(provider, sessionApiKeys[provider]);
+            } else {
+                removePersistedApiKeys();
+            }
         }
 
         function refreshApiCredentials() {
@@ -2345,15 +2621,18 @@
         }
 
         function changeApiProvider(provider) {
+            const keyInput = document.getElementById('api-key');
+            if (apiProvider && keyInput) sessionApiKeys[apiProvider] = keyInput.value.trim();
+
             apiProvider = provider || 'google';
             localStorage.setItem('sanko_api_provider', apiProvider);
             apiKey = getStoredApiKey(apiProvider);
             selectedModel = localStorage.getItem(getModelStorageKey(apiProvider)) || '';
 
-            document.getElementById('api-key').value = apiKey || '';
+            keyInput.value = apiKey || '';
             document.getElementById('model-choice').innerHTML = '';
             document.getElementById('game-model-choice').innerHTML = '';
-            document.getElementById('model-selection-area').style.display = selectedModel ? 'block' : 'none';
+            document.getElementById('model-selection-area').style.display = selectedModel && apiKey ? 'block' : 'none';
             document.getElementById('verify-btn').style.display = 'inline-block';
             document.getElementById('verify-btn').disabled = false;
             document.getElementById('verify-btn').innerText = '驗證金鑰';
@@ -2419,7 +2698,7 @@
             let p = scenarioPresets[activePresetId];
             if (!p) return;
             p.isLocked = !p.isLocked;
-            localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+            persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
             updatePresetLockUI();
         }
 
@@ -2433,12 +2712,12 @@
                 if (index === forceOpenNpcIndex) details.open = true; 
                 
                 details.innerHTML = `
-                    <summary>NPC: <span id="npc-title-${index}">${npc.name || '新角色'}</span></summary>
+                    <summary>NPC: <span id="npc-title-${index}">${escapeStatusHtml(npc.name || '新角色')}</span></summary>
                     <div class="foldable-content">
                         <button class="delete-scen-btn" onclick="removeNpcBlock(${index})">刪除</button>
                         <div class="avatar-setup-area u-inline-060">
                             <div class="avatar-box" onclick="document.getElementById('upload-npc-${index}').click();">
-                                <img id="preview-npc-${index}" class="avatar-preview" src="${npc.avatar}">
+                                <img id="preview-npc-${index}" class="avatar-preview" src="${escapeStatusHtml(npc.avatar || emptyAvatar)}">
                                 <div class="avatar-label">點擊更換頭像</div>
                                 <input type="file" id="upload-npc-${index}" accept="image/*" onchange="triggerCrop(this, 'npc-${index}')" hidden class="hidden-file-input">
                             </div>
@@ -2447,7 +2726,7 @@
                         <div class="u-inline-061">
                             <div class="u-inline-062">
                                 <div class="scenario-label">NPC 名稱</div>
-                                <input type="text" class="scenario-input" id="npc-name-${index}" value="${npc.name}" oninput="document.getElementById('npc-title-${index}').innerText = this.value || '新角色';">
+                                <input type="text" class="scenario-input" id="npc-name-${index}" value="${escapeStatusHtml(npc.name)}" oninput="document.getElementById('npc-title-${index}').innerText = this.value || '新角色';">
                             </div>
                             <div class="u-inline-063">
                                 <div class="scenario-label">開局好感</div>
@@ -2457,12 +2736,12 @@
 
                         <div class="scenario-label u-inline-064">詳細設定</div>
                         <div class="anime-sheet">
-                            <div><label>年齡 / 身高 / 體型</label><input type="text" id="npc-age-${index}" value="${npc.details?.age || ''}"></div>
-                            <div><label>說話習慣 / 語氣</label><input type="text" id="npc-speech-${index}" value="${npc.details?.speech || ''}"></div>
-                            <div><label>喜歡的事物</label><input type="text" id="npc-likes-${index}" value="${npc.details?.likes || ''}"></div>
-                            <div><label>討厭的事物</label><input type="text" id="npc-dislikes-${index}" value="${npc.details?.dislikes || ''}"></div>
-                            <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="npc-app-${index}" rows="1" oninput="autoResize(this)">${npc.details?.app || ''}</textarea></div>
-                            <div class="full"><label>核心性格 / 背景故事</label><textarea id="npc-bg-${index}" rows="1" oninput="autoResize(this)">${npc.details?.bg || npc.persona || ''}</textarea></div>
+                            <div><label>年齡 / 身高 / 體型</label><input type="text" id="npc-age-${index}" value="${escapeStatusHtml(npc.details?.age || '')}"></div>
+                            <div><label>說話習慣 / 語氣</label><input type="text" id="npc-speech-${index}" value="${escapeStatusHtml(npc.details?.speech || '')}"></div>
+                            <div><label>喜歡的事物</label><input type="text" id="npc-likes-${index}" value="${escapeStatusHtml(npc.details?.likes || '')}"></div>
+                            <div><label>討厭的事物</label><input type="text" id="npc-dislikes-${index}" value="${escapeStatusHtml(npc.details?.dislikes || '')}"></div>
+                            <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="npc-app-${index}" rows="1" oninput="autoResize(this)">${escapeStatusHtml(npc.details?.app || '')}</textarea></div>
+                            <div class="full"><label>核心性格 / 背景故事</label><textarea id="npc-bg-${index}" rows="1" oninput="autoResize(this)">${escapeStatusHtml(npc.details?.bg || npc.persona || '')}</textarea></div>
                         </div>
                     </div>
                 `;
@@ -2482,17 +2761,17 @@
                 if (index === forceOpenScenIndex) details.open = true;
 
                 details.innerHTML = `
-                    <summary>情境: <span id="scen-title-${index}">${scen.name || '未命名'}</span></summary>
+                    <summary>情境: <span id="scen-title-${index}">${escapeStatusHtml(scen.name || '未命名')}</span></summary>
                     <div class="foldable-content">
                         <button class="delete-scen-btn" onclick="removeScenarioBlock(${index})">刪除</button>
                         <div class="scenario-label">情境名稱</div>
-                        <input type="text" class="scenario-input" id="scen-name-${index}" value="${scen.name}" oninput="document.getElementById('scen-title-${index}').innerText = this.value || '未命名';">
+                        <input type="text" class="scenario-input" id="scen-name-${index}" value="${escapeStatusHtml(scen.name)}" oninput="document.getElementById('scen-title-${index}').innerText = this.value || '未命名';">
                         <div class="scenario-label">該情境下的物理法則與世界觀</div>
-                        <textarea class="scenario-input" id="scen-lore-${index}" oninput="autoResize(this)">${scen.lore}</textarea>
+                        <textarea class="scenario-input" id="scen-lore-${index}" oninput="autoResize(this)">${escapeStatusHtml(scen.lore)}</textarea>
                         <div class="scenario-label">NPC 們在此情境下的總體身分/狀態</div>
-                        <textarea class="scenario-input" id="scen-npcRoles-${index}" oninput="autoResize(this)">${scen.npcRoles || ''}</textarea>
+                        <textarea class="scenario-input" id="scen-npcRoles-${index}" oninput="autoResize(this)">${escapeStatusHtml(scen.npcRoles || '')}</textarea>
                         <div class="scenario-label">玩家在此的專屬身份/狀態</div>
-                        <input type="text" class="scenario-input" id="scen-player-${index}" value="${scen.playerRole}">
+                        <input type="text" class="scenario-input" id="scen-player-${index}" value="${escapeStatusHtml(scen.playerRole)}">
                     </div>
                 `;
                 container.appendChild(details);
@@ -2621,7 +2900,7 @@
             if (confirm(`確定要刪除「${scenarioPresets[activePresetId].presetName}」這個配置嗎？`)) {
                 delete scenarioPresets[activePresetId]; activePresetId = Object.keys(scenarioPresets)[0];
                 renderPresetSelector(); loadPresetToForm(activePresetId);
-                localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+                persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
             }
         }
 
@@ -2681,8 +2960,12 @@
             const presetName = document.getElementById('input-preset-name').value.trim() || '未命名配置'; 
             const p = gatherPresetData(activePresetId, presetName);
             p.statsLocked = true; 
-            scenarioPresets[activePresetId] = p; 
-            localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets)); 
+            scenarioPresets[activePresetId] = p;
+            if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
+                if (pOld) scenarioPresets[activePresetId] = pOld;
+                else delete scenarioPresets[activePresetId];
+                return;
+            }
             localStorage.setItem('sanko_active_preset_id', activePresetId);
             currentScenario = { ...p }; 
             renderPresetSelector(); 
@@ -2709,8 +2992,15 @@
             const p = gatherPresetData(newId, newPresetName); 
             p.isLocked = false; 
             p.statsLocked = true;
-            scenarioPresets[newId] = p; activePresetId = newId;
-            localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets)); localStorage.setItem('sanko_active_preset_id', activePresetId);
+            const previousActiveId = activePresetId;
+            scenarioPresets[newId] = p;
+            activePresetId = newId;
+            if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
+                delete scenarioPresets[newId];
+                activePresetId = previousActiveId;
+                return;
+            }
+            localStorage.setItem('sanko_active_preset_id', activePresetId);
             currentScenario = { ...p }; renderPresetSelector(); loadPresetToForm(newId); alert(`已另存新檔為「${newPresetName}」！基礎屬性已被鎖定！`);
         }
 
@@ -2720,8 +3010,12 @@
             document.getElementById('setup-screen').style.display = 'flex';
         }
 
-        function deleteAllData() {
-            if(confirm("警告：這將會清除設備上儲存的 API 金鑰、照片設定與所有劇本存檔！\n此操作無法復原！")) { localStorage.clear(); location.reload(); }
+        async function deleteAllData() {
+            if(!confirm("警告：這將會清除設備上儲存的 API 金鑰、照片設定與所有劇本存檔！\n此操作無法復原！")) return;
+            await indexedWriteQueue;
+            await clearIndexedGameData();
+            Object.keys(localStorage).filter(key => key.startsWith('sanko_')).forEach(key => localStorage.removeItem(key));
+            location.reload();
         }
 
         /* ==== 遊戲內面板功能模組化 ==== */
@@ -2847,7 +3141,10 @@
                 newPreset.statsLocked = true;
                 
                 scenarioPresets[newId] = newPreset;
-                localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+                if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
+                    delete scenarioPresets[newId];
+                    return;
+                }
                 
                 // 將當前遊戲數據綁定到新配置 ID
                 currentScenario.sourcePresetId = newId;
@@ -2872,7 +3169,8 @@
             const pDynamic = currentScenario.playerDynamic;
             const pDynamicPreview = getDynamicStatePreview(pDynamic);
 
-                        let rCount = savesData[currentSaveId].respecCount !== undefined ? savesData[currentSaveId].respecCount : 3;
+                        let rCount = Math.max(0, Number.parseInt(savesData[currentSaveId].respecCount, 10));
+            if (!Number.isFinite(rCount)) rCount = 3;
             // 改為單純的骷髏頭按鈕，長按或游標懸停會顯示剩餘次數
             let respecBtnHtml = rCount > 0 
                 ? `<button onclick="modalRespecStats()" title="找守墓人洗點 (剩餘 ${rCount} 次)" class="u-inline-065">💀</button>` 
@@ -2882,7 +3180,7 @@
             let statsHtml = `
             <div class="u-inline-067">
                 <div class="u-inline-068">
-                    <span class="u-inline-069">玩家：${currentScenario.playerName}</span>
+                    <span class="u-inline-069">玩家：${escapeStatusHtml(currentScenario.playerName)}</span>
                     <span class="u-inline-070">${respecBtnHtml}</span>
                 </div>
 
@@ -2904,12 +3202,12 @@
                     </div>
                 </summary>
                 <div class="dark-card-content anime-sheet u-inline-073">
-                    <div><label>年齡 / 身高 / 體型</label><input type="text" id="edit-p-age" value="${pDet.age}"></div>
-                    <div><label>說話習慣 / 語氣</label><input type="text" id="edit-p-speech" value="${pDet.speech}"></div>
-                    <div><label>喜歡的事物</label><input type="text" id="edit-p-likes" value="${pDet.likes}"></div>
-                    <div><label>討厭的事物</label><input type="text" id="edit-p-dislikes" value="${pDet.dislikes}"></div>
-                    <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="edit-p-app" rows="1" oninput="autoResize(this)">${pDet.app}</textarea></div>
-                    <div class="full"><label>核心性格 / 背景故事</label><textarea id="edit-p-bg" rows="1" oninput="autoResize(this)">${pDet.bg}</textarea></div>
+                    <div><label>年齡 / 身高 / 體型</label><input type="text" id="edit-p-age" value="${escapeStatusHtml(pDet.age)}"></div>
+                    <div><label>說話習慣 / 語氣</label><input type="text" id="edit-p-speech" value="${escapeStatusHtml(pDet.speech)}"></div>
+                    <div><label>喜歡的事物</label><input type="text" id="edit-p-likes" value="${escapeStatusHtml(pDet.likes)}"></div>
+                    <div><label>討厭的事物</label><input type="text" id="edit-p-dislikes" value="${escapeStatusHtml(pDet.dislikes)}"></div>
+                    <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="edit-p-app" rows="1" oninput="autoResize(this)">${escapeStatusHtml(pDet.app)}</textarea></div>
+                    <div class="full"><label>核心性格 / 背景故事</label><textarea id="edit-p-bg" rows="1" oninput="autoResize(this)">${escapeStatusHtml(pDet.bg)}</textarea></div>
                     ${renderDynamicStateEditor('edit-p-state', pDynamic)}
                 </div>
             </details>\n`;
@@ -2922,7 +3220,8 @@
             </div>`;
 
             currentScenario.npcs.forEach((n, idx) => {
-                const aff = n.affection !== undefined ? n.affection : 0;
+                const affectionValue = Number(n.affection);
+                const aff = Number.isFinite(affectionValue) ? affectionValue : 0;
                 let nDet = n.details || { age: '', speech: '', likes: '', dislikes: '', app: '', bg: n.persona || '' };
                 n.dynamic = normalizeDynamicState(n.dynamic);
                 const nDynamic = n.dynamic;
@@ -2932,7 +3231,7 @@
                 <details class="dark-card">
                     <summary>
                         <div class="summary-left">
-                            <span class="summary-name">${n.name}</span>
+                            <span class="summary-name">${escapeStatusHtml(n.name)}</span>
                             <span class="summary-tag">♥好感: ${aff}</span>
                             ${nDynamicPreview ? `<span class="dynamic-state-preview" title="${escapeStatusHtml(nDynamicPreview)}">${escapeStatusHtml(nDynamicPreview)}</span>` : ''}
                         </div>
@@ -2942,13 +3241,13 @@
                             <button class="delete-btn-red" onclick="modalDeleteNpc(${idx}); event.stopPropagation();">刪除</button>
                         </div>
                         <div class="anime-sheet u-inline-075">
-                            <div class="full"><label>角色名稱</label><input type="text" id="edit-n-name-${idx}" value="${n.name}" oninput="this.closest('details').querySelector('.summary-name').innerText = this.value || '未命名';"></div>
-                            <div><label>年齡 / 身高 / 體型</label><input type="text" id="edit-n-age-${idx}" value="${nDet.age}"></div>
-                            <div><label>說話習慣 / 語氣</label><input type="text" id="edit-n-speech-${idx}" value="${nDet.speech}"></div>
-                            <div><label>喜歡的事物</label><input type="text" id="edit-n-likes-${idx}" value="${nDet.likes}"></div>
-                            <div><label>討厭的事物</label><input type="text" id="edit-n-dislikes-${idx}" value="${nDet.dislikes}"></div>
-                            <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="edit-n-app-${idx}" rows="1" oninput="autoResize(this)">${nDet.app}</textarea></div>
-                            <div class="full"><label>核心性格 / 背景故事</label><textarea id="edit-n-bg-${idx}" rows="1" oninput="autoResize(this)">${nDet.bg}</textarea></div>
+                            <div class="full"><label>角色名稱</label><input type="text" id="edit-n-name-${idx}" value="${escapeStatusHtml(n.name)}" oninput="this.closest('details').querySelector('.summary-name').innerText = this.value || '未命名';"></div>
+                            <div><label>年齡 / 身高 / 體型</label><input type="text" id="edit-n-age-${idx}" value="${escapeStatusHtml(nDet.age)}"></div>
+                            <div><label>說話習慣 / 語氣</label><input type="text" id="edit-n-speech-${idx}" value="${escapeStatusHtml(nDet.speech)}"></div>
+                            <div><label>喜歡的事物</label><input type="text" id="edit-n-likes-${idx}" value="${escapeStatusHtml(nDet.likes)}"></div>
+                            <div><label>討厭的事物</label><input type="text" id="edit-n-dislikes-${idx}" value="${escapeStatusHtml(nDet.dislikes)}"></div>
+                            <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="edit-n-app-${idx}" rows="1" oninput="autoResize(this)">${escapeStatusHtml(nDet.app)}</textarea></div>
+                            <div class="full"><label>核心性格 / 背景故事</label><textarea id="edit-n-bg-${idx}" rows="1" oninput="autoResize(this)">${escapeStatusHtml(nDet.bg)}</textarea></div>
                             ${renderDynamicStateEditor(`edit-n-state-${idx}`, nDynamic)}
                         </div>
                     </div>
@@ -2968,7 +3267,7 @@
                 <details class="dark-card">
                     <summary>
                         <div class="summary-left">
-                            <span class="summary-name">情境：${sc.name || '未命名'}</span>
+                            <span class="summary-name">情境：${escapeStatusHtml(sc.name || '未命名')}</span>
                             ${isCurrent}
                         </div>
                     </summary>
@@ -2977,11 +3276,11 @@
                             <button class="delete-btn-red" onclick="modalDeleteScenario(${idx}); event.stopPropagation();">刪除</button>
                         </div>
                         <div class="scenario-label">情境名稱</div>
-                        <input type="text" id="edit-scen-name-${idx}" class="scenario-input" value="${sc.name}" oninput="this.closest('details').querySelector('.summary-name').innerText = '情境：' + (this.value || '未命名');">
+                        <input type="text" id="edit-scen-name-${idx}" class="scenario-input" value="${escapeStatusHtml(sc.name)}" oninput="this.closest('details').querySelector('.summary-name').innerText = '情境：' + (this.value || '未命名');">
                         <div class="scenario-label">環境法則與世界觀</div>
-                        <textarea id="edit-scen-lore-${idx}" class="scenario-input" oninput="autoResize(this)">${sc.lore}</textarea>
+                        <textarea id="edit-scen-lore-${idx}" class="scenario-input" oninput="autoResize(this)">${escapeStatusHtml(sc.lore)}</textarea>
                         <div class="scenario-label">NPC 們在此的身分/狀態</div>
-                        <textarea id="edit-scen-npcs-${idx}" class="scenario-input" oninput="autoResize(this)">${sc.npcRoles || ''}</textarea>
+                        <textarea id="edit-scen-npcs-${idx}" class="scenario-input" oninput="autoResize(this)">${escapeStatusHtml(sc.npcRoles || '')}</textarea>
                     </div>
                 </details>`;
             });
@@ -3010,7 +3309,7 @@
                         syncPreset.isLocked = false; 
                         syncPreset.statsLocked = scenarioPresets[sourceId].statsLocked !== undefined ? scenarioPresets[sourceId].statsLocked : true;
                         scenarioPresets[sourceId] = syncPreset;
-                        localStorage.setItem('sanko_scenario_presets_v2', JSON.stringify(scenarioPresets));
+                        persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
                     }
                 }
                 
@@ -3035,11 +3334,22 @@
             const container = document.getElementById('ui-flags-container'); container.innerHTML = '';
             if(currentFlags.length === 0) { container.innerHTML = '<span class="u-inline-076">尚未解鎖任何標籤...</span>'; return; }
             currentFlags.forEach((flag, index) => {
-                let cleanFlag = flag.replace(/^狀態[：:]\s*/, '');
-                currentFlags[index] = cleanFlag; 
-                
-                const tag = document.createElement('div'); tag.className = 'flag-tag';
-                tag.innerHTML = `${cleanFlag} <span onclick="removeFlag(${index})" title="刪除此標籤">✖</span>`; container.appendChild(tag);
+                const cleanFlag = valueToText(flag).replace(/^狀態[：:]\s*/, '');
+                currentFlags[index] = cleanFlag;
+
+                const tag = document.createElement('div');
+                tag.className = 'flag-tag';
+                tag.appendChild(document.createTextNode(`${cleanFlag} `));
+
+                const removeButton = document.createElement('span');
+                removeButton.innerText = '✖';
+                removeButton.title = '刪除此標籤';
+                removeButton.setAttribute('role', 'button');
+                removeButton.setAttribute('tabindex', '0');
+                removeButton.onclick = () => removeFlag(index);
+                removeButton.onkeydown = event => { if (event.key === 'Enter' || event.key === ' ') removeFlag(index); };
+                tag.appendChild(removeButton);
+                container.appendChild(tag);
             });
         }
 
@@ -3091,18 +3401,41 @@
         function backToSaveMenu() { saveCurrentProgress(); document.getElementById('game-container').style.display = 'none'; document.getElementById('save-menu-screen').style.display = 'flex'; renderSaveList(); }
 
         function renderSaveList() {
-            const listDiv = document.getElementById('save-list'); listDiv.innerHTML = ''; const saveKeys = Object.keys(savesData).sort((a, b) => b - a);
+            const listDiv = document.getElementById('save-list');
+            listDiv.innerHTML = '';
+            const saveKeys = Object.keys(savesData).sort((a, b) => String(b).localeCompare(String(a)));
             if (saveKeys.length === 0) { listDiv.innerHTML = '<p class="u-inline-077">目前沒有任何存檔紀錄。</p>'; return; }
             saveKeys.forEach(id => {
-                const saveData = savesData[id]; 
-                const pName = saveData.scenario ? saveData.scenario.playerName : "玩家";
-                let tName = "群像劇";
-                if(saveData.scenario && saveData.scenario.npcs && saveData.scenario.npcs.length > 0) tName = saveData.scenario.npcs[0].name;
-                else if(saveData.scenario && saveData.scenario.targetName) tName = saveData.scenario.targetName;
+                const saveData = savesData[id] && typeof savesData[id] === 'object' ? savesData[id] : {};
+                const scenario = saveData.scenario && typeof saveData.scenario === 'object' ? saveData.scenario : {};
+                const pName = valueToText(scenario.playerName, '玩家');
+                let tName = '群像劇';
+                if (Array.isArray(scenario.npcs) && scenario.npcs.length > 0) tName = valueToText(scenario.npcs[0]?.name, tName);
+                else if (scenario.targetName) tName = valueToText(scenario.targetName, tName);
 
-                const slotDiv = document.createElement('div'); slotDiv.className = 'save-slot';
-                slotDiv.innerHTML = `<button class="delete-save-btn" onclick="event.stopPropagation(); deleteSave('${id}')">刪除</button><div class="save-title">${saveData.title}</div><div class="save-info">代表NPC: ${tName} | 玩家: ${pName}</div><div class="save-info u-inline-078">最後遊玩：${saveData.date}</div>`;
-                slotDiv.onclick = () => loadGame(id); listDiv.appendChild(slotDiv);
+                const slotDiv = document.createElement('div');
+                slotDiv.className = 'save-slot';
+
+                const deleteButton = document.createElement('button');
+                deleteButton.className = 'delete-save-btn';
+                deleteButton.innerText = '刪除';
+                deleteButton.onclick = event => { event.stopPropagation(); deleteSave(id); };
+
+                const title = document.createElement('div');
+                title.className = 'save-title';
+                title.innerText = valueToText(saveData.title, '未命名存檔');
+
+                const info = document.createElement('div');
+                info.className = 'save-info';
+                info.innerText = `代表NPC: ${tName} | 玩家: ${pName}`;
+
+                const date = document.createElement('div');
+                date.className = 'save-info u-inline-078';
+                date.innerText = `最後遊玩：${valueToText(saveData.date, '未知')}`;
+
+                slotDiv.append(deleteButton, title, info, date);
+                slotDiv.onclick = () => loadGame(id);
+                listDiv.appendChild(slotDiv);
             });
         }
 
@@ -3115,55 +3448,127 @@
             const saveName = userInput.trim() || defaultName;
             const id = Date.now().toString();
             const newSave = { title: saveName, date: new Date().toLocaleString(), hp: 100, san: 100, items: [], scenIndex: 0, chatPageIndex: 0, scripts: [[]], log: "1. 故事剛開始，目前尚無重大事件發生。", flags: [], respecCount: 3, scenario: JSON.parse(JSON.stringify(currentScenario)) };
-            
-            // 綁定資料來源 ID
             newSave.scenario.sourcePresetId = activePresetId;
-            
-            savesData[id] = newSave; localStorage.setItem('sanko_saves_v8', JSON.stringify(savesData)); loadGame(id); 
+            savesData[id] = newSave;
+            if (!persistJson('sanko_saves_v8', savesData, '遊戲存檔')) { delete savesData[id]; return; }
+            loadGame(id); 
         }
 
         function deleteSave(id) {
             if(confirm("確定要刪除這個存檔嗎？此操作無法復原。")) {
-                delete savesData[id]; if(currentSaveId === id) currentSaveId = null; localStorage.setItem('sanko_saves_v8', JSON.stringify(savesData)); renderSaveList();
+                const removedSave = savesData[id];
+                delete savesData[id];
+                if (!persistJson('sanko_saves_v8', savesData, '遊戲存檔')) { savesData[id] = removedSave; return; }
+                if(currentSaveId === id) currentSaveId = null;
+                renderSaveList();
             }
         }
 
         function exportSaves() {
-            if (Object.keys(savesData).length === 0) { alert("目前沒有存檔可以匯出。"); return; }
-            const exportPayload = { version: 2, saves: savesData, apiUsageStats };
-            const dataStr = JSON.stringify(exportPayload); const blob = new Blob([dataStr], { type: "application/json" }); const url = URL.createObjectURL(blob);
-            const a = document.createElement('a'); a.href = url; a.download = `AVG_Engine_Saves_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(url);
+            saveCurrentProgress();
+            if (Object.keys(savesData).length === 0 && Object.keys(scenarioPresets).length === 0) { alert("目前沒有資料可以匯出。"); return; }
+            const exportPayload = {
+                version: 3,
+                exportedAt: new Date().toISOString(),
+                saves: savesData,
+                scenarioPresets,
+                activePresetId,
+                apiUsageStats,
+                homePic: document.getElementById('setup-pic')?.src || ''
+            };
+            const dataStr = JSON.stringify(exportPayload);
+            const blob = new Blob([dataStr], { type: "application/json" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AVG_Engine_Full_Backup_${new Date().toISOString().slice(0,10)}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
         }
 
         function importSaves(input) {
-            if (!input.files || !input.files[0]) return; const file = input.files[0]; const reader = new FileReader();
+            if (!input.files || !input.files[0]) return;
+            const file = input.files[0];
+            if (file.size > 50 * 1024 * 1024) { alert('匯入失敗：備份檔超過 50MB。'); input.value = ''; return; }
+            const reader = new FileReader();
             reader.onload = (e) => {
                 try {
                     const importedData = JSON.parse(e.target.result);
-                    const importedSaves = importedData.saves || importedData;
-                    Object.assign(savesData, importedSaves);
-                    if (importedData.apiUsageStats) {
+                    const isFullBackup = importedData && typeof importedData === 'object' && !Array.isArray(importedData) && ('saves' in importedData || 'scenarioPresets' in importedData);
+                    const importedSaves = isFullBackup ? (importedData.saves || {}) : importedData;
+                    const importedPresets = isFullBackup ? (importedData.scenarioPresets || {}) : {};
+                    if (!importedSaves || typeof importedSaves !== 'object' || Array.isArray(importedSaves)) throw new Error('存檔集合格式不正確');
+
+                    let presetCount = 0;
+                    let importedCount = 0;
+                    let collisionCount = 0;
+                    const presetIdMap = {};
+
+                    if (importedPresets && typeof importedPresets === 'object' && !Array.isArray(importedPresets)) {
+                        Object.entries(importedPresets).forEach(([sourceId, preset]) => {
+                            if (!preset || typeof preset !== 'object' || Array.isArray(preset)) return;
+                            let targetId = String(sourceId || `preset_${Date.now()}`);
+                            while (scenarioPresets[targetId]) {
+                                collisionCount += 1;
+                                targetId = `${sourceId}_import_${Date.now()}_${collisionCount}`;
+                            }
+                            const copiedPreset = clonePersistentValue(preset);
+                            copiedPreset.id = targetId;
+                            scenarioPresets[targetId] = copiedPreset;
+                            presetIdMap[sourceId] = targetId;
+                            presetCount += 1;
+                        });
+                    }
+
+                    Object.entries(importedSaves).forEach(([sourceId, save]) => {
+                        if (!save || typeof save !== 'object' || Array.isArray(save)) return;
+                        let targetId = String(sourceId || Date.now());
+                        while (savesData[targetId]) {
+                            collisionCount += 1;
+                            targetId = `${sourceId}_import_${Date.now()}_${collisionCount}`;
+                        }
+                        const copiedSave = clonePersistentValue(save);
+                        const sourcePresetId = copiedSave.scenario?.sourcePresetId;
+                        if (sourcePresetId && presetIdMap[sourcePresetId]) copiedSave.scenario.sourcePresetId = presetIdMap[sourcePresetId];
+                        savesData[targetId] = copiedSave;
+                        importedCount += 1;
+                    });
+
+                    if (!importedCount && !presetCount) throw new Error('沒有可用的存檔或角色配置');
+                    if (isFullBackup && importedData.apiUsageStats && typeof importedData.apiUsageStats === 'object') {
                         apiUsageStats = importedData.apiUsageStats;
                         saveApiUsageStats();
                     }
-                    localStorage.setItem('sanko_saves_v8', JSON.stringify(savesData));
+                    if (isFullBackup && typeof importedData.homePic === 'string' && importedData.homePic.startsWith('data:image/')) {
+                        document.getElementById('setup-pic').src = importedData.homePic;
+                        persistLargeValue('sanko_home_pic', importedData.homePic, '首頁頭像');
+                    }
+                    persistJson('sanko_scenario_presets_v2', scenarioPresets, '匯入角色配置');
+                    persistJson('sanko_saves_v8', savesData, '匯入存檔');
+                    renderPresetSelector();
                     renderSaveList();
-                    alert("匯入完成。");
+                    alert(`匯入完成：${importedCount} 個存檔、${presetCount} 個角色配置${collisionCount ? `，${collisionCount} 個同 ID 資料已自動改名` : ''}。`);
                 }
-                catch (err) { alert("匯入失敗：檔案格式不正確或已損毀。"); } input.value = ""; 
-            }; reader.readAsText(file);
+                catch (err) { alert(`匯入失敗：${err.message || '檔案格式不正確或已損毀。'}`); }
+                input.value = ""; 
+            };
+            reader.readAsText(file);
         }
 
         function saveCurrentProgress() {
-            if(!currentSaveId) return;
+            if(!currentSaveId || !savesData[currentSaveId]) return false;
             savesData[currentSaveId].scripts = chatScripts;
             savesData[currentSaveId].chatPageIndex = currentChatPageIndex;
-            savesData[currentSaveId].hp = currentHp; savesData[currentSaveId].san = currentSan; savesData[currentSaveId].items = currentItems;
-            savesData[currentSaveId].scenIndex = currentScenarioIndex; savesData[currentSaveId].date = new Date().toLocaleString();
-            savesData[currentSaveId].log = currentAdventureLog; savesData[currentSaveId].flags = currentFlags;
+            savesData[currentSaveId].hp = normalizeSurvivalValue(currentHp, 100);
+            savesData[currentSaveId].san = normalizeSurvivalValue(currentSan, 100);
+            savesData[currentSaveId].items = currentItems;
+            savesData[currentSaveId].scenIndex = currentScenarioIndex;
+            savesData[currentSaveId].date = new Date().toLocaleString();
+            savesData[currentSaveId].log = currentAdventureLog;
+            savesData[currentSaveId].flags = currentFlags;
             savesData[currentSaveId].scenario = currentScenario;
             delete savesData[currentSaveId].script;
-            localStorage.setItem('sanko_saves_v8', JSON.stringify(savesData));
+            return persistJson('sanko_saves_v8', savesData, '遊戲存檔');
         }
 
         function openMidGameScenarioModal() {
@@ -3275,12 +3680,12 @@ ${buildSurvivalInstruction()}
 ${flagsText}
 
 【DM 核心記憶庫】
-先前的事件日誌：\n${currentAdventureLog}
+先前的事件日誌：\n${getAdventureLogForPrompt()}
 
 【🚨 TRPG 硬判定與數值影響】
 1. 玩家輸入若包含「系統硬判定」，代表程式已依指定六屬性、難度與 D20 骰點算出結果。結果【大成功／成功／失敗／大失敗】具有最高優先級，DM 絕對不得翻案、升降級或重新擲骰。
-2. narrative 第一段必須明確承接硬判定結果並演出直接後果。大成功應帶來額外優勢；大失敗應帶來合理且明顯的代價，但仍遵守無 Game Over 的安全機制。
-3. 六屬性與難度已經反映在成功門檻中，禁止再次用角色數值修改結果。Flags、傷勢與情境只能影響後果描寫，不可改變已算定的成功等級。
+2. narrative 第一段必須明確承接硬判定結果並演出直接後果。大成功應帶來額外優勢；大失敗應帶來合理且明顯的代價，並遵守目前遊戲難度的歸零與 Game Over 規則。
+3. 六屬性加值與難度 DC 已經反映在程式結果中，禁止再次用角色數值修改結果。Flags、傷勢與情境只能影響後果描寫，不可改變已算定的成功等級。
 4. 玩家輸入沒有「系統硬判定」時，不要擅自宣稱玩家已經擲骰；可以在 options 建議玩家使用擲骰按鈕。
 5. 【事件對數值的影響】：重大事件可利用 new_flags 發放狀態標籤。使用或消耗道具時，將效果反映在 hp_change、san_change 或 lost_items；贈送 NPC 時可反映在 npc_love_change。
 
@@ -3302,7 +3707,7 @@ ${flagsText}
 - "new_flags": 字串陣列 [Array]。若玩家獲得長期 Buff/Debuff 或解鎖重要承諾/事件寫入此處。(注意：標籤名稱不要加「狀態：」前綴，直接寫名稱即可)
 - "npc_state_updates": 物件陣列。即時情緒範例：[{"name":"宮崎三高","changes":{"mood":"警戒"},"reason":"察覺門外動靜"}]。持久變化必須加 persistent:true，例如：[{"name":"宮崎三高","persistent":true,"changes":{"relationship":"開始信任玩家","goal":"履行護送約定","memoryNotes":["答應護送玩家離開遺跡"]},"reason":"玩家替他擋下攻擊"}]。無變動回傳 []。
 - "player_state_update": 物件。即時狀態只填 changes；需要更新 relationship、goal 或 memoryNotes 時必須加 persistent:true。重要紀錄格式：{"persistent":true,"changes":{"condition":"右臂擦傷","memoryNotes":["為保護隊友承受了遺跡陷阱"]},"reason":"陷阱判定失敗"}。無變動回傳 {}。
-- "adventure_log": 字串 (String)。請以字串格式回傳，利用 \\n 換行。保留舊有重要日誌，並往下新增最新進展，上限 1000 字。
+- "adventure_log": 字串 (String)。只回傳「本回合新增的重要事件」，一行一則；不要重抄、改寫或刪除舊紀錄，程式會自動去重後追加。沒有重大事件時回傳空字串。
 - "narrative": 第三方旁白視角。進行情境描寫、NPC之間的動作、判定結果宣告。
 - "dialogues": 物件陣列 (Array of Objects)。只有真正開口說話的 NPC 才列入此陣列！名稱必須完全符合上述 NPC 列表。格式範例：[{"speaker": "宮崎三高", "text": "退後。"}]。如果沒人講話，回傳 []。
 - "options": 必須回傳 3 個物件。格式：[{"text":"跳過崩塌的地板","check":"dex","difficulty":"hard"},{"text":"詢問 NPC 更多情報","check":"none","difficulty":"normal"},{"text":"留在原地觀察","check":"none","difficulty":"normal"}]。只有具有明確風險且成敗不確定的行動才標記 check；日常對話、移動、觀察明顯事物通常填 none。三個選項通常最多 1 個需要檢定，極特殊危機最多 2 個，至少保留 1 個 none。帶 check 的選項送出時會自動擲骰。不可故意挑玩家最高屬性。
@@ -3372,12 +3777,13 @@ ${flagsText}
 
             try {
                 localStorage.setItem('sanko_api_provider', apiProvider);
-                localStorage.setItem(getKeyStorageKey(apiProvider), apiKey);
-                if (apiProvider === 'google') localStorage.setItem('sanko_api_key', apiKey);
+                sessionApiKeys[apiProvider] = apiKey;
 
                 const preferredModel = localStorage.getItem(getModelStorageKey(apiProvider)) || selectedModel || '';
                 const models = apiProvider === 'openrouter' ? await fetchOpenRouterModels() : await fetchGoogleModels();
                 populateModelSelects(models, preferredModel);
+                if (rememberApiKey) persistApiKey(apiProvider, apiKey);
+                else removePersistedApiKeys();
 
                 document.getElementById('delete-key-btn').style.display = 'inline-block';
                 document.getElementById('model-selection-area').style.display = 'block';
@@ -3431,7 +3837,10 @@ ${flagsText}
                         if (rawMsg.includes("解鎖") || rawMsg.includes("獲得") || rawMsg.includes("失去") || rawMsg.includes("消耗") || rawMsg.includes("好感度") || rawMsg.includes("發生改變") || rawMsg.includes("檢定")) {
                             const alertDiv = document.createElement('div'); alertDiv.className = 'alert-msg'; alertDiv.innerText = rawMsg; msgBox.appendChild(alertDiv);
                         } else {
-                            const systemMsgDiv = document.createElement('div'); systemMsgDiv.className = 'system-msg'; systemMsgDiv.innerHTML = `<i>${rawMsg}</i>`; msgBox.appendChild(systemMsgDiv);
+                            const systemMsgDiv = document.createElement('div');
+                            systemMsgDiv.className = 'system-msg';
+                            systemMsgDiv.innerText = rawMsg;
+                            msgBox.appendChild(systemMsgDiv);
                         }
                     } else {
                         const splitIdx = line.indexOf('：');
@@ -3498,7 +3907,16 @@ ${flagsText}
         }
 
         function loadGame(id) {
-            currentSaveId = id; const saveData = savesData[id];
+            const saveData = savesData[id];
+            if (!saveData || typeof saveData !== 'object' || Array.isArray(saveData)) {
+                alert('這份存檔格式不正確，無法載入。');
+                return;
+            }
+            currentSaveId = id;
+            const fallbackScenario = scenarioPresets[activePresetId] || defaultPreset;
+            if (!saveData.scenario || typeof saveData.scenario !== 'object' || Array.isArray(saveData.scenario)) {
+                saveData.scenario = JSON.parse(JSON.stringify(fallbackScenario));
+            }
             
             if(saveData.scenario) { 
                 currentScenario = saveData.scenario; 
@@ -3506,19 +3924,29 @@ ${flagsText}
                 if(!currentScenario.gameDifficulty) currentScenario.gameDifficulty = 'standard';
                 if(!currentScenario.playerStats) currentScenario.playerStats = {str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10};
                 currentScenario.playerStats = normalizePlayerStats(currentScenario.playerStats);
-                if(!currentScenario.npcs) {
+                if(!Array.isArray(currentScenario.npcs)) {
                     currentScenario.npcs = [{ id: 'npc_legacy', name: currentScenario.targetName || '未知目標', avatar: currentScenario.targetAvatar || emptyAvatar, details: { age: '', speech: '', likes: '', dislikes: '', app: '', bg: currentScenario.targetPersona || '' }, affection: saveData.love !== undefined ? saveData.love : 0 }];
-                } else { currentScenario.npcs.forEach(n => { if (n.affection === undefined) n.affection = saveData.love !== undefined ? saveData.love : 0; if(!n.details) n.details = { age: '', speech: '', likes: '', dislikes: '', app: '', bg: n.persona || '' }; }); }
-                if(!currentScenario.scenarios) {
+                } else {
+                    currentScenario.npcs = currentScenario.npcs.filter(n => n && typeof n === 'object' && !Array.isArray(n));
+                    currentScenario.npcs.forEach(n => { if (n.affection === undefined) n.affection = saveData.love !== undefined ? saveData.love : 0; if(!n.details || typeof n.details !== 'object') n.details = { age: '', speech: '', likes: '', dislikes: '', app: '', bg: n.persona || '' }; });
+                    if (!currentScenario.npcs.length) currentScenario.npcs.push({ id: 'npc_imported', name: '新角色', avatar: emptyAvatar, affection: 0, details: { age: '', speech: '', likes: '', dislikes: '', app: '', bg: '' } });
+                }
+                if(!Array.isArray(currentScenario.scenarios)) {
                     currentScenario.scenarios = [];
                     if(currentScenario.world1) currentScenario.scenarios.push({name: currentScenario.world1, lore: currentScenario.worldLore||'', npcRoles:'', playerRole:''});
                     if(currentScenario.world2) currentScenario.scenarios.push({name: currentScenario.world2, lore: '', npcRoles:'', playerRole:''});
                     if(currentScenario.scenarios.length === 0) currentScenario.scenarios.push({name: '預設場景', lore: '', npcRoles:'', playerRole:''});
-                } else { currentScenario.scenarios.forEach(sc => { if(sc.npcRoles === undefined) sc.npcRoles = sc.targetRole || ''; }); }
+                } else {
+                    currentScenario.scenarios = currentScenario.scenarios.filter(sc => sc && typeof sc === 'object' && !Array.isArray(sc));
+                    currentScenario.scenarios.forEach(sc => { if(sc.npcRoles === undefined) sc.npcRoles = sc.targetRole || ''; });
+                    if (!currentScenario.scenarios.length) currentScenario.scenarios.push({name: '預設場景', lore: '', npcRoles: '', playerRole: ''});
+                }
             }
             
-            chatScripts = saveData.scripts || [];
-            if(chatScripts.length === 0 && saveData.script) { chatScripts = [saveData.script]; }
+            chatScripts = Array.isArray(saveData.scripts)
+                ? saveData.scripts.map(page => Array.isArray(page) ? page.map(line => valueToText(line)).filter(Boolean) : [])
+                : [];
+            if(chatScripts.length === 0 && Array.isArray(saveData.script)) { chatScripts = [saveData.script.map(line => valueToText(line)).filter(Boolean)]; }
             if(chatScripts.length === 0) { chatScripts = [[]]; }
 
             currentScenarioIndex = saveData.scenIndex || 0;
@@ -3531,11 +3959,13 @@ ${flagsText}
                 if (!chatScripts[i]) chatScripts[i] = [];
             });
 
-            currentHp = saveData.hp !== undefined ? saveData.hp : 100;
-            currentSan = saveData.san !== undefined ? saveData.san : 100;
-            currentItems = saveData.items || [];
-            currentAdventureLog = saveData.log || "1. 故事剛開始，目前尚無重大事件發生。";
-            currentFlags = saveData.flags || [];
+            currentHp = normalizeSurvivalValue(saveData.hp, 100);
+            currentSan = normalizeSurvivalValue(saveData.san, 100);
+            currentItems = Array.isArray(saveData.items) ? saveData.items.map(item => valueToText(item)).filter(Boolean) : [];
+            currentAdventureLog = valueToText(saveData.log, "1. 故事剛開始，目前尚無重大事件發生。");
+            currentFlags = Array.isArray(saveData.flags) ? saveData.flags.map(flag => valueToText(flag)).filter(Boolean) : [];
+            const loadSurvivalOutcome = resolveSurvivalOutcome();
+            if (loadSurvivalOutcome.rescued || loadSurvivalOutcome.gameOver) saveCurrentProgress();
 
             document.getElementById('ui-hp').innerText = currentHp; document.getElementById('ui-san').innerText = currentSan; document.getElementById('ui-target-typing').innerText = "引擎 (DM)";
             
@@ -3551,9 +3981,14 @@ ${flagsText}
             renderChatPage(currentChatPageIndex);
             
             const msgBox = document.getElementById('dialogue-box'); 
-            const sysMsg = document.createElement('div'); sysMsg.className = 'system-msg'; sysMsg.innerHTML = "<i>— 遊戲紀錄已載入 —</i>"; msgBox.appendChild(sysMsg); msgBox.scrollTop = msgBox.scrollHeight;
+            const sysMsg = document.createElement('div'); sysMsg.className = 'system-msg'; sysMsg.innerText = "— 遊戲紀錄已載入 —"; msgBox.appendChild(sysMsg); msgBox.scrollTop = msgBox.scrollHeight;
 
-            document.getElementById('player-input').focus();
+            const input = document.getElementById('player-input');
+            input.disabled = false;
+            document.getElementById('send-btn').disabled = false;
+            document.getElementById('dice-btn').disabled = false;
+            input.placeholder = '輸入你的開局動作，或點選上方選項...';
+            if (!applyGameOverUi()) input.focus();
         }
 
         function selectOption(text, check = '', difficulty = 'normal') {
@@ -3575,33 +4010,45 @@ ${flagsText}
             return { key, ...GAME_DIFFICULTIES[key] };
         }
 
+        function getSurvivalDiceModifier(statKey) {
+            let modifier = 0;
+            if (currentHp <= 20 && ['str', 'dex', 'con'].includes(statKey)) modifier -= 2;
+            if (currentSan <= 20 && ['int', 'wis', 'cha'].includes(statKey)) modifier -= 2;
+            return modifier;
+        }
+
         function calculateDiceCheck(statKey, difficultyKey = 'normal', forcedRoll = null) {
             const statInfo = DICE_STATS[statKey];
             const difficulty = DICE_DIFFICULTIES[difficultyKey] || DICE_DIFFICULTIES.normal;
             const gameDifficulty = getGameDifficultyInfo();
             const rawScore = Number(currentScenario?.playerStats?.[statKey] ?? 10);
             const score = Number.isFinite(rawScore) ? Math.round(rawScore) : 10;
-            const target = Math.max(1, Math.min(19, score + difficulty.modifier + gameDifficulty.targetModifier));
+            const abilityModifier = Math.floor((score - 10) / 2);
+            const survivalModifier = getSurvivalDiceModifier(statKey);
+            const totalModifier = abilityModifier + survivalModifier;
+            const dc = Math.max(2, Math.min(30, difficulty.dc + gameDifficulty.dcModifier));
             const roll = forcedRoll === null ? Math.floor(Math.random() * 20) + 1 : Math.max(1, Math.min(20, Math.round(forcedRoll)));
-            const criticalThreshold = Math.max(1, Math.floor(target / 5));
-            const fumbleThreshold = target < 10 ? 19 : 20;
-            let result = '失敗';
-            if (roll <= criticalThreshold) result = '大成功';
-            else if (roll >= fumbleThreshold) result = '大失敗';
-            else if (roll <= target) result = '成功';
+            const total = roll + totalModifier;
+            let result = total >= dc ? '成功' : '失敗';
+            if (roll === 20) result = '大成功';
+            else if (roll === 1) result = '大失敗';
             return {
                 statKey,
                 code: statInfo.code,
                 label: statInfo.label,
                 score,
+                abilityModifier,
                 difficultyKey,
                 difficultyLabel: difficulty.label,
-                difficultyModifier: difficulty.modifier,
+                difficultyDc: difficulty.dc,
                 gameDifficultyKey: gameDifficulty.key,
                 gameDifficultyLabel: gameDifficulty.label,
-                gameDifficultyModifier: gameDifficulty.targetModifier,
-                target,
+                gameDifficultyDcModifier: gameDifficulty.dcModifier,
+                survivalModifier,
+                totalModifier,
+                dc,
                 roll,
+                total,
                 result
             };
         }
@@ -3668,6 +4115,7 @@ ${flagsText}
         }
 
         async function sendDiceChoice() {
+            if (getCurrentGameOver()) { applyGameOverUi(); return; }
             const inputEl = document.getElementById('player-input');
             const playerText = inputEl.value.trim();
             if (!playerText) { alert('請先輸入你打算做什麼，再來擲骰子喔！'); return; }
@@ -3690,9 +4138,12 @@ ${flagsText}
                     }
                     : await classifyDiceCheck(playerText);
                 const check = calculateDiceCheck(classification.statKey, classification.difficultyKey);
-                const modifierText = check.difficultyModifier > 0 ? `+${check.difficultyModifier}` : String(check.difficultyModifier);
-                const directive = `(系統硬判定：${check.code} ${check.label}｜屬性 ${check.score}｜行動難度 ${check.difficultyLabel} ${modifierText}｜遊戲難度 ${check.gameDifficultyLabel} ${check.gameDifficultyModifier}｜成功門檻 ${check.target}｜D20 ${check.roll}｜結果【${check.result}】｜判定理由：${classification.reason}。此結果由程式計算，AI 不得更改。)`;
-                pendingDiceSummary = `— ${check.code} ${check.label}檢定：${check.result}（D20 ${check.roll}／門檻 ${check.target}）—`;
+                const signedAbility = check.abilityModifier >= 0 ? `+${check.abilityModifier}` : String(check.abilityModifier);
+                const signedTotal = check.totalModifier >= 0 ? `+${check.totalModifier}` : String(check.totalModifier);
+                const gameDifficultyText = check.gameDifficultyDcModifier ? `｜遊戲難度 ${check.gameDifficultyLabel}：DC +${check.gameDifficultyDcModifier}` : `｜遊戲難度 ${check.gameDifficultyLabel}`;
+                const survivalText = check.survivalModifier ? `｜生存狀態修正 ${check.survivalModifier}` : '';
+                const directive = `(系統硬判定：${check.code} ${check.label}｜屬性 ${check.score}（加值 ${signedAbility}）｜行動難度 ${check.difficultyLabel}：基礎 DC ${check.difficultyDc}${gameDifficultyText}${survivalText}｜最終 DC ${check.dc}｜D20 ${check.roll} ${signedTotal} = ${check.total}｜結果【${check.result}】｜判定理由：${classification.reason}。此結果由程式計算，AI 不得更改。)`;
+                pendingDiceSummary = `— ${check.code} ${check.label}檢定：${check.result}（D20 ${check.roll} ${signedTotal} = ${check.total}／DC ${check.dc}）—`;
                 inputEl.value = `${playerText}\n${directive}`;
                 document.getElementById('ui-target-typing').innerText = '引擎 (DM)';
                 await sendChoice();
@@ -3713,6 +4164,7 @@ ${flagsText}
         function checkInputKey(e) { adjustInputHeight(); const isMobile = window.innerWidth <= 600; if (!isMobile) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChoice(); } } }
 
         async function sendChoice() {
+            if (getCurrentGameOver()) { applyGameOverUi(); return; }
             const inputEl = document.getElementById('player-input'); const sendBtn = document.getElementById('send-btn'); const diceBtn = document.getElementById('dice-btn'); 
             const playerText = inputEl.value.trim(); if(!playerText) return;
             const suggestedStat = normalizeDiceStatKey(inputEl.dataset.diceStat);
@@ -3742,11 +4194,13 @@ ${flagsText}
                 await callAI_JSON(pendingMetaPrompt, false, playerText);
                 pendingMetaPrompt = "";
             } finally {
-                inputEl.disabled = false;
-                sendBtn.disabled = false;
-                diceBtn.disabled = false;
+                const gameOver = getCurrentGameOver();
+                inputEl.disabled = Boolean(gameOver);
+                sendBtn.disabled = Boolean(gameOver);
+                diceBtn.disabled = Boolean(gameOver);
                 document.getElementById('loading').style.display = 'none';
-                inputEl.focus();
+                if (gameOver) applyGameOverUi();
+                else inputEl.focus();
             }
         }
 
@@ -3780,9 +4234,67 @@ ${flagsText}
 
         function getGameDifficultyInstruction() {
             const mode = getGameDifficultyInfo();
-            if (mode.gameOver === 'forced') return `【遊戲難度：${mode.label}】所有檢定門檻額外 ${mode.targetModifier}。HP 或 SAN 歸零時必須演出明確的 Game Over／壞結局，不得以救援取消。`;
-            if (mode.gameOver === 'possible') return `【遊戲難度：${mode.label}】所有檢定門檻額外 ${mode.targetModifier}。HP 或 SAN 歸零時允許演出 Game Over；只有劇情中確實存在合理救援條件時，才可給予最後救援。`;
-            return `【遊戲難度：${mode.label}】沒有 Game Over。HP 或 SAN 歸零時啟動隊友救援、撤離或安全機制。`;
+            if (mode.gameOver === 'forced') return `【遊戲難度：${mode.label}】所有檢定 DC 額外 +${mode.dcModifier}。HP 或 SAN 歸零時程式會立即鎖定 Game Over，旁白必須承接壞結局。`;
+            if (mode.gameOver === 'possible') return `【遊戲難度：${mode.label}】所有檢定 DC 額外 +${mode.dcModifier}。HP 或 SAN 歸零時程式會在回覆完成後擲 D20 生死檢定：1–10 保命並回到 1 點，11–20 Game Over。你只能描寫倒下或崩潰，不可提前宣判最終生死。`;
+            return `【遊戲難度：${mode.label}】沒有 Game Over。HP 或 SAN 歸零時程式會啟動保護機制並回到 1 點。`;
+        }
+
+        function getCurrentGameOver() {
+            return currentSaveId && savesData[currentSaveId] ? savesData[currentSaveId].gameOver || null : null;
+        }
+
+        function applyGameOverUi() {
+            const gameOver = getCurrentGameOver();
+            if (!gameOver) return false;
+            const input = document.getElementById('player-input');
+            const sendButton = document.getElementById('send-btn');
+            const diceButton = document.getElementById('dice-btn');
+            if (input) {
+                input.disabled = true;
+                input.value = '';
+                input.placeholder = `GAME OVER：${gameOver.reason || '本次冒險已結束'}`;
+            }
+            if (sendButton) sendButton.disabled = true;
+            if (diceButton) diceButton.disabled = true;
+            const options = document.getElementById('options-area');
+            if (options) options.innerHTML = '';
+            return true;
+        }
+
+        function resolveSurvivalOutcome(forcedRoll = null) {
+            if (getCurrentGameOver()) return { gameOver: true, existing: true };
+            const zeroKinds = [];
+            if (currentHp <= 0) zeroKinds.push('HP');
+            if (currentSan <= 0) zeroKinds.push('SAN');
+            if (!zeroKinds.length) return { gameOver: false, rescued: false };
+
+            const mode = getGameDifficultyInfo();
+            const reason = `${zeroKinds.join(' 與 ')} 歸零`;
+            let survivalRoll = null;
+            let gameOver = mode.gameOver === 'forced';
+
+            if (mode.gameOver === 'possible') {
+                survivalRoll = forcedRoll === null ? Math.floor(Math.random() * 20) + 1 : Math.max(1, Math.min(20, Math.round(forcedRoll)));
+                gameOver = survivalRoll >= 11;
+            }
+
+            if (gameOver) {
+                savesData[currentSaveId].gameOver = { reason, mode: mode.key, roll: survivalRoll, at: new Date().toLocaleString() };
+                createSystemAlert(mode.gameOver === 'forced'
+                    ? `— GAME OVER：${reason}（極限模式）—`
+                    : `— 生死檢定失敗：D20 ${survivalRoll}，GAME OVER —`);
+                applyGameOverUi();
+                return { gameOver: true, roll: survivalRoll, reason };
+            }
+
+            if (currentHp <= 0) currentHp = 1;
+            if (currentSan <= 0) currentSan = 1;
+            document.getElementById('ui-hp').innerText = currentHp;
+            document.getElementById('ui-san').innerText = currentSan;
+            createSystemAlert(mode.gameOver === 'possible'
+                ? `— 生死檢定成功：D20 ${survivalRoll}，${reason}後保留 1 點 —`
+                : `— 保護機制啟動：${reason}後保留 1 點 —`);
+            return { gameOver: false, rescued: true, roll: survivalRoll, reason };
         }
 
         function buildSurvivalInstruction() {
@@ -3811,7 +4323,7 @@ ${flagsText}
             currentFlags = currentFlags.filter(flag => !AUTO_SURVIVAL_FLAG_SET.has(flag));
             requiredFlags.forEach(flag => currentFlags.push(flag));
 
-            if (!announce) return;
+            if (!announce || getCurrentGameOver()) return;
 
             requiredFlags.forEach(flag => {
                 if (previousAutoFlags.includes(flag)) return;
@@ -3982,7 +4494,7 @@ ${flagsText}
         function buildLatestActionPrompt(latestPlayerAction = "") {
             const actionText = valueToText(latestPlayerAction);
             if (!actionText) return "";
-            return `\n\n【本回合玩家最新輸入 - 必須優先判讀】\n${actionText}\n\n【本回合 DM 回應要求】\n1. 先理解玩家此刻的具體意圖、目標、手段與語氣。\n2. narrative 的第一段必須直接回饋這個動作造成的立即結果。\n3. 若有「系統硬判定」，必須逐字遵守其中已算定的屬性、門檻與結果，不得重新解讀。\n4. 只讓真正會在此刻反應的 NPC 說話；其餘角色可用動作或沉默呈現。\n5. options 必須接續這個結果，提供 3 個下一步行動。`;
+            return `\n\n【本回合玩家最新輸入 - 必須優先判讀】\n${actionText}\n\n【本回合 DM 回應要求】\n1. 先理解玩家此刻的具體意圖、目標、手段與語氣。\n2. narrative 的第一段必須直接回饋這個動作造成的立即結果。\n3. 若有「系統硬判定」，必須逐字遵守其中已算定的屬性、加值、DC 與結果，不得重新解讀。\n4. 只讓真正會在此刻反應的 NPC 說話；其餘角色可用動作或沉默呈現。\n5. options 必須接續這個結果，提供 3 個下一步行動。`;
         }
 
         async function callAI_JSON(extraPrompt = "", isOpening = false, latestPlayerAction = "") {
@@ -4038,12 +4550,15 @@ ${flagsText}
                     currentScenario.playerDynamic = result.state;
                 }
 
-                if(parsedData.hp_change) { currentHp += parseInt(parsedData.hp_change); if(currentHp > 100) currentHp = 100; if(currentHp < 0) currentHp = 0; document.getElementById('ui-hp').innerText = currentHp; }
-                if(parsedData.san_change) { currentSan += parseInt(parsedData.san_change); if(currentSan > 100) currentSan = 100; if(currentSan < 0) currentSan = 0; document.getElementById('ui-san').innerText = currentSan; }
+                const hpDelta = parseNumericDelta(parsedData.hp_change);
+                const sanDelta = parseNumericDelta(parsedData.san_change);
+                if (hpDelta) currentHp = applySurvivalDelta(currentHp, hpDelta);
+                if (sanDelta) currentSan = applySurvivalDelta(currentSan, sanDelta);
+                document.getElementById('ui-hp').innerText = currentHp;
+                document.getElementById('ui-san').innerText = currentSan;
                 
                 if(parsedData.adventure_log) {
-                    const logText = valueToText(parsedData.adventure_log);
-                    if (logText) currentAdventureLog = logText;
+                    currentAdventureLog = mergeAdventureLog(currentAdventureLog, parsedData.adventure_log);
                 }
                 
                 if(parsedData.new_items && Array.isArray(parsedData.new_items) && parsedData.new_items.length > 0) {
@@ -4102,7 +4617,9 @@ ${flagsText}
                     }
                 }
 
-                if(parsedData.options && Array.isArray(parsedData.options)) {
+                resolveSurvivalOutcome();
+
+                if(!getCurrentGameOver() && parsedData.options && Array.isArray(parsedData.options)) {
                     const optArea = document.getElementById('options-area');
                     parsedData.options.forEach(opt => {
                         const option = normalizeOptionEntry(opt);
@@ -4122,7 +4639,9 @@ ${flagsText}
                 }
                 
                 syncSurvivalFlags({ announce: true });
-                saveCurrentProgress(); document.getElementById('loading').style.display = 'none';
+                saveCurrentProgress();
+                applyGameOverUi();
+                document.getElementById('loading').style.display = 'none';
 
             } catch (error) {
                 console.error(error); document.getElementById('loading').style.display = 'none'; alert("系統抓到錯誤：" + error.message);
