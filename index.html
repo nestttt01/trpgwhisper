@@ -234,7 +234,7 @@
         .game-model-select { max-width: 130px; text-overflow: ellipsis; overflow: hidden; }
 
         .mini-add-btn { background: #fff; border: 2px solid var(--border-dark); padding: 5px 10px; border-radius: 8px; font-size: 11px; font-weight: 900; cursor: pointer; color: var(--text-main); transition: all 0.2s; flex-shrink: 0; white-space: nowrap; }
-        .mini-add-btn:hover { background: var(--accent-neon); box-shadow: 2px 2px 0px var(--border-dark); transform: translate(-1px, -1px); }creator-mode-btn
+        .mini-add-btn:hover { background: var(--accent-neon); box-shadow: 2px 2px 0px var(--border-dark); transform: translate(-1px, -1px); }
         .creator-mode-btn { width: 26px; height: 24px; padding: 0; display: inline-grid; place-items: center; font-size: 13px; border-radius: 7px; }
         .creator-mode-btn.active { background: var(--accent-neon); color: var(--border-dark); box-shadow: 2px 2px 0px var(--border-dark); transform: translate(-1px, -1px); }
         .creator-mode-btn:disabled { opacity: 0.45; box-shadow: none; transform: none; cursor: not-allowed; }
@@ -246,6 +246,9 @@
         .msg-wrapper { display: flex; gap: 10px; align-items: center; animation: fadeIn 0.4s ease-out; margin-top: 5px; }
         .msg-wrapper.player { flex-direction: row-reverse; }
         .chat-avatar { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; border: 2px solid var(--border-dark); flex-shrink: 0; background: #fff; box-shadow: 2px 2px 0px rgba(0,0,0,0.1); }
+        .chat-avatar.editable-avatar { cursor: pointer; }
+        .chat-avatar.editable-avatar:hover,
+        .chat-avatar.editable-avatar:focus-visible { outline: 3px solid var(--accent-neon); outline-offset: 2px; }
         .msg-content { display: flex; flex-direction: column; gap: 4px; max-width: 80%; }
         .msg-speaker { font-size: 12px; color: var(--text-sub); font-weight: 900; letter-spacing: 1px; }
         .msg-wrapper.npc .msg-speaker { margin-left: 4px; color: var(--text-main); border-left: 2px solid var(--accent-neon); padding-left: 6px;}
@@ -330,6 +333,7 @@
         input[type="file"].hidden-file-input,
         #pic-input,
         #upload-player,
+        #upload-game-avatar,
         #import-input,
         input[id^="upload-npc-"] {
             display: none !important;
@@ -1217,6 +1221,8 @@
         }
     </script>
 
+    <input type="file" id="upload-game-avatar" accept="image/*" onchange="triggerGameAvatarCrop(this)" hidden class="hidden-file-input">
+
     <div id="crop-modal" class="modal-overlay">
         <div class="u-inline-001">
             <h3 class="u-inline-002">調整頭像</h3>
@@ -1354,7 +1360,7 @@
                 <p class="u-inline-020">受傷或精神打擊會改變 HP 與 SAN，道具可獲得、使用或失去，NPC 好感度會依互動增減。這些資料都能在角色面板檢視與手動修正。</p>
 
                 <p class="u-inline-019">8. 存檔、備份與命運重鑄</p>
-                <p class="u-inline-020">每個存檔各自保存劇情、動態狀態與重要紀錄，不會污染新遊戲。可匯出完整備份；每個存檔也有 3 次找守墓人重新洗點的機會。首頁配色只保存在本機，並會包含於完整備份中。</p>
+                <p class="u-inline-020">每個存檔各自保存劇情、動態狀態與重要紀錄，不會污染新遊戲。遊玩途中可直接點擊玩家或 NPC 的對話頭像新增／更換圖片；頭像會存入目前紀錄，角色配置未上鎖時也會同步回配置。可匯出完整備份；每個存檔也有 3 次找守墓人重新洗點的機會。首頁配色只保存在本機，並會包含於完整備份中。</p>
 
                 <div class="u-inline-021">
                     <p class="u-inline-019">💡 提示：玩家即是神 (手動覆寫)</p>
@@ -1431,7 +1437,7 @@
             </div>
             <div class="theme-reset-row"><button type="button" class="theme-reset-btn" onclick="resetUiTheme()">恢復預設</button></div>
         </details>
-        <p class="setup-version">測試版 v0.29 · 2026/06/21</p>
+        <p class="setup-version">測試版 v0.30 · 2026/06/21</p>
     </div>
 
     <div id="edit-scenario-screen">
@@ -1761,7 +1767,7 @@
                     name: '艾歐澤亞 (FFXIV)',
                     lore: '充滿魔法與劍的奇幻虛擬世界。大家擁有技能與血量設定，一起推進高難度副本。但在副本以外的氛圍卻是大家喜歡一同歡樂，艾歐澤亞住民們經營了各種形形色色的店面，包括花店、麵包店、咖啡廳、舞廳、女僕公關店、或者是賭場。',
                     npcRoles: '三高是硬核賢者補師(H2)，負責補血。SY是技術高超的遠程輸出。',
-                    playerRole: '熱衷 PVP 但對高難副本一竅不通的坦克，最近喜歡跑店。',
+                    playerRole: '熱衷 PVP 但對高難副本一竅不通的坦克，最近熱衷於跑店。',
                     transitionRule: '從現實世界進入時，預設視為登入遊戲；角色保留現實世界的人際關係與記憶。'
                 },
                 {
@@ -1769,7 +1775,7 @@
                     lore: '現代都市，現代都市，地點在哪裡並不重要，不需要寫出地點。\n【🚨 DM 動態情境判斷法則】：\n1. 當剛退出遊戲 / 未特別說明時：預設大家『已下班，各自待幾家中』透過 Discord 語音閒聊。請描寫居家的放鬆感（如看迷因、喝水）。\n2. 當玩家主動出門 / 約見面 / 跑現實劇情時：請立刻無縫切換為『實體空間互動』！此時他們作為攝影師、化妝師的現實職業狀態與穿搭外貌，將成為主要的互動元素。\n(請 DM 隨時根據玩家的動作，聰明判斷現在是「遠端通話」還是「實體面對面」)',
                     npcRoles: '語音通話時：三高通常在看動物迷因，SY 呈現放鬆狀態。實體見面時：三高會展現禁慾專業的攝影師氣場，SY 則是擅長打扮的男性。',
                     playerRole: '平時在家是被死線追殺的設計師，若出門則會切換為現實生活對應的狀態。',
-                    transitionRule: '從艾歐澤亞切回時，預設視角回到玩家獨自一人的住宅；除非玩家明確描述實體見面。'
+                    transitionRule: '從艾歐澤亞切回時，預設視為登出遊戲並回到 Discord 語音；除非玩家明確描述實體見面。'
                 }
             ]
         };
@@ -2134,6 +2140,7 @@
         }
 
         let cropTargetRole = '';
+        let pendingGameAvatarTarget = null;
         let cropImgObj = document.getElementById('crop-img');
         let cropContainer = document.getElementById('crop-container');
         let scaleSlider = document.getElementById('crop-scale');
@@ -2274,6 +2281,8 @@
                 const idx = cropTargetRole.split('-')[1];
                 const targetImg = document.getElementById(`preview-npc-${idx}`);
                 if (targetImg) targetImg.src = finalBase64;
+            } else if (cropTargetRole === 'game') {
+                commitGameAvatar(finalBase64);
             }
             closeCropModal();
         }
@@ -4372,14 +4381,126 @@ ${flagsText}
             dialogueBox.scrollTop = dialogueBox.scrollHeight;
         }
 
+
+        function openGameAvatarPicker(kind, npcId = '') {
+            if (!currentSaveId || !currentScenario) return;
+            pendingGameAvatarTarget = { kind, npcId: valueToText(npcId) };
+            const input = document.getElementById('upload-game-avatar');
+            if (!input) return;
+            input.value = '';
+            input.click();
+        }
+
+        function triggerGameAvatarCrop(input) {
+            if (!pendingGameAvatarTarget) return;
+            triggerCrop(input, 'game');
+        }
+
+        function getGameAvatarCharacter(target = pendingGameAvatarTarget) {
+            if (!target || !currentScenario) return null;
+            if (target.kind === 'player') return { kind: 'player', character: currentScenario };
+            const npcs = Array.isArray(currentScenario.npcs) ? currentScenario.npcs : [];
+            const npc = npcs.find(item => valueToText(item.id) === valueToText(target.npcId));
+            return npc ? { kind: 'npc', character: npc } : null;
+        }
+
+        function updateVisibleGameAvatars(target, avatarSrc) {
+            document.querySelectorAll('.chat-avatar.editable-avatar').forEach(img => {
+                const samePlayer = target.kind === 'player' && img.dataset.avatarKind === 'player';
+                const sameNpc = target.kind === 'npc'
+                    && img.dataset.avatarKind === 'npc'
+                    && img.dataset.avatarNpcId === valueToText(target.npcId);
+                if (samePlayer || sameNpc) img.src = avatarSrc;
+            });
+        }
+
+        function syncGameAvatarToPreset(target, avatarSrc) {
+            const sourceId = currentScenario?.sourcePresetId || currentScenario?.id;
+            const preset = sourceId ? scenarioPresets[sourceId] : null;
+            if (!preset) return { synced: false, reason: 'missing' };
+            if (preset.isLocked) return { synced: false, reason: 'locked', presetName: preset.presetName || '目前配置' };
+
+            const previousPreset = clonePersistentValue(preset);
+            if (target.kind === 'player') {
+                preset.playerAvatar = avatarSrc;
+            } else {
+                if (!Array.isArray(preset.npcs)) preset.npcs = [];
+                const currentNpc = getGameAvatarCharacter(target)?.character;
+                if (!currentNpc) return { synced: false, reason: 'missing-character' };
+                let presetNpc = preset.npcs.find(item =>
+                    (valueToText(item.id) && valueToText(item.id) === valueToText(currentNpc.id))
+                    || (valueToText(item.name) && valueToText(item.name) === valueToText(currentNpc.name))
+                );
+                if (!presetNpc) {
+                    presetNpc = clonePersistentValue(currentNpc);
+                    delete presetNpc.dynamic;
+                    preset.npcs.push(presetNpc);
+                }
+                presetNpc.avatar = avatarSrc;
+            }
+
+            if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置頭像')) {
+                scenarioPresets[sourceId] = previousPreset;
+                return { synced: false, reason: 'storage' };
+            }
+            return { synced: true, presetName: preset.presetName || '目前配置' };
+        }
+
+        function commitGameAvatar(avatarSrc) {
+            const target = pendingGameAvatarTarget;
+            const resolved = getGameAvatarCharacter(target);
+            if (!target || !resolved) {
+                alert('找不到這名角色，頭像未變更。');
+                pendingGameAvatarTarget = null;
+                return;
+            }
+
+            if (target.kind === 'player') currentScenario.playerAvatar = avatarSrc;
+            else resolved.character.avatar = avatarSrc;
+            updateVisibleGameAvatars(target, avatarSrc);
+            const saveOk = saveCurrentProgress();
+            if (!saveOk) {
+                pendingGameAvatarTarget = null;
+                return;
+            }
+            const presetResult = syncGameAvatarToPreset(target, avatarSrc);
+            pendingGameAvatarTarget = null;
+
+            if (presetResult.reason === 'locked') {
+                alert(`頭像已存入目前遊戲紀錄。\n角色配置「${presetResult.presetName}」已上鎖，因此沒有覆寫配置。`);
+            }
+        }
+
+        function makeChatAvatarEditable(avatar, target, speaker) {
+            if (!avatar || !target) return;
+            avatar.classList.add('editable-avatar');
+            avatar.dataset.avatarKind = target.kind;
+            if (target.kind === 'npc') avatar.dataset.avatarNpcId = valueToText(target.npcId);
+            avatar.alt = `${speaker} 的頭像`;
+            avatar.title = '點擊新增或更換頭像';
+            avatar.tabIndex = 0;
+            avatar.setAttribute('role', 'button');
+            avatar.setAttribute('aria-label', `更換 ${speaker} 的頭像`);
+            const openPicker = () => openGameAvatarPicker(target.kind, target.npcId || '');
+            avatar.addEventListener('click', openPicker);
+            avatar.addEventListener('keydown', event => {
+                if (event.key !== 'Enter' && event.key !== ' ') return;
+                event.preventDefault();
+                openPicker();
+            });
+        }
+
         function appendMessage(speaker, text) {
-            if (!text) return; let isPlayer = false; let avatarSrc = emptyAvatar;
+            if (!text) return; let isPlayer = false; let avatarSrc = emptyAvatar; let avatarTarget = null;
 
             if (speaker === currentScenario.playerName) {
-                isPlayer = true; avatarSrc = currentScenario.playerAvatar || emptyAvatar;
+                isPlayer = true;
+                avatarSrc = currentScenario.playerAvatar || emptyAvatar;
+                avatarTarget = { kind: 'player' };
             } else {
                 const foundNpc = currentScenario.npcs.find(n => n.name === speaker);
                 avatarSrc = foundNpc ? (foundNpc.avatar || emptyAvatar) : emptyAvatar;
+                if (foundNpc) avatarTarget = { kind: 'npc', npcId: valueToText(foundNpc.id) };
             }
 
             const dialogueBox = document.getElementById('dialogue-box'); 
@@ -4389,7 +4510,10 @@ ${flagsText}
             const avatar = document.createElement('img');
             avatar.src = avatarSrc;
             avatar.className = 'chat-avatar';
-            avatar.onerror = () => { avatar.style.display = 'none'; };
+            avatar.onerror = () => {
+                if (avatar.src !== emptyAvatar) avatar.src = emptyAvatar;
+            };
+            makeChatAvatarEditable(avatar, avatarTarget, speaker);
 
             const content = document.createElement('div');
             content.className = 'msg-content';
