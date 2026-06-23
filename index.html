@@ -58,7 +58,8 @@
                 <h3 class="u-inline-005">玩家狀態與面板</h3>
                 <div class="u-inline-009">
                     <button class="btn u-inline-010" onclick="saveAsNewPresetFromModal()">另存新配置</button>
-                    <button class="btn u-inline-011" onclick="saveStatusModal()">儲存並返回</button>
+                    <button id="status-save-btn" class="btn u-inline-011" onclick="saveStatusModal()">儲存並返回</button>
+                    <button class="status-panel-close" type="button" onclick="collapseStatusPanel()" aria-label="關閉角色面板" title="關閉角色面板">×</button>
                 </div>
             </div>
             
@@ -110,9 +111,11 @@
 
                     <div class="memory-action-row">
                         <button id="organize-summary-btn" class="memory-action-btn" onclick="organizeMemoryWithAI('summary')">整理摘要</button>
-                        <button class="memory-action-btn" onclick="openAdventureJournal(currentSaveId)">開啟完整冒險日誌</button>
-                        <span class="memory-action-note">完整紀錄已移到獨立日誌頁；AI 仍會讀取同一份存檔資料，不受畫面位置影響。</span>
+                        <button id="inline-journal-toggle-btn" class="memory-action-btn" onclick="toggleInlineAdventureJournal(currentSaveId)">開啟完整冒險日誌</button>
+                        <span class="memory-action-note">完整紀錄可直接在本分頁展開；AI 仍會讀取同一份存檔資料。</span>
                     </div>
+
+                    <div id="inline-journal-host" class="inline-journal-host"></div>
 
                     <div class="memory-brief-card">
                         <div class="memory-brief-grid">
@@ -410,10 +413,11 @@
         </div>
     </div>
 
+    <div id="journal-screen-home" hidden></div>
     <div id="journal-screen">
         <div class="journal-header">
             <h2>冒險日誌</h2>
-            <button class="btn" onclick="closeAdventureJournal()">返回</button>
+            <button id="journal-close-btn" class="btn" onclick="closeAdventureJournal()">返回</button>
         </div>
         <div class="journal-toolbar">
             <select id="journal-save-select" aria-label="選擇日誌存檔" onchange="selectAdventureJournalSave(this.value)"></select>
@@ -447,7 +451,7 @@
 
     <div id="game-container">
         
-        <div id="floating-menu-btn" onclick="openStatusModal()">角色面板</div>
+        <div id="floating-menu-btn" onclick="toggleStatusPanel()" role="button" tabindex="0" aria-label="開啟或收回角色面板">角色面板</div>
 
         <div id="status-bar">
             <div class="top-row">

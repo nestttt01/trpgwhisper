@@ -129,6 +129,7 @@ window.onerror = function(message, source, lineno, colno, error) {
         let journalSearchText = '';
         let journalEditingEntryIndex = -1;
         let journalReturnTarget = 'setup';
+        let journalEmbedded = false;
         let apiUsageStats = {};
         let lastPromptDiagnostics = {};
 
@@ -2980,11 +2981,46 @@ window.onerror = function(message, source, lineno, colno, error) {
             document.getElementById('ui-stats-display').innerHTML = statsHtml;
             
             renderStatusSummary(); renderFlags(); renderItems(); renderApiUsageStats();
-            const statusModal = document.getElementById('status-modal');
-            statusModal.style.display = 'block';
-            statusModal.scrollTop = 0;
+            setStatusPanelOpen(true);
+            updateStatusSaveButtonLabel();
             switchStatusTab(activeStatusTab);
             initTextareas();
+        }
+
+        function setStatusPanelOpen(isOpen) {
+            const statusModal = document.getElementById('status-modal');
+            if (!statusModal) return;
+            statusModal.style.display = isOpen ? 'block' : 'none';
+            document.body.classList.toggle('status-panel-open', Boolean(isOpen));
+            if (isOpen) statusModal.scrollTop = 0;
+        }
+
+        function shouldKeepStatusPanelOpenAfterSave() {
+            return window.matchMedia('(min-width: 1100px)').matches
+                && document.getElementById('game-container')?.style.display === 'flex';
+        }
+
+        function updateStatusSaveButtonLabel() {
+            const button = document.getElementById('status-save-btn');
+            if (button) button.textContent = shouldKeepStatusPanelOpenAfterSave() ? '儲存' : '儲存並返回';
+        }
+
+        function collapseStatusPanel() {
+            const statusModal = document.getElementById('status-modal');
+            if (!statusModal || statusModal.style.display !== 'block') return;
+            try {
+                syncDomToCurrentScenario();
+                saveCurrentProgress();
+            } catch (error) {
+                console.warn('收回角色面板時背景儲存失敗', error);
+            }
+            setStatusPanelOpen(false);
+        }
+
+        function toggleStatusPanel() {
+            const statusModal = document.getElementById('status-modal');
+            if (statusModal?.style.display === 'block') collapseStatusPanel();
+            else openStatusModal();
         }
 
         function saveStatusModal() {
@@ -3018,12 +3054,23 @@ window.onerror = function(message, source, lineno, colno, error) {
                     });
                 }
 
-                document.getElementById('status-modal').style.display = 'none';
+                if (shouldKeepStatusPanelOpenAfterSave()) {
+                    renderStatusSummary();
+                    renderFlags();
+                    renderItems();
+                    updateStatusSaveButtonLabel();
+                } else {
+                    setStatusPanelOpen(false);
+                }
             } catch (e) {
                 console.error(e);
                 alert("儲存時發生錯誤：" + e.message);
             }
         }
+
+        window.addEventListener('resize', () => {
+            if (document.getElementById('status-modal')?.style.display === 'block') updateStatusSaveButtonLabel();
+        });
 
         function renderFlags() {
             const container = document.getElementById('ui-flags-container'); container.innerHTML = '';
@@ -3141,6 +3188,34 @@ window.onerror = function(message, source, lineno, colno, error) {
             });
         }
 
+        function refreshOpenStatusPanel() {
+            const modal = document.getElementById('status-modal');
+            if (!modal || modal.style.display !== 'block') return;
+            const panelHasFocus = document.activeElement?.closest?.('#status-modal-content');
+            if (panelHasFocus) {
+                renderStatusSummary();
+                renderFlags();
+                renderItems();
+                return;
+            }
+            const scroller = document.querySelector('#status-modal-content > .u-inline-012');
+            const scrollTop = scroller?.scrollTop || 0;
+            openStatusModal();
+            const refreshedScroller = document.querySelector('#status-modal-content > .u-inline-012');
+            if (refreshedScroller) refreshedScroller.scrollTop = scrollTop;
+        }
+
+        document.getElementById('status-modal')?.addEventListener('click', event => {
+            if (event.target === event.currentTarget) collapseStatusPanel();
+        });
+        document.addEventListener('keydown', event => {
+            if (event.key === 'Escape' && document.getElementById('status-modal')?.style.display === 'block') collapseStatusPanel();
+            if ((event.key === 'Enter' || event.key === ' ') && event.target?.id === 'floating-menu-btn') {
+                event.preventDefault();
+                toggleStatusPanel();
+            }
+        });
+
         function getAdventureJournalSaveKeys() {
             return Object.keys(savesData).filter(id => savesData[id] && typeof savesData[id] === 'object' && !Array.isArray(savesData[id]))
                 .sort((a, b) => String(b).localeCompare(String(a)));
@@ -3154,13 +3229,26 @@ window.onerror = function(message, source, lineno, colno, error) {
                 const statusModal = document.getElementById('status-modal');
                 if (statusModal?.style.display === 'block') syncDomToCurrentScenario();
                 saveCurrentProgress();
-                if (statusModal) statusModal.style.display = 'none';
+                const host = document.getElementById('inline-journal-host');
+                const journalScreen = document.getElementById('journal-screen');
+                if (host && journalScreen) {
+                    host.appendChild(journalScreen);
+                    journalScreen.classList.add('journal-screen-embedded');
+                    journalScreen.style.display = 'flex';
+                    journalEmbedded = true;
+                    document.getElementById('status-page-log')?.classList.add('journal-inline-open');
+                    const toggleButton = document.getElementById('inline-journal-toggle-btn');
+                    if (toggleButton) toggleButton.textContent = '收起完整冒險日誌';
+                    const closeButton = document.getElementById('journal-close-btn');
+                    if (closeButton) closeButton.textContent = '收起';
+                }
+            } else {
+                ['setup-screen', 'edit-scenario-screen', 'save-menu-screen', 'game-container'].forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.style.display = 'none';
+                });
+                document.getElementById('journal-screen').style.display = 'flex';
             }
-            ['setup-screen', 'edit-scenario-screen', 'save-menu-screen', 'game-container'].forEach(id => {
-                const el = document.getElementById(id);
-                if (el) el.style.display = 'none';
-            });
-            document.getElementById('journal-screen').style.display = 'flex';
             const keys = getAdventureJournalSaveKeys();
             journalSelectedSaveId = (preferredSaveId && savesData[preferredSaveId])
                 ? String(preferredSaveId)
@@ -3171,12 +3259,29 @@ window.onerror = function(message, source, lineno, colno, error) {
             if (search) search.value = '';
             renderAdventureJournalSaveSelector();
             renderAdventureJournal();
-            window.scrollTo(0, 0);
+            if (!journalEmbedded) window.scrollTo(0, 0);
+        }
+
+        function toggleInlineAdventureJournal(preferredSaveId = '') {
+            if (journalEmbedded) closeAdventureJournal();
+            else openAdventureJournal(preferredSaveId);
         }
 
         function closeAdventureJournal() {
             document.getElementById('journal-edit-modal').style.display = 'none';
-            document.getElementById('journal-screen').style.display = 'none';
+            const journalScreen = document.getElementById('journal-screen');
+            journalScreen.style.display = 'none';
+            if (journalEmbedded) {
+                journalScreen.classList.remove('journal-screen-embedded');
+                document.getElementById('journal-screen-home')?.after(journalScreen);
+                journalEmbedded = false;
+                document.getElementById('status-page-log')?.classList.remove('journal-inline-open');
+                const toggleButton = document.getElementById('inline-journal-toggle-btn');
+                if (toggleButton) toggleButton.textContent = '開啟完整冒險日誌';
+                const closeButton = document.getElementById('journal-close-btn');
+                if (closeButton) closeButton.textContent = '返回';
+                return;
+            }
             if (journalReturnTarget === 'game' && currentSaveId) {
                 document.getElementById('game-container').style.display = 'flex';
                 updatePlayerInputPlaceholder();
@@ -3475,7 +3580,7 @@ window.onerror = function(message, source, lineno, colno, error) {
         }
 
         function backToSetup() { document.getElementById('save-menu-screen').style.display = 'none'; document.getElementById('setup-screen').style.display = 'flex'; }
-        function backToSaveMenu() { saveCurrentProgress(); document.getElementById('game-container').style.display = 'none'; document.getElementById('save-menu-screen').style.display = 'flex'; renderSaveList(); }
+        function backToSaveMenu() { saveCurrentProgress(); if (journalEmbedded) closeAdventureJournal(); setStatusPanelOpen(false); document.getElementById('game-container').style.display = 'none'; document.getElementById('save-menu-screen').style.display = 'flex'; renderSaveList(); }
 
         function renderSaveList() {
             const listDiv = document.getElementById('save-list');
@@ -5609,7 +5714,8 @@ ${currentScenario.scenarios?.[currentScenarioIndex]?.runtimeGuideRole ? `
 2. 直接依指令調整時間、空間、在場角色、事件先後或敘事焦點。
 3. NPC 不得聽見、質疑、責怪或對此產生好感變化。
 4. 若指令說玩家不在場，禁止讓玩家角色發言或被 NPC 當成衝突來源；若指令明確要求回歸，才安排合理登場。
-5. narrative 第一段必須呈現指令已生效的結果；options 提供符合新場景的後續方向。`;
+5. narrative 第一段必須呈現指令已生效的結果；options 提供符合新場景的後續方向。
+6. 若指令明確要求增減道具、Flags、HP、SAN、好感度或角色動態狀態，必須同步填入對應 JSON 欄位；若未要求，不得擅自變動。`;
             }
             if (context.mode === 'narrator') {
                 return `
@@ -5694,7 +5800,10 @@ ${rawAction}
                 const rawText = await requestAIText(fullPrompt, { kind: 'normal', maxTokens: profile.normalMaxTokens });
                 const parsedData = await parseAIJsonWithRepair(rawText, fullPrompt);
                 const inputContext = parseSceneInputContext(stripHardDiceDirective(latestPlayerAction));
-                const playerEffectsAllowed = inputContext.mode === 'character';
+                // 輔助旁白不可改動玩家；角色行動與最高權限的創作者指令都可寫入狀態欄位。
+                const playerEffectsAllowed = inputContext.mode !== 'narrator';
+                const affectionEffectsAllowed = inputContext.mode === 'character'
+                    || (inputContext.mode === 'creator' && /好感度|affection/i.test(inputContext.content));
                 const changes = parsedData.changes && typeof parsedData.changes === 'object' && !Array.isArray(parsedData.changes)
                     ? parsedData.changes
                     : {};
@@ -5721,7 +5830,7 @@ ${rawAction}
                 ];
                 
                 const manuallyHandledNpcIds = new Set(Array.isArray(manualAffectionNpcIds) ? manualAffectionNpcIds : []);
-                if (playerEffectsAllowed) {
+                if (affectionEffectsAllowed) {
                     applyAffectionPayload(changes.affection_set ?? parsedData.npc_love_set, 'set', manuallyHandledNpcIds);
                     applyAffectionPayload(changes.affection_change ?? parsedData.npc_love_change, 'change', manuallyHandledNpcIds);
                 }
@@ -5873,6 +5982,7 @@ ${rawAction}
                 }
                 
                 syncSurvivalFlags({ announce: true });
+                refreshOpenStatusPanel();
                 if (pendingSceneTransition) pendingSceneTransition = null;
                 saveCurrentProgress();
                 applyGameOverUi();
