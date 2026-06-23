@@ -1291,3 +1291,9 @@ input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 
                 grid-template-columns: 1fr;
             }
 }
+/* 手機版：新手教學第一段增加上方留白 */
+@media (max-width: 600px) {
+  .u-inline-018 {
+    padding-top: 18px;
+  }
+}
