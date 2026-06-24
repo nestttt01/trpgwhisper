@@ -2318,7 +2318,7 @@ window.onerror = function(message, source, lineno, colno, error) {
                     const nameValue = valueToText(document.getElementById(`scen-name-${index}`)?.value || scenario.name, `情境 ${index + 1}`);
                     const fullLoreValue = valueToText(document.getElementById(`scen-lore-${index}`)?.value || scenario.lore, '尚未填寫世界觀');
                     const loreValue = fullLoreValue.length > 72 ? `${fullLoreValue.slice(0, 72)}…` : fullLoreValue;
-                    button.innerHTML = `<span class="desktop-scenario-number">${index + 1}</span><span><strong>${escapeStatusHtml(nameValue)}</strong><small>${escapeStatusHtml(loreValue)}</small></span>`;
+                    button.innerHTML = `<span class="desktop-scenario-number">${index + 1}</span><span><strong data-no-i18n>${escapeStatusHtml(nameValue)}</strong><small data-no-i18n>${escapeStatusHtml(loreValue)}</small></span>`;
                     scenarioList.appendChild(button);
                 });
                 const addScenarioButton = document.createElement('button');
@@ -2421,7 +2421,7 @@ window.onerror = function(message, source, lineno, colno, error) {
                 if (index === forceOpenNpcIndex) details.open = true; 
                 
                 details.innerHTML = `
-                    <summary>NPC: <span id="npc-title-${index}">${escapeStatusHtml(npc.name || '新角色')}</span></summary>
+                    <summary>NPC: <span id="npc-title-${index}" data-no-i18n>${escapeStatusHtml(npc.name || '新角色')}</span></summary>
                     <div class="foldable-content">
                         <button class="delete-scen-btn" onclick="removeNpcBlock(${index})">刪除</button>
                         <div class="avatar-setup-area u-inline-060">
@@ -2471,7 +2471,7 @@ window.onerror = function(message, source, lineno, colno, error) {
                 if (index === forceOpenScenIndex) details.open = true;
 
                 details.innerHTML = `
-                    <summary>情境: <span id="scen-title-${index}">${escapeStatusHtml(scen.name || '未命名')}</span></summary>
+                    <summary>情境: <span id="scen-title-${index}" data-no-i18n>${escapeStatusHtml(scen.name || '未命名')}</span></summary>
                     <div class="foldable-content">
                         <button class="delete-scen-btn" onclick="removeScenarioBlock(${index})">刪除</button>
                         <div class="scenario-label">情境名稱</div>
@@ -3219,7 +3219,7 @@ window.onerror = function(message, source, lineno, colno, error) {
                 <details class="dark-card">
                     <summary>
                         <div class="summary-left">
-                            <span class="summary-name">${escapeStatusHtml(n.name)}${npcDead ? `<span class="npc-dead-badge">${getNpcDeathBadgeText(n)}</span>` : ''}</span>
+                            <span class="summary-name"><span class="npc-summary-user-name" data-no-i18n>${escapeStatusHtml(n.name)}</span>${npcDead ? `<span class="npc-dead-badge">${getNpcDeathBadgeText(n)}</span>` : ''}</span>
                             <span class="summary-tag">♥好感: ${aff}</span>
                             ${nDynamicPreview ? `<span class="dynamic-state-preview" title="${escapeStatusHtml(nDynamicPreview)}">${escapeStatusHtml(nDynamicPreview)}</span>` : ''}
                         </div>
@@ -3229,7 +3229,7 @@ window.onerror = function(message, source, lineno, colno, error) {
                             <button class="delete-btn-red" onclick="modalDeleteNpc(${idx}); event.stopPropagation();">刪除</button>
                         </div>
                         <div class="anime-sheet u-inline-075">
-                            <div class="full"><label>角色名稱</label><input type="text" id="edit-n-name-${idx}" value="${escapeStatusHtml(n.name)}" oninput="this.closest('details').querySelector('.summary-name').innerText = this.value || '未命名';"></div>
+                            <div class="full"><label>角色名稱</label><input type="text" id="edit-n-name-${idx}" value="${escapeStatusHtml(n.name)}" oninput="this.closest('details').querySelector('.npc-summary-user-name').innerText = this.value || '未命名';"></div>
                             <div><label>目前好感度${npcDead ? '（死亡後停止）' : ''}</label><input type="number" id="edit-n-aff-${idx}" min="-100" max="100" value="${clampAffectionValue(n.affection, 0)}" ${npcDead ? 'disabled' : ''}></div>
                             <div><label>年齡 / 身高 / 體型</label><input type="text" id="edit-n-age-${idx}" value="${escapeStatusHtml(nDet.age)}"></div>
                             <div><label>說話習慣 / 語氣</label><input type="text" id="edit-n-speech-${idx}" value="${escapeStatusHtml(nDet.speech)}"></div>
@@ -5274,6 +5274,10 @@ ${transitionRule}`;
         function getLocalModeSwitchType(text) {
             const command = normalizeModeSwitchCommandText(text);
             if (!command) return '';
+            if (/^(?:switch\s+(?:to\s+)?)?(?:narrator|narrator\s+mode)$/i.test(command)) return 'narrator';
+            if (/^(?:switch\s+(?:to\s+)?)?(?:player|player\s+mode)$/i.test(command)) return 'player';
+            if (/^(?:ナレーター(?:に|へ)?切替|ナレーター(?:に|へ)?切り替え|ナレーターモード)$/.test(command)) return 'narrator';
+            if (/^(?:プレイヤー(?:に|へ)?切替|プレイヤー(?:に|へ)?切り替え|プレイヤーモード)$/.test(command)) return 'player';
             if (/^(?:切換|切到|切成|改成|改為|轉成|轉換為)?\s*(?:輔助旁白|旁白模式|輔助旁白模式|旁白|導演模式|創作者視角)$/.test(command)) return 'narrator';
             if (/^(?:切回|切換為|切換|回到|恢復|改回|轉回)?\s*(?:玩家|玩家模式|角色行動|角色行動模式)$/.test(command)) return 'player';
             if (/^(?:玩家登入|玩家回來|玩家回歸|玩家登場|玩家上線|恢復玩家模式|回到玩家模式|恢復角色行動|普通輸入恢復角色行動)$/.test(command)) return 'player';

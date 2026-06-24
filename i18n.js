@@ -20,16 +20,25 @@
         '另存新配置': ['Save as New', '別名で保存'],
         '儲存並返回': ['Save & Return', '保存して戻る'], '儲存': ['Save', '保存'],
         '狀態': ['Status', 'ステータス'], '紀錄': ['Log', '記録'], '設定': ['Settings', '設定'],
+        '情境': ['Scene', 'シーン'], '當前': ['Current', '現在'], 'NPC 好感摘要': ['NPC Affection', 'NPC好感度'], '尚未設定 NPC。': ['No NPCs yet.', 'NPCはまだいません。'],
         '狀態旗標 / Flags': ['Status Flags', '状態フラグ'],
         'AI 會依據這些狀態銜接劇情、Buff/Debuff 與長期影響。': ['AI uses these states to continue the story, buffs/debuffs, and long-term effects.', 'AIはこれらの状態を参照して物語、バフ／デバフ、長期的な影響をつなげます。'],
         '加入': ['Add', '追加'], '玩家道具': ['Player Items', 'プレイヤー所持品'],
         '目前持有、失去或劇情產生的重要物品。': ['Important items currently held, lost, or created by the story.', '現在所持・紛失、または物語で生まれた重要アイテムです。'],
-        '介面語言': ['Display Language', '表示言語'], '輸出語言': ['Output Language', '出力言語'],
+        '介面語言': ['Display Language', '表示言語'], '輸出語言': ['Output Language', '出力言語'], '繁體中文': ['Traditional Chinese', '繁体字中国語'],
         '日文台詞 + 繁中翻譯': ['Japanese dialogue + Traditional Chinese translation', '日本語台詞＋繁体字中国語訳'],
         '英文台詞 + 繁中翻譯': ['English dialogue + Traditional Chinese translation', '英語台詞＋繁体字中国語訳'],
         '自動依玩家語言': ['Auto-detect player language', 'プレイヤー言語を自動判定'],
         '詳細設定': ['Details', '詳細'],
         '玩家、NPC 與情境的詳細欄位集中在這裡。跑團中只想看摘要時，回到「狀態」頁即可。': ['Detailed player, NPC, and scenario fields are here. Return to Status when you only need a summary.', 'プレイヤー、NPC、シナリオの詳細項目はこちらです。要約だけを見る場合は「ステータス」に戻ってください。'],
+        '編輯玩家細節設定': ['Edit Player Details', 'プレイヤー詳細を編集'],
+        '登場 NPC 管理': ['Manage NPCs', 'NPC管理'], '情境空間管理': ['Manage Scenes', 'シーン管理'],
+        '角色名稱': ['Character Name', 'キャラクター名'], '目前好感度': ['Current Affection', '現在の好感度'], '目前好感度（死亡後停止）': ['Current Affection (locked after death)', '現在の好感度（死亡後は固定）'],
+        '已死亡': ['Deceased', '死亡'], '已死亡・復活失敗': ['Deceased · Revival Failed', '死亡・復活失敗'],
+        '動態狀態': ['Dynamic Status', '動的ステータス'], '當前情緒': ['Current Mood', '現在の気分'],
+        '身體／外觀狀態': ['Physical / Appearance', '身体／外見の状態'], '此刻對玩家／隊伍的個人態度': ['Current Attitude to Player / Party', 'プレイヤー／仲間への現在の態度'],
+        '當前目標': ['Current Goal', '現在の目標'], '角色專屬約定／秘密（完整保留；每行一個短標題）': ['Character Promises / Secrets (one short title per line)', 'キャラクター固有の約束／秘密（1行に短い見出し1件）'],
+        'AI 重要紀錄追加已暫停；仍可手動修改': ['Automatic memory updates are paused; manual edits are still available.', '重要記録の自動追加は一時停止中です。手動編集は可能です。'],
         '讀取摘要': ['Story Summary', '参照サマリー'],
         '每回合會自動更新重點、任務與關係；完整冒險紀錄仍保留在下方，不會自動刪除。': ['Story highlights, tasks, and relationships update each turn. The full adventure log remains below and is never deleted automatically.', '各ターンで重要事項、タスク、関係が更新されます。冒険記録は下に残り、自動削除されません。'],
         '整理摘要': ['Organize Summary', 'サマリーを整理'], '開啟完整冒險日誌': ['Show Full Log', '全ログを表示'],
@@ -56,7 +65,9 @@
         '進入遊戲後，直接在下方輸入角色想說的話或想做的事。你也可以點選 AI 提供的選項。若行動具有風險，可以使用骰子按鈕進行 D20 判定；系統會依角色能力、難度與骰點決定成功或失敗。NPC 只有在劇情明確確認時才會死亡；標準模式可由劇情或「神」復活，困難模式每次死亡只有一次復活檢定，極限模式則永久死亡。': ['Type what your character says or does, or choose an AI suggestion. Risky actions can use a D20 check based on ability, difficulty, and roll. NPC death requires explicit story confirmation; revival rules depend on game difficulty.', 'キャラクターの台詞や行動を入力するか、AIの選択肢を選びます。危険な行動は能力、難易度、出目によるD20判定が可能です。NPCの死亡は物語上の明確な確定が必要で、復活ルールは難易度で変わります。'],
         '5. 玩家、旁白與「神」模式': ['5. Player, Narrator & Creator Mode', '5. プレイヤー、ナレーター、「神」モード'],
         '一般輸入會被視為玩家角色的行動。輸入': ['Normal input is treated as the player character’s action. Enter', '通常入力はプレイヤーキャラクターの行動として扱われます。'],
+        '［切換旁白］': ['[Switch to Narrator]', '［ナレーターに切替］'],
         '可以改用場外視角安排環境、鏡頭與 NPC 行動；輸入': ['switches to an outside perspective for environments, camera, and NPC actions; enter', 'で場外視点から環境、カメラ、NPC行動を指定できます。'],
+        '［切換玩家］': ['[Switch to Player]', '［プレイヤーに切替］'],
         '就能回到玩家角色。「神」按鈕則是創作者模式，可以直接調整場景、時間、人物或事件。神模式的內容不會被 NPC 當成玩家說出口的話。': ['to return to the player character. The Creator button directly adjusts scenes, time, people, or events; NPCs will not treat those instructions as spoken dialogue.', 'でプレイヤーに戻ります。「神」ボタンは場面、時間、人物、出来事を直接調整する作者モードで、NPCはその内容をプレイヤーの発言として扱いません。'],
         '6. 角色面板與冒險日誌': ['6. Character Panel & Adventure Log', '6. キャラクターパネルと冒険日誌'],
         '角色面板可以查看與修改玩家狀態、NPC、道具、Flags、任務、劇情摘要及角色關係；AI 每回合會參考這些重點資料來延續故事。面板內的冒險日誌只顯示目前這份遊戲紀錄，完整事件可以搜尋、分頁、編輯或整理，不會因摘要更新而自動消失。桌機版按「儲存」後面板會保持開啟，可點側邊標籤收回；手機版則使用「儲存並返回」。': ['View and edit player status, NPCs, items, flags, tasks, summaries, and relationships. The embedded adventure log belongs only to the current save. On desktop, Save keeps the panel open; use the side tab to collapse it. Mobile uses Save & Return.', 'プレイヤー状態、NPC、アイテム、フラグ、タスク、要約、関係を確認・編集できます。パネル内の日誌は現在のセーブ専用です。PC版では保存後も開いたままで、サイドタブから閉じられます。スマホ版は「保存して戻る」を使います。'],
@@ -89,7 +100,7 @@
         '請選擇 Google Gemini 或 OpenRouter，貼上對應的 API Key 並完成驗證。金鑰不會包含在匯出備份中；共用裝置請勿開啟保存功能。': ['Choose Google Gemini or OpenRouter, paste the matching API key, and verify it. Keys are excluded from exports; do not save them on shared devices.', 'Google GeminiまたはOpenRouterを選び、対応するAPIキーを貼り付けて認証します。キーはバックアップに含まれません。共有端末では保存しないでください。'],
         '查看 API 詳細說明與模型選擇': ['API & Model Help', 'API・モデルのヘルプ'],
         '驗證成功。請選擇大腦核心：': ['Verified. Choose a model:', '確認完了。モデルを選択：'],
-        '劇本創角': ['Character Setup', 'キャラクター設定'], '進入存檔選單': ['Saves', 'セーブ'],
+        '劇本創角': ['Character Setup', 'キャラクター'], '進入存檔選單': ['Saves', 'セーブ'],
         '冒險日誌': ['Adventure Log', '冒険日誌'], '閱讀遊戲玩法與系統指南': ['Game Guide', 'ゲームガイド'],
         '清除設備所有資料': ['Delete Local Data', 'ローカルデータを削除'],
         '外觀配色': ['Theme', 'テーマ'], '背景': ['Background', '背景'], '面板': ['Panel', 'パネル'],
@@ -112,15 +123,22 @@
         '💀 找守墓人洗點': ['💀 Respec', '💀 振り直す'],
         'STR 力量': ['STR Strength', 'STR 筋力'], 'DEX 敏捷': ['DEX Dexterity', 'DEX 敏捷'], 'CON 體質': ['CON Constitution', 'CON 体質'],
         'INT 智力': ['INT Intelligence', 'INT 知力'], 'WIS 感知': ['WIS Wisdom', 'WIS 感知'], 'CHA 魅力': ['CHA Charisma', 'CHA 魅力'],
-        '詳細人物設定': ['Character Details', 'キャラクター詳細'], '年齡 / 身高 / 體型': ['Age / Height / Build', '年齢／身長／体格'],
+        '詳細人物設定': ['Character Details', 'キャラクター詳細'], '核心性格 / 背景故事': ['Core Personality / Background', '性格／背景'], '年齡 / 身高 / 體型': ['Age / Height / Build', '年齢／身長／体格'],
         '說話習慣 / 語氣': ['Speech Style / Tone', '話し方／口調'], '喜歡的事物': ['Likes', '好きなもの'], '討厭的事物': ['Dislikes', '嫌いなもの'],
         '外貌特徵 / 常見穿搭': ['Appearance / Usual Outfit', '外見／普段の服装'], '核心性格 / 背景故事 (專長等)': ['Core Personality / Background', '性格／背景（特技など）'],
         '登場 NPC 列表': ['NPC List', '登場NPC一覧'], '+ 新增 NPC': ['+ Add NPC', '+ NPC追加'], '動態情境列表': ['Scenario List', 'シナリオ一覧'],
+        'NPC 名稱': ['NPC Name', 'NPC名'], '開局好感': ['Starting Affection', '初期好感度'], 'NPC:': ['NPC:', 'NPC：'], '情境:': ['Scenario:', 'シナリオ：'],
+        '情境名稱': ['Scenario Name', 'シナリオ名'], '該情境下的物理法則與世界觀': ['World Rules & Setting', 'このシナリオの世界観とルール'],
+        'NPC 們在此情境下的總體身分/狀態': ['NPC Roles / Status', 'このシナリオでのNPCの役割／状態'], '玩家在此的專屬身份/狀態': ['Player Role / Status', 'このシナリオでのプレイヤーの役割／状態'],
+        '玩家在此的身分/狀態': ['Player Role / Status', 'プレイヤーの役割／状態'], '新增情境': ['Add Scenario', 'シナリオ追加'], '建立新的世界或場景': ['Create a new world or scene', '新しい世界や場面を作成'],
         '+ 新增情境': ['+ Add Scenario', '+ シナリオ追加'], '儲存變更': ['Save', '保存'], '另存新檔': ['Save as New', '別名で保存'], '返回選單': ['Back to Menu', 'メニューへ戻る'],
         '隨機生成': ['Randomize', 'ランダム生成'], '偏好關鍵字（可留空，AI 會自由發揮）': ['Preferences (optional)', '希望キーワード（任意）'],
         '開始生成': ['Generate', '生成'], '生成中…': ['Generating…', '生成中…'], '重新生成': ['Regenerate', '再生成'],
         '套用到表單': ['Apply', '適用'], 'AI 正在建立設定…': ['Creating preset…', '設定を作成中…'],
         '選擇記憶紀錄': ['Select Save', 'セーブを選択'], '本機資料狀態': ['Storage', 'ストレージ'], '重新計算': ['Refresh', '更新'],
+        '今日呼叫': ['Today', '今日の呼び出し'], '本月呼叫': ['This Month', '今月の呼び出し'], 'JSON 修復': ['JSON Repairs', 'JSON修復'], '總呼叫': ['Total', '合計'],
+        '模型使用次數': ['Model Usage', 'モデル使用回数'], '尚未有模型使用紀錄。': ['No model usage yet.', 'モデル使用履歴はまだありません。'],
+        '尚未選擇': ['Not selected', '未選択'], '尚未使用': ['Not used yet', '未使用'], '實際費用仍以 OpenRouter / Google 後台為準。': ['Check OpenRouter / Google for actual costs.', '実際の料金はOpenRouter／Googleで確認してください。'], '重設統計': ['Reset Stats', '統計をリセット'],
         '正在計算瀏覽器儲存空間…': ['Calculating storage…', '容量を計算中…'], '尚未確認備份狀態。': ['Backup not checked.', 'バックアップ未確認'],
         '創建新紀錄': ['New Save', '新規セーブ'], '匯出': ['Export', 'エクスポート'], '匯入': ['Import', 'インポート'], '返回大廳': ['Home', 'ホーム'],
         '整理重複事件': ['Merge Duplicates', '重複を統合'], '↶ 復原上次整理': ['↶ Undo Merge', '↶ 統合を元に戻す'], '跳到最新': ['Latest', '最新へ'],
@@ -188,7 +206,8 @@
         '極限模式的死亡永久成立，無法嘗試復活。': ['Death is permanent in Nightmare mode.', '極限モードでは死亡は永続し、復活できません。'],
         '這名 NPC 的復活檢定已經失敗，不能再次嘗試。': ['This NPC already failed their revival check.', 'このNPCは復活判定に失敗しており、再挑戦できません。'],
         '困難模式不能由「神」直接復活；必須以角色行動進行一次復活檢定。': ['Hard mode requires a character action and revival check; Creator mode cannot revive directly.', 'ハードモードではキャラクター行動による復活判定が必要です。「神」で直接復活できません。'],
-        '困難模式的復活必須檢定。請按「擲骰」，成功才能復活；失敗後將永久無法再嘗試。': ['Hard mode revival requires a roll. Success revives; failure is permanent.', 'ハードモードの復活には判定が必要です。成功で復活、失敗すると再挑戦できません。']
+        '困難模式的復活必須檢定。請按「擲骰」，成功才能復活；失敗後將永久無法再嘗試。': ['Hard mode revival requires a roll. Success revives; failure is permanent.', 'ハードモードの復活には判定が必要です。成功で復活、失敗すると再挑戦できません。'],
+        '確定要清除本機 API 使用統計嗎？遊戲存檔不會被刪除。': ['Reset local API usage stats? Game saves will not be deleted.', 'ローカルのAPI使用統計をリセットしますか？セーブデータは削除されません。']
     };
 
     const reverse = { en: new Map(), ja: new Map() };
@@ -198,6 +217,7 @@
     const systemReverse = { en: new Map(), ja: new Map() };
     Object.entries(SYSTEM_M).forEach(([zh, values]) => { systemReverse.en.set(values[0], zh); systemReverse.ja.set(values[1], zh); });
     const textKeys = new WeakMap();
+    const dynamicTextKeys = new WeakMap();
     const attrKeys = new WeakMap();
     let currentLanguage = normalizeLanguage(localStorage.getItem(UI_LANGUAGE_STORAGE_KEY));
     let observer = null;
@@ -222,7 +242,7 @@
 
     function shouldSkipNode(node) {
         const parent = node.parentElement;
-        return !parent || Boolean(parent.closest('script, style, code, [data-no-i18n], #dialogue-box, .journal-entry-text, .save-title, .msg-text, .msg-narrative, .desktop-npc-avatar-button > span:last-child, #desktop-player-name, .summary-name, .npc-summary-name'));
+        return !parent || Boolean(parent.closest('script, style, [data-no-i18n], #dialogue-box, .journal-entry-text, .save-title, .msg-text, .msg-narrative, .desktop-npc-avatar-button > span:last-child, #desktop-player-name, .npc-summary-name'));
     }
 
     function translateDynamic(value, locale) {
@@ -232,7 +252,26 @@
             [/^最後遊玩：(.*)$/, a => locale === 'en' ? `Last played: ${a[1]}` : locale === 'ja' ? `最終プレイ：${a[1]}` : a[0]],
             [/^代表NPC:\s*(.*?)\s*\|\s*玩家:\s*(.*)$/, a => locale === 'en' ? `Featured NPC: ${a[1]} | Player: ${a[2]}` : locale === 'ja' ? `代表NPC：${a[1]}｜プレイヤー：${a[2]}` : a[0]],
             [/^配置：(.*)$/, a => locale === 'en' ? `Preset: ${a[1]}` : locale === 'ja' ? `設定：${a[1]}` : a[0]],
-            [/^情境\s*(\d+)：(.*)$/, a => locale === 'en' ? `Scenario ${a[1]}: ${a[2]}` : locale === 'ja' ? `シナリオ ${a[1]}：${a[2]}` : a[0]]
+            [/^情境\s*(\d+)：(.*)$/, a => locale === 'en' ? `Scenario ${a[1]}: ${a[2]}` : locale === 'ja' ? `シナリオ ${a[1]}：${a[2]}` : a[0]],
+            [/^玩家：(.+)$/, a => locale === 'en' ? `Player: ${a[1]}` : locale === 'ja' ? `プレイヤー：${a[1]}` : a[0]],
+            [/^目前：(.*)$/, a => locale === 'en' ? `Current: ${a[1]}` : locale === 'ja' ? `現在：${a[1]}` : a[0]],
+            [/^情境：(.*)$/, a => locale === 'en' ? `Scenario: ${a[1]}` : locale === 'ja' ? `シナリオ：${a[1]}` : a[0]],
+            [/^♥好感:\s*(-?\d+)$/, a => locale === 'en' ? `♥ Affection: ${a[1]}` : locale === 'ja' ? `♥ 好感度：${a[1]}` : a[0]],
+            [/^\[力量STR:\s*(.*?)\]$/, a => locale === 'en' ? `[STR Strength: ${a[1]}]` : locale === 'ja' ? `[STR 筋力：${a[1]}]` : a[0]],
+            [/^\[敏捷DEX:\s*(.*?)\]$/, a => locale === 'en' ? `[DEX Dexterity: ${a[1]}]` : locale === 'ja' ? `[DEX 敏捷：${a[1]}]` : a[0]],
+            [/^\[體質CON:\s*(.*?)\]$/, a => locale === 'en' ? `[CON Constitution: ${a[1]}]` : locale === 'ja' ? `[CON 体質：${a[1]}]` : a[0]],
+            [/^\[智力INT:\s*(.*?)\]$/, a => locale === 'en' ? `[INT Intelligence: ${a[1]}]` : locale === 'ja' ? `[INT 知力：${a[1]}]` : a[0]],
+            [/^\[感知WIS:\s*(.*?)\]$/, a => locale === 'en' ? `[WIS Wisdom: ${a[1]}]` : locale === 'ja' ? `[WIS 感知：${a[1]}]` : a[0]],
+            [/^\[魅力CHA:\s*(.*?)\]$/, a => locale === 'en' ? `[CHA Charisma: ${a[1]}]` : locale === 'ja' ? `[CHA 魅力：${a[1]}]` : a[0]],
+            [/^只有重大約定／秘密才會追加；AI 每回合讀最近\s*(\d+)\s*筆$/, a => locale === 'en' ? `Only major promises or secrets are added; the latest ${a[1]} are used each turn.` : locale === 'ja' ? `重要な約束や秘密のみ追加され、各ターンで最新${a[1]}件を参照します。` : a[0]],
+            [/^查看／編輯全部\s*(\d+)\s*筆紀錄$/, a => locale === 'en' ? `View / Edit All ${a[1]} Notes` : locale === 'ja' ? `${a[1]}件すべて表示／編集` : a[0]],
+            [/^最近更新：(.*)$/, a => locale === 'en' ? `Last updated: ${a[1]}` : locale === 'ja' ? `最終更新：${a[1]}` : a[0]],
+            [/^(\d+)\s*\/\s*修復\s*(\d+)$/, a => locale === 'en' ? `${a[1]} / Repairs ${a[2]}` : locale === 'ja' ? `${a[1]}／修復 ${a[2]}` : a[0]],
+            [/^目前供應商：(.*)$/, a => locale === 'en' ? `Provider: ${a[1]}` : locale === 'ja' ? `プロバイダー：${a[1]}` : a[0]],
+            [/^目前模型：(.*)$/, a => locale === 'en' ? `Model: ${a[1]}` : locale === 'ja' ? `モデル：${a[1]}` : a[0]],
+            [/^最後使用：(.*)$/, a => locale === 'en' ? `Last used: ${a[1]}` : locale === 'ja' ? `最終使用：${a[1]}` : a[0]],
+            [/^已保存\s*(\d+)\s*\/\s*(\d+)\s*個 Flags；目前全部都會提供給 AI。$/, a => locale === 'en' ? `${a[1]} / ${a[2]} flags saved; all are currently shared with AI.` : locale === 'ja' ? `${a[1]}／${a[2]}件のフラグを保存中。現在はすべてAIに共有されます。` : a[0]],
+            [/^已保存\s*(\d+)\s*個 Flags；AI 每回合優先讀取\s*(\d+)\s*個（含生存狀態、最早重要項目與最近項目），其餘仍完整保留。$/, a => locale === 'en' ? `${a[1]} flags saved; AI prioritizes ${a[2]} each turn and keeps the rest.` : locale === 'ja' ? `${a[1]}件のフラグを保存中。各ターンで${a[2]}件を優先し、残りも保持されます。` : a[0]]
         ];
         for (const [pattern, format] of rules) {
             const match = value.match(pattern);
@@ -273,8 +312,20 @@
             if (trimmed !== next) node.nodeValue = raw.replace(trimmed, next);
             return;
         }
-        const nextDynamic = translateDynamic(trimmed, currentLanguage);
-        if (nextDynamic !== trimmed) node.nodeValue = raw.replace(trimmed, nextDynamic);
+        let dynamicSource = dynamicTextKeys.get(node);
+        if (dynamicSource) {
+            const knownVariants = [dynamicSource, translateDynamic(dynamicSource, 'en'), translateDynamic(dynamicSource, 'ja')];
+            if (!knownVariants.includes(trimmed)) {
+                dynamicTextKeys.delete(node);
+                dynamicSource = '';
+            }
+        }
+        dynamicSource ||= trimmed;
+        const nextDynamic = translateDynamic(dynamicSource, currentLanguage);
+        if (nextDynamic !== dynamicSource || dynamicTextKeys.has(node)) {
+            if (!dynamicTextKeys.has(node)) dynamicTextKeys.set(node, dynamicSource);
+            if (nextDynamic !== trimmed) node.nodeValue = raw.replace(trimmed, nextDynamic);
+        }
     }
 
     function translateAttributes(element) {
