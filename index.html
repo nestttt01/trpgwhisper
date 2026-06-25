@@ -506,10 +506,11 @@
                             </label>
                         </div>
                         <p class="desktop-game-difficulty-note">困難模式：檢定 DC +2，NPC 每次死亡只有一次復活檢定。極限模式：檢定 DC +4，歸零必定 Game Over，NPC 死亡後無法復活。</p>
-                        <div class="desktop-game-management-actions">
-                            <button type="button" onclick="saveAsNewPreset()">另存新配置</button>
-                            <button type="button" onclick="restoreDefaultPreset()">清空欄位</button>
-                            <button type="button" class="danger" onclick="deleteCurrentPreset()">刪除配置</button>
+ <div class="desktop-game-management-actions">
+ <button type="button" onclick="saveAsNewPreset()">另存新配置</button>
+ <button type="button" onclick="exportCurrentPreset()">匯出目前配置</button>
+ <button type="button" onclick="restoreDefaultPreset()">清空欄位</button>
+ <button type="button" class="danger" onclick="deleteCurrentPreset()">刪除配置</button>
                         </div>
                         <p class="desktop-game-autosave-note">角色與情境的修改會保留，返回大廳時自動儲存目前配置。</p>
                     </div>
@@ -545,8 +546,8 @@
                         <input type="file" id="upload-player" accept="image/*" onchange="triggerCrop(this, 'player')" hidden class="hidden-file-input">
                     </div>
                 </div>
-                <div class="scenario-label">玩家名稱</div>
-                <input type="text" id="input-player-name" class="scenario-input" oninput="syncDesktopCharacterNameWidth(this); renderDesktopPresetOverview()">
+<div class="scenario-label">玩家名稱</div>
+<input type="text" id="input-player-name" class="scenario-input" oninput="syncDesktopCharacterNameWidth(this); renderDesktopPresetOverview()">
                 
                 <div class="u-inline-039">
                     <div class="scenario-label u-inline-040">基礎六圍屬性</div>
@@ -573,8 +574,8 @@
                             <div><label>說話習慣 / 語氣</label><input type="text" id="p-speech"></div>
                             <div><label>喜歡的事物</label><input type="text" id="p-likes"></div>
                             <div><label>討厭的事物</label><input type="text" id="p-dislikes"></div>
-                            <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="p-app" rows="1" oninput="autoResize(this)"></textarea></div>
-                            <div class="full"><label>核心性格 / 背景故事 (專長等)</label><textarea id="p-bg" rows="1" oninput="autoResize(this)"></textarea></div>
+ <div class="full"><label>外貌特徵 / 常見穿搭</label><textarea id="p-app" rows="1" oninput="autoResize(this)"></textarea></div>
+ <div class="full"><label>核心性格 / 背景故事 (專長等)</label><textarea id="p-bg" rows="1" oninput="autoResize(this)"></textarea></div>
                         </div>
                     </div>
                 </details>
@@ -631,6 +632,7 @@
         <div class="action-buttons u-inline-051">
             <button class="btn u-inline-052" onclick="saveCurrentPreset()">儲存變更</button>
             <button class="btn" onclick="saveAsNewPreset()">另存新檔</button>
+            <button class="btn" onclick="exportCurrentPreset()">匯出目前配置</button>
         </div>
         <div class="action-buttons u-inline-053">
             <button class="btn u-inline-054" onclick="cancelEdit()">返回選單</button>
@@ -653,10 +655,11 @@
         </div>
     </div>
 
-    <div id="save-menu-screen-home" hidden></div>
-    <div id="save-menu-screen">
-        <h2>選擇記憶紀錄</h2>
-        <div id="save-list"></div>
+<div id="save-menu-screen-home" hidden></div>
+<div id="save-menu-screen">
+<h2>選擇記憶紀錄</h2>
+<p id="setup-current-preset" class="setup-current-preset setup-current-preset-save">目前配置：<span id="setup-current-preset-name">未命名配置</span></p>
+<div id="save-list"></div>
         <div id="storage-health-card" class="storage-health-card">
             <div class="storage-health-head"><strong>本機資料狀態</strong><button type="button" onclick="updateStorageHealthDisplay()">重新計算</button></div>
             <p id="storage-usage-text">正在計算瀏覽器儲存空間…</p>
