@@ -238,15 +238,9 @@ let editScenarioDirty = false;
 let apiUsageStats = {};
 let lastPromptDiagnostics = {};
 
-        window.addEventListener('ui-language-change', event => {
-            const locale = event.detail?.locale || (window.getUiLanguage ? getUiLanguage() : 'zh-TW');
-            updateSetupCurrentPresetLabel();
-            const gameVisible = document.getElementById('game-container')?.style.display === 'flex';
-            if (!gameVisible || !currentSaveId || !savesData[currentSaveId]) return;
-            savesData[currentSaveId].uiLocale = locale;
-            if (currentScenario && typeof currentScenario === 'object') currentScenario.uiLocale = locale;
-            scheduleActiveGameSave(80);
-        });
+window.addEventListener('ui-language-change', () => {
+ updateSetupCurrentPresetLabel();
+});
 
         const UI_THEME_STORAGE_KEY = 'sanko_ui_theme_v1';
         const LAST_BACKUP_STORAGE_KEY = 'sanko_last_backup_at_v1';
@@ -806,8 +800,9 @@ dialogue: '--accent-gray'
                     document.getElementById('api-key').value = savedKey;
                     document.getElementById('delete-key-btn').style.display = 'inline-block';
             }
-            selectedModel = localStorage.getItem(getModelStorageKey(apiProvider)) || '';
-            setHomeModelAreaVisible(selectedModel && apiKey);
+selectedModel = localStorage.getItem(getModelStorageKey(apiProvider)) || '';
+setHomeModelAreaVisible(selectedModel && apiKey);
+ensureGameModelSelectReady();
 
             const savedPic = await readPersistentValue('sanko_home_pic', '');
                 if (savedPic) { document.getElementById('setup-pic').src = savedPic; }
@@ -2318,17 +2313,104 @@ currentOpenTasks = serializeTaskChecklist(tasks);
             document.getElementById('model-choice').innerHTML = '';
             document.getElementById('game-model-choice').innerHTML = '';
             setHomeModelAreaVisible(selectedModel && apiKey);
-            document.getElementById('verify-btn').style.display = 'inline-block';
-            document.getElementById('verify-btn').disabled = false;
-            document.getElementById('verify-btn').innerText = '驗證金鑰';
-            document.getElementById('delete-key-btn').style.display = apiKey ? 'inline-block' : 'none';
-        }
+ document.getElementById('verify-btn').style.display = 'inline-block';
+ document.getElementById('verify-btn').disabled = false;
+ document.getElementById('verify-btn').innerText = '驗證金鑰';
+ document.getElementById('delete-key-btn').style.display = apiKey ? 'inline-block' : 'none';
+ ensureGameModelSelectReady();
+}
 
-        function syncModelSelection(modelName) {
-            if(!modelName) return; selectedModel = modelName;
-            localStorage.setItem(getModelStorageKey(apiProvider), modelName);
-            document.getElementById('model-choice').value = modelName; document.getElementById('game-model-choice').value = modelName;
-        }
+function syncModelSelection(modelName) {
+if (modelName === '__load_models__') {
+ fetchAvailableModelsFromGame();
+ return;
+}
+if(!modelName) {
+ ensureGameModelSelectReady();
+ return;
+}
+selectedModel = modelName;
+localStorage.setItem(getModelStorageKey(apiProvider), modelName);
+setSelectValueWithFallback(document.getElementById('model-choice'), modelName);
+setSelectValueWithFallback(document.getElementById('game-model-choice'), modelName);
+renderApiUsageStats();
+}
+
+function setSelectValueWithFallback(select, value, label = '') {
+ if (!select || !value) return;
+ if (!Array.from(select.options).some(option => option.value === value)) {
+ const opt = document.createElement('option');
+ opt.value = value;
+ opt.textContent = label || value.replace(/^models\//, '');
+ select.appendChild(opt);
+ }
+ select.value = value;
+}
+
+function ensureGameModelSelectReady() {
+ const gameSelect = document.getElementById('game-model-choice');
+ if (!gameSelect) return;
+ const storedModel = localStorage.getItem(getModelStorageKey(apiProvider)) || selectedModel || '';
+ const hasRealModel = Array.from(gameSelect.options).some(option => option.value && option.value !== '__load_models__');
+ if (!hasRealModel) {
+  gameSelect.innerHTML = '';
+  if (storedModel) {
+   setSelectValueWithFallback(gameSelect, storedModel);
+  } else {
+   const placeholderOpt = document.createElement('option');
+   placeholderOpt.value = '';
+   placeholderOpt.textContent = '選擇模型';
+   gameSelect.appendChild(placeholderOpt);
+  }
+  const loadOpt = document.createElement('option');
+  loadOpt.value = '__load_models__';
+  loadOpt.textContent = storedModel ? '載入其他模型...' : '載入模型...';
+ gameSelect.appendChild(loadOpt);
+ gameSelect.value = storedModel || '';
+ } else if (storedModel) {
+ setSelectValueWithFallback(gameSelect, storedModel);
+ }
+}
+
+async function fetchAvailableModelsFromGame() {
+ const gameSelect = document.getElementById('game-model-choice');
+ const providerSelect = document.getElementById('api-provider');
+ const keyInput = document.getElementById('api-key');
+ apiProvider = providerSelect?.value || localStorage.getItem('sanko_api_provider') || apiProvider || 'google';
+ let key = keyInput?.value.trim() || getStoredApiKey(apiProvider);
+ if (!key) {
+ const providerName = apiProvider === 'openrouter' ? 'OpenRouter' : 'Google Gemini';
+ const input = prompt(`請貼上 ${providerName} API Key 來載入模型：`, '');
+ if (input === null) {
+ ensureGameModelSelectReady();
+ return;
+ }
+ key = input.trim();
+ if (!key) {
+ alert('需要 API Key 才能載入模型。');
+ ensureGameModelSelectReady();
+ return;
+ }
+ if (keyInput) keyInput.value = key;
+ }
+ apiKey = key;
+ sessionApiKeys[apiProvider] = key;
+ localStorage.setItem('sanko_api_provider', apiProvider);
+ if (gameSelect) gameSelect.disabled = true;
+ try {
+ const preferredModel = localStorage.getItem(getModelStorageKey(apiProvider)) || selectedModel || '';
+ const models = apiProvider === 'openrouter' ? await fetchOpenRouterModels() : await fetchGoogleModels();
+ populateModelSelects(models, preferredModel);
+ setHomeModelAreaVisible(true);
+ document.getElementById('delete-key-btn').style.display = 'inline-block';
+ } catch (error) {
+ console.error('遊戲內載入模型失敗', error);
+ alert(getFriendlyErrorMessage(error, '模型載入失敗，請確認金鑰後再試。'));
+ ensureGameModelSelectReady();
+ } finally {
+ if (gameSelect) gameSelect.disabled = false;
+ }
+}
 
         function normalizeChatLineForScenePrompt(line, pageIndex = currentChatPageIndex) {
             const text = valueToText(line);
@@ -4313,7 +4395,7 @@ renderSaveList();
             const id = Date.now().toString();
             const selectedPreset = scenarioPresets[activePresetId] || defaultPreset;
             const freshScenario = createFreshScenarioFromPreset(selectedPreset);
-            const newSave = { title: saveName, date: new Date().toLocaleString(), uiLocale: window.getUiLanguage ? getUiLanguage() : 'zh-TW', hp: 100, san: 100, items: [], scenIndex: 0, chatPageIndex: 0, scripts: [[]], log: "• 故事剛開始，目前尚無重大事件發生。", memoryBrief: { story: "", tasks: "", relationships: "" }, flags: [], inputDraft: '', respecCount: 3, scenario: freshScenario };
+            const newSave = { title: saveName, date: new Date().toLocaleString(), hp: 100, san: 100, items: [], scenIndex: 0, chatPageIndex: 0, scripts: [[]], log: "• 故事剛開始，目前尚無重大事件發生。", memoryBrief: { story: "", tasks: "", relationships: "" }, flags: [], inputDraft: '', respecCount: 3, scenario: freshScenario };
             newSave.scenario.sourcePresetId = activePresetId;
             savesData[id] = newSave;
             if (!persistSingleSave(id, '遊戲存檔')) { delete savesData[id]; return; }
@@ -4468,8 +4550,7 @@ function importSaves(input) {
                 relationships: currentRelationshipSummary
             };
             savesData[currentSaveId].flags = currentFlags;
-            savesData[currentSaveId].uiLocale = window.getUiLanguage ? getUiLanguage() : 'zh-TW';
-            const currentInputDraft = document.getElementById('player-input')?.value || '';
+const currentInputDraft = document.getElementById('player-input')?.value || '';
             savesData[currentSaveId].inputDraft = currentInputDraft;
             try {
                 const draftKey = getInputDraftStorageKey(currentSaveId);
@@ -5273,12 +5354,9 @@ const btn = document.createElement('button'); btn.className = 'opt-btn'; btn.sty
             if (!saveData || typeof saveData !== 'object' || Array.isArray(saveData)) {
                 alert('這份存檔格式不正確，無法載入。');
                 return;
-            }
-            currentSaveId = id;
-            if (window.setUiLanguage) {
-                setUiLanguage(saveData.uiLocale || (window.getUiLanguage ? getUiLanguage() : 'zh-TW'), { notify: false });
-            }
-            const fallbackScenario = scenarioPresets[activePresetId] || defaultPreset;
+ }
+ currentSaveId = id;
+ const fallbackScenario = scenarioPresets[activePresetId] || defaultPreset;
             if (!saveData.scenario || typeof saveData.scenario !== 'object' || Array.isArray(saveData.scenario)) {
                 saveData.scenario = JSON.parse(JSON.stringify(fallbackScenario));
             }
@@ -5355,7 +5433,9 @@ const btn = document.createElement('button'); btn.className = 'opt-btn'; btn.sty
                 if(i === currentScenarioIndex) opt.selected = true; locSelect.appendChild(opt);
             });
             
-            document.getElementById('game-model-choice').value = selectedModel; document.getElementById('dialogue-box').innerHTML = ''; document.getElementById('options-area').innerHTML = '';
+ ensureGameModelSelectReady();
+ setSelectValueWithFallback(document.getElementById('game-model-choice'), selectedModel);
+ document.getElementById('dialogue-box').innerHTML = ''; document.getElementById('options-area').innerHTML = '';
 document.getElementById('setup-screen').style.display = 'none'; document.getElementById('save-menu-screen').style.display = 'none'; document.getElementById('game-container').style.display = 'flex';
             
             renderChatPage(currentChatPageIndex);
