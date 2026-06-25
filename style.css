@@ -424,10 +424,10 @@ z-index: 10;
         }
         .btn:disabled { background: #ddd !important; border-color: var(--text-sub) !important; color: var(--text-sub) !important; cursor: not-allowed; transform: none; box-shadow: none !important; }
 
-        #dice-btn { background: var(--accent-neon); color: var(--border-dark); border: 2px solid var(--border-dark); padding: 12px 14px; }
-        #send-btn { background: var(--border-dark); color: #fff; }
+#dice-btn { background: var(--accent-neon); color: var(--border-dark); border: 2px solid var(--border-dark); padding: 12px 14px; }
+#send-btn { background: var(--border-dark); color: #fff; }
 
-        #loading { display: none; color: var(--text-sub); font-style: italic; font-weight: bold; font-size: 12px; text-align: center; padding: 10px 0; animation: pulse 1.5s infinite; }
+#loading { display: none; color: var(--text-sub); font-style: italic; font-weight: bold; font-size: 12px; text-align: center; padding: 10px 0; animation: pulse 1.5s infinite; }
         #cancel-ai-btn { margin-left: 8px; padding: 4px 9px; border: 1px solid var(--border-dark); border-radius: 6px; background: var(--card-bg); color: var(--text-main); font-size: 11px; font-style: normal; font-weight: 900; cursor: pointer; }
 
         #crop-container { box-sizing: content-box; width: 250px; height: 250px; border-radius: 50%; border: 4px solid var(--accent-neon); overflow: hidden; position: relative; background: var(--card-bg); box-shadow: 0 0 20px rgba(0,0,0,0.5); touch-action: none; margin-top: 20px;}
@@ -2141,10 +2141,10 @@ white-space: nowrap;
             #dialogue-box { gap: 12px; padding: 0; }
             #status-bar { padding-bottom: 8px; margin-bottom: 8px; gap: 6px; }
             #input-area { padding-top: 8px; gap: 6px; }
-            #player-input { padding: 10px; font-size: 14px; min-height: 40px; }
-            .btn { padding: 8px 12px; font-size: 13px; }
-            #dice-btn { padding: 8px 10px; }
-            #options-area { gap: 6px; margin-bottom: 6px; }
+#player-input { padding: 10px; font-size: 14px; min-height: 40px; }
+.btn { padding: 8px 12px; font-size: 13px; }
+#dice-btn { padding: 8px 10px; }
+#options-area { gap: 6px; margin-bottom: 6px; }
             .opt-btn { padding: 10px 12px; font-size: 13px; }
             .modal-overlay { padding: max(8px, env(safe-area-inset-top)) 6px max(8px, env(safe-area-inset-bottom)); overflow-x: hidden !important; touch-action: pan-y; overscroll-behavior: contain; }
             #status-modal-content > .modal-header-sticky {
@@ -2285,4 +2285,29 @@ input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 
 .npc-summary-list {
  grid-template-columns: 1fr;
  }
+}
+
+/* 遊戲底部送出列：鎖定骰點與送出按鈕同高。放在檔案最後，避免被前面的按鈕樣式覆蓋。 */
+#game-container #input-area > button#dice-btn.btn,
+#game-container #input-area > button#send-btn.btn {
+height: 48px;
+min-height: 48px;
+max-height: 48px;
+box-sizing: border-box;
+padding-top: 0;
+padding-bottom: 0;
+display: inline-flex;
+align-items: center;
+justify-content: center;
+align-self: flex-end;
+line-height: 1;
+}
+
+@media screen and (max-width: 768px) {
+#game-container #input-area > button#dice-btn.btn,
+#game-container #input-area > button#send-btn.btn {
+height: 40px;
+min-height: 40px;
+max-height: 40px;
+}
 }
