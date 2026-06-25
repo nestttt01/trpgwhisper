@@ -503,7 +503,7 @@
         currentLanguage = normalizeLanguage(locale);
         if (options.persist !== false) localStorage.setItem(UI_LANGUAGE_STORAGE_KEY, currentLanguage);
         document.documentElement.lang = currentLanguage;
-        document.title = translatedValue('TRPG模擬器(測試版)');
+        document.title = translatedValue('旅途筆記');
         syncLanguageSelectors();
         translateSubtree(document.body);
         if (options.notify !== false) window.dispatchEvent(new CustomEvent('ui-language-change', { detail: { locale: currentLanguage } }));
