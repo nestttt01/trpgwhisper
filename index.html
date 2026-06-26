@@ -250,14 +250,14 @@
 <div class="setup-home-frame">
 <nav class="setup-side-tabs" aria-label="首頁快捷選單">
 <button type="button" class="setup-side-tab setup-home-tab" data-home-tab="main" onclick="goHomeFromSetupNav()" aria-label="回到首頁" title="回到首頁"><img src="assets/icons/home.svg" alt="" aria-hidden="true"></button>
-<button type="button" class="setup-side-tab" data-home-tab="api" onclick="openApiGuideModal()">API說明</button>
-<button type="button" class="setup-side-tab" data-home-tab="guide" onclick="openTutorialModal()">遊戲玩法</button>
+<button type="button" class="setup-side-tab" data-home-tab="api" data-side-label="API說明" data-no-i18n onclick="openApiGuideModal()">API說明</button>
+<button type="button" class="setup-side-tab" data-home-tab="guide" data-side-label="遊戲玩法" data-no-i18n onclick="openTutorialModal()">遊戲玩法</button>
 <div class="setup-side-unlocked" aria-label="已驗證功能">
-<button type="button" class="setup-side-tab" onclick="openEditScenario()">角色配置</button>
-<button type="button" class="setup-side-tab" data-home-tab="saves" onclick="openSaveMenu()">存檔</button>
-<button type="button" class="setup-side-tab" data-home-tab="journal" onclick="openAdventureJournal()">冒險日誌</button>
+<button type="button" class="setup-side-tab" data-side-label="角色配置" data-no-i18n onclick="openEditScenario()">角色配置</button>
+<button type="button" class="setup-side-tab" data-home-tab="saves" data-side-label="存檔" data-no-i18n onclick="openSaveMenu()">存檔</button>
+<button type="button" class="setup-side-tab" data-home-tab="journal" data-side-label="冒險日誌" data-no-i18n onclick="openAdventureJournal()">冒險日誌</button>
 </div>
-<button type="button" class="setup-side-tab setup-side-language" onclick="cycleUiLanguageFromHome()">語言切換</button>
+<button type="button" class="setup-side-tab setup-side-language" data-side-label="語言切換" data-no-i18n onclick="cycleUiLanguageFromHome()">語言切換</button>
 </nav>
 
 <main class="setup-home-panel" aria-label="TRPG模擬器首頁">

@@ -238,8 +238,32 @@ let editScenarioDirty = false;
 let apiUsageStats = {};
 let lastPromptDiagnostics = {};
 
+function syncSetupSideLabels() {
+const locale = window.getUiLanguage ? getUiLanguage() : 'zh-TW';
+const shortLabels = {
+'API說明': { en: 'API', ja: 'API' },
+'遊戲玩法': { en: 'Guide', ja: '遊び方' },
+'角色配置': { en: 'Char', ja: 'キャラ' },
+'存檔': { en: 'Data', ja: 'データ' },
+'冒險日誌': { en: 'Log', ja: '日誌' },
+'語言切換': { en: 'Lang', ja: '言語' }
+};
+document.querySelectorAll('.setup-side-tab[data-side-label]').forEach(tab => {
+const source = tab.dataset.sideLabel || tab.textContent.trim();
+const mapped = shortLabels[source];
+tab.textContent = locale === 'en'
+? (mapped?.en || source)
+: locale === 'ja'
+? (mapped?.ja || source)
+: source;
+});
+}
+
 window.addEventListener('ui-language-change', () => {
  updateSetupCurrentPresetLabel();
+ syncSetupSideLabels();
+ renderAdventureJournalSaveSelector();
+ renderAdventureJournal();
 });
 
         const UI_THEME_STORAGE_KEY = 'sanko_ui_theme_v1';
@@ -802,6 +826,7 @@ dialogue: '--accent-gray'
             }
 selectedModel = localStorage.getItem(getModelStorageKey(apiProvider)) || '';
 setHomeModelAreaVisible(selectedModel && apiKey);
+syncSetupSideLabels();
 ensureGameModelSelectReady();
 
             const savedPic = await readPersistentValue('sanko_home_pic', '');
@@ -1304,6 +1329,7 @@ document.getElementById('save-menu-screen').style.display = 'none';
 document.getElementById('journal-screen').style.display = 'none';
 showHomeInfoView('main', { force: true });
 }
+window.goHomeFromSetupNav = goHomeFromSetupNav;
 
 function getSelectedSaveIds() {
 return Array.from(window.journeySelectedSaveIds || []).filter(id => savesData[id]);
@@ -3557,7 +3583,7 @@ clearEditScenarioDirty();
             }
             const boundSaves = getPresetBoundSaves(activePresetId);
             if (boundSaves.length) {
-                const saveNames = boundSaves.slice(0, 6).map(([, save]) => `• ${valueToText(save.title, save.date || '未命名紀錄')}`);
+ const saveNames = boundSaves.slice(0, 6).map(([, save]) => `• ${valueToText(save.title, save.date || uiText('未命名紀錄'))}`);
                 const more = boundSaves.length > 6 ? `\n…以及另外 ${boundSaves.length - 6} 份紀錄` : '';
                 alert(`無法刪除「${valueToText(pOld?.presetName, '此配置')}」。\n\n目前仍有 ${boundSaves.length} 份遊戲紀錄綁定這個配置：\n${saveNames.join('\n')}${more}\n\n請先在對應遊戲中使用「另存新配置」切換綁定，再回來刪除。`);
                 return;
@@ -4358,7 +4384,7 @@ journalEmbedded = false;
             if (!keys.length) {
                 const option = document.createElement('option');
                 option.value = '';
-                option.textContent = '目前沒有存檔';
+ option.textContent = uiText('目前沒有存檔');
                 select.appendChild(option);
                 select.disabled = true;
                 return;
@@ -4368,7 +4394,7 @@ journalEmbedded = false;
                 const save = savesData[id];
                 const option = document.createElement('option');
                 option.value = id;
-                option.textContent = `${valueToText(save.title, '未命名紀錄')} · ${valueToText(save.date, '未知時間')}`;
+ option.textContent = `${valueToText(save.title, uiText('未命名紀錄'))} · ${valueToText(save.date, uiText('未知時間'))}`;
                 option.selected = id === journalSelectedSaveId;
                 select.appendChild(option);
             });
@@ -4411,21 +4437,26 @@ renderAdventureJournal();
         function renderAdventureJournal() {
             const list = document.getElementById('journal-entry-list');
             const meta = document.getElementById('journal-meta');
-            const pageLabel = document.getElementById('journal-page-label');
-            const prevButton = document.getElementById('journal-prev-btn');
-            const nextButton = document.getElementById('journal-next-btn');
-            const organizeButton = document.getElementById('journal-organize-btn');
-            if (!list || !meta || !pageLabel) return;
-            const save = savesData[journalSelectedSaveId];
-            if (!save) {
-                list.innerHTML = `<p class="journal-empty">${escapeStatusHtml(uiText('目前沒有可查看的冒險紀錄。'))}</p>`;
-                meta.textContent = uiText('請先建立遊戲存檔。');
-                pageLabel.textContent = uiText('第 0 / 0 頁');
-                if (prevButton) prevButton.disabled = true;
-                if (nextButton) nextButton.disabled = true;
-                if (organizeButton) organizeButton.disabled = true;
-                return;
-            }
+ const pageLabel = document.getElementById('journal-page-label');
+ const prevButton = document.getElementById('journal-prev-btn');
+ const nextButton = document.getElementById('journal-next-btn');
+ const organizeButton = document.getElementById('journal-organize-btn');
+ const pagination = pageLabel?.closest('.journal-pagination');
+ if (!list || !meta || !pageLabel) return;
+ const save = savesData[journalSelectedSaveId];
+ if (!save) {
+ list.innerHTML = `<p class="journal-empty">${escapeStatusHtml(uiText('目前沒有可查看的冒險紀錄。'))}</p>`;
+ meta.textContent = uiText('請先建立遊戲存檔。');
+ pageLabel.textContent = uiText('第 0 / 0 頁');
+ if (prevButton) prevButton.disabled = true;
+ if (nextButton) nextButton.disabled = true;
+ if (organizeButton) organizeButton.disabled = true;
+ if (pagination) {
+ pagination.hidden = true;
+ pagination.style.display = 'none';
+ }
+ return;
+ }
             if (organizeButton) organizeButton.disabled = false;
             const allEntries = getAdventureJournalEntries();
             const filteredEntries = journalSearchText
@@ -4443,9 +4474,14 @@ renderAdventureJournal();
  : uiText('共 {total} 條紀錄；每頁最多 {pageSize} 條')
  .replace('{total}', allEntries.length)
  .replace('{pageSize}', JOURNAL_PAGE_SIZE);
-            pageLabel.textContent = locale === 'en' ? `Page ${journalPageIndex + 1} / ${pageCount}` : locale === 'ja' ? `${journalPageIndex + 1} / ${pageCount} ページ` : `第 ${journalPageIndex + 1} / ${pageCount} 頁`;
-            if (prevButton) prevButton.disabled = journalPageIndex <= 0;
-            if (nextButton) nextButton.disabled = journalPageIndex >= pageCount - 1;
+ pageLabel.textContent = locale === 'en' ? `Page ${journalPageIndex + 1} / ${pageCount}` : locale === 'ja' ? `${journalPageIndex + 1} / ${pageCount} ページ` : `第 ${journalPageIndex + 1} / ${pageCount} 頁`;
+ if (pagination) {
+ const showPagination = pageCount > 1;
+ pagination.hidden = !showPagination;
+ pagination.style.display = showPagination ? 'grid' : 'none';
+ }
+ if (prevButton) prevButton.disabled = journalPageIndex <= 0;
+ if (nextButton) nextButton.disabled = journalPageIndex >= pageCount - 1;
             if (!visibleEntries.length) {
                 list.innerHTML = `<p class="journal-empty">${escapeStatusHtml(uiText('沒有符合搜尋條件的紀錄。'))}</p>`;
                 return;
@@ -4523,9 +4559,9 @@ save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重�
             renderAdventureJournal();
         }
 
-        function chunkAdventureLog(log, maxChars = 7000) {
-            const entries = splitAdventureLog(log);
-            const chunks = [];
+function chunkAdventureLog(log, maxChars = 7000) {
+ const entries = splitAdventureLog(log);
+ const chunks = [];
             let currentChunk = [];
             let currentLength = 0;
             entries.forEach(entry => {
@@ -4540,14 +4576,37 @@ save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重�
                 currentLength += clean.length + 3;
             });
             if (currentChunk.length) chunks.push(currentChunk.join('\n'));
-            return chunks.length ? chunks : ['• 尚無重大事件。'];
-        }
+ return chunks.length ? chunks : ['• 尚無重大事件。'];
+ }
 
-        function buildSelectedJournalOrganizerPrompt(save, logChunk = '', partIndex = 0, partCount = 1) {
-            const scenario = save?.scenario || {};
-            const memory = save?.memoryBrief || {};
-            return `你是 TRPG 冒險紀錄整理器。整理第 ${partIndex + 1}/${partCount} 段紀錄：合併本段語意重複內容，保持原順序，保留重要事實、任務結果、角色關係轉折、場景變化與重要物品異動。不得捏造或預設劇情。只輸出 JSON：{"adventure_log":["精簡事件"]}。\n玩家：${valueToText(scenario.playerName, '玩家')}\n相關角色：${(scenario.npcs || []).map(npc => npc.name).filter(Boolean).slice(0, 20).join('、') || '無'}\n既有摘要：${truncatePromptText(memory.story, 1200) || '無'}\n任務：${truncatePromptText(memory.tasks, 900) || '無'}\n關係：${truncatePromptText(memory.relationships, 900) || '無'}\n\n本段紀錄：\n${logChunk}`;
-        }
+ function isProtectedAdventureLogEntry(line) {
+ const text = stripMemoryListPrefix(line);
+ return /^(?:【\s*)?任務(?:完成|失敗)(?:\s*】)?[：:]?/.test(text)
+ || /^(?:🏆|(?:【\s*)?(?:成就|成就解鎖|成就達成)(?:\s*】)?[：:]?)/.test(text)
+ || /^\[(?:成就|Achievement|ACHIEVEMENT|狀態\/成就)\]/.test(text);
+ }
+
+ function restoreProtectedAdventureLogEntries(originalLog, organizedLog) {
+ const protectedEntries = splitAdventureLog(originalLog).filter(isProtectedAdventureLogEntry);
+ if (!protectedEntries.length) return organizedLog;
+ const mergedEntries = splitAdventureLog(organizedLog);
+ const seen = new Set(mergedEntries.map(normalizeAdventureLogKey).filter(Boolean));
+ protectedEntries.forEach(entry => {
+ const key = normalizeAdventureLogKey(entry);
+ if (!key || seen.has(key)) return;
+ seen.add(key);
+ mergedEntries.push(entry);
+ });
+ return formatBulletListText(mergedEntries, '• 故事剛開始，目前尚無重大事件發生。');
+ }
+
+ function buildSelectedJournalOrganizerPrompt(save, logChunk = '', partIndex = 0, partCount = 1) {
+ const scenario = save?.scenario || {};
+ const memory = save?.memoryBrief || {};
+ return `你是 TRPG 冒險紀錄整理器。整理第 ${partIndex + 1}/${partCount} 段紀錄：合併本段語意重複內容，保持原順序，保留重要事實、任務結果、角色關係轉折、場景變化與重要物品異動。不得捏造或預設劇情。
+保護規則：凡是「任務完成：」「任務失敗：」「【成就】」「成就：」「🏆」或「[成就]」開頭的紀錄，必須原文保留；不得刪除、不得改寫成摘要、不得把完成或失敗任務改回未完成。
+只輸出 JSON：{"adventure_log":["精簡事件"]}。\n玩家：${valueToText(scenario.playerName, '玩家')}\n相關角色：${(scenario.npcs || []).map(npc => npc.name).filter(Boolean).slice(0, 20).join('、') || '無'}\n既有摘要：${truncatePromptText(memory.story, 1200) || '無'}\n任務：${truncatePromptText(memory.tasks, 900) || '無'}\n關係：${truncatePromptText(memory.relationships, 900) || '無'}\n\n本段紀錄：\n${logChunk}`;
+ }
 
         async function organizeAdventureLogWithAI(save, onProgress = null) {
             const profile = getModelRuntimeProfile();
@@ -4566,26 +4625,31 @@ save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重�
         async function organizeSelectedJournalLog() {
             const save = savesData[journalSelectedSaveId];
             if (!save) return;
-            if (!confirm('整理會合併語意重複的事件。系統會先保留備份，確定要繼續嗎？')) return;
+ if (!confirm(uiText('整理會合併語意重複的事件。系統會先保留備份，確定要繼續嗎？'))) return;
             const button = document.getElementById('journal-organize-btn');
             const originalLabel = button?.innerText || '';
-            if (button) { button.disabled = true; button.innerText = '整理中…'; }
+ if (button) { button.disabled = true; button.innerText = uiText('整理中…'); }
             try {
                 const organizedLog = await organizeAdventureLogWithAI(save, (current, total) => {
-                    if (button) button.innerText = total > 1 ? `整理中 ${current}/${total}` : '整理中…';
+ if (button) {
+ button.innerText = total > 1
+ ? uiText('整理中 {current}/{total}').replace('{current}', current).replace('{total}', total)
+ : uiText('整理中…');
+ }
                 });
-                if (!organizedLog) throw new Error('AI 沒有回傳可用的冒險紀錄。');
-                if (!Array.isArray(save.memoryLogBackups)) save.memoryLogBackups = [];
-                save.memoryLogBackups.push({ date: new Date().toLocaleString(), log: save.log });
-                save.memoryLogBackups = save.memoryLogBackups.slice(-3);
-                save.log = organizedLog;
-                save.date = new Date().toLocaleString();
-                if (journalSelectedSaveId === currentSaveId) currentAdventureLog = organizedLog;
+ if (!organizedLog) throw new Error(uiText('AI 沒有回傳可用的冒險紀錄。'));
+ const finalLog = restoreProtectedAdventureLogEntries(save.log, organizedLog);
+ if (!Array.isArray(save.memoryLogBackups)) save.memoryLogBackups = [];
+ save.memoryLogBackups.push({ date: new Date().toLocaleString(), log: save.log });
+ save.memoryLogBackups = save.memoryLogBackups.slice(-3);
+ save.log = finalLog;
+ save.date = new Date().toLocaleString();
+ if (journalSelectedSaveId === currentSaveId) currentAdventureLog = finalLog;
                 persistSingleSave(journalSelectedSaveId, '整理冒險日誌');
                 journalPageIndex = 0;
                 renderAdventureJournalSaveSelector();
                 renderAdventureJournal();
-                alert('冒險紀錄已整理完成；如不滿意可按「復原上次整理」。');
+ alert(uiText('冒險紀錄已整理完成；如不滿意可按「復原上次整理」。'));
             } catch (error) {
                 console.error(error);
                 alert(`${getFriendlyErrorMessage(error, 'AI 暫時無法完成整理。')}\n原本內容沒有被刪除。`);
@@ -6810,11 +6874,12 @@ ${JSON.stringify(visiblePayload)}`;
                     const organizedLog = await organizeAdventureLogWithAI(save, (current, total) => {
                         if (activeButton) activeButton.innerText = total > 1 ? `整理中 ${current}/${total}` : '整理中…';
                     });
-                    if (!organizedLog) throw new Error('AI 沒有回傳可用的冒險紀錄。');
-                    if (!Array.isArray(save.memoryLogBackups)) save.memoryLogBackups = [];
-                    save.memoryLogBackups.push({ date: new Date().toLocaleString(), log: currentAdventureLog });
-                    save.memoryLogBackups = save.memoryLogBackups.slice(-3);
-                    currentAdventureLog = organizedLog;
+ if (!organizedLog) throw new Error(uiText('AI 沒有回傳可用的冒險紀錄。'));
+ const finalLog = restoreProtectedAdventureLogEntries(currentAdventureLog, organizedLog);
+ if (!Array.isArray(save.memoryLogBackups)) save.memoryLogBackups = [];
+ save.memoryLogBackups.push({ date: new Date().toLocaleString(), log: currentAdventureLog });
+ save.memoryLogBackups = save.memoryLogBackups.slice(-3);
+ currentAdventureLog = finalLog;
                 } else {
                     const prompt = buildMemoryOrganizerPrompt('summary');
                     const rawText = await requestAIText(prompt, { kind: 'summary', maxTokens: profile.summaryMaxTokens });
