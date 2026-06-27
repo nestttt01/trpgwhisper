@@ -15,6 +15,8 @@
 '整理中…': ['Organizing…', '整理中…'],
 '整理中 {current}/{total}': ['Organizing {current}/{total}', '整理中 {current}/{total}'],
 'AI 沒有回傳可用的冒險紀錄。': ['AI did not return a usable adventure log.', 'AIから使用できる冒険記録が返りませんでした。'],
+'冒險紀錄內容': ['Adventure log entry', '冒険記録の内容'],
+'確定要刪除這筆冒險紀錄嗎？': ['Delete this adventure log entry?', 'この冒険記録を削除しますか？'],
 '未命名配置': ['Untitled Preset', '無題の設定'],
 '目前配置': ['Current Preset', '現在の設定'],
 '測試語氣': ['Test Voice', '口調テスト'],

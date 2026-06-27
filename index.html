@@ -731,19 +731,7 @@
         </div>
     </div>
 
-    <div id="journal-edit-modal" class="modal-overlay">
-        <div id="journal-edit-content">
-            <h3>編輯單筆冒險紀錄</h3>
-            <textarea id="journal-edit-text" aria-label="冒險紀錄內容"></textarea>
-            <div class="journal-edit-actions">
-                <button class="btn" onclick="saveJournalEntryEdit()">儲存</button>
-                <button class="btn" onclick="deleteJournalEntryEdit()">刪除此筆</button>
-                <button class="btn" onclick="closeJournalEntryEditor()">取消</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="game-container">
+ <div id="game-container">
         
         <div id="floating-menu-btn" onclick="toggleStatusPanel()" role="button" tabindex="0" aria-label="開啟或收回角色面板">角色面板</div>
 
@@ -758,7 +746,7 @@
             </div>
             <div class="scroll-row">
                 <select id="btn-location" class="btn-location" onchange="changeScenario(this.value)"></select>
-                <button class="mini-add-btn" onclick="openMidGameScenarioModal()">+ 新情境</button>
+                <button class="mini-add-btn" onclick="addMidGameScenarioAndEdit()">+ 新情境</button>
                 <button id="creator-mode-btn" class="mini-add-btn creator-mode-btn" type="button" onclick="toggleCreatorInputMode()" aria-pressed="false" title="切換持續創作者指令模式">神</button>
                 
                 <div class="spacer"></div>

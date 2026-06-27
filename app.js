@@ -231,7 +231,6 @@ event.returnValue = '';
         let journalSelectedSaveId = '';
         let journalPageIndex = 0;
         let journalSearchText = '';
-let journalEditingEntryIndex = -1;
 let journalReturnTarget = 'setup';
 let journalEmbedded = false;
 let editScenarioDirty = false;
@@ -4447,7 +4446,6 @@ if (el) el.style.display = 'none';
         }
 
 function closeAdventureJournal() {
-document.getElementById('journal-edit-modal').style.display = 'none';
 const journalScreen = document.getElementById('journal-screen');
 journalScreen.style.display = 'none';
 if (journalScreen.classList.contains('journal-screen-home-embedded')) {
@@ -4594,10 +4592,51 @@ renderAdventureJournal();
 list.innerHTML = visibleEntries.map(entry => `
 <article class="journal-entry${entry.important ? ' journal-entry-important' : ''}">
 <span class="journal-entry-index">#${entry.index + 1}</span>
-<p class="journal-entry-text">${escapeStatusHtml(uiJournalEntryText(entry.text))}</p>
+<textarea class="journal-entry-text journal-entry-inline-input" rows="1" aria-label="${escapeStatusHtml(uiText('冒險紀錄內容'))}" oninput="autoResize(this)" onblur="saveJournalEntryInlineEdit(${entry.index}, this.value)">${escapeStatusHtml(uiJournalEntryText(entry.text))}</textarea>
 <button class="journal-entry-star" type="button" aria-label="${entry.important ? escapeStatusHtml(uiText('取消重要標記')) : escapeStatusHtml(uiText('標記為重要'))}" title="${entry.important ? escapeStatusHtml(uiText('取消重要標記')) : escapeStatusHtml(uiText('標記為重要'))}" onclick="toggleJournalEntryImportant(${entry.index})">${entry.important ? '★' : '☆'}</button>
-<button class="journal-entry-edit" type="button" onclick="openJournalEntryEditor(${entry.index})">${escapeStatusHtml(uiText('編輯'))}</button>
+<button class="journal-entry-delete" type="button" aria-label="${escapeStatusHtml(uiText('刪除此筆'))}" title="${escapeStatusHtml(uiText('刪除此筆'))}" onclick="deleteJournalEntryInline(${entry.index})">－</button>
 </article>`).join('');
+list.querySelectorAll('.journal-entry-inline-input').forEach(autoResize);
+}
+
+function saveJournalEntryInlineEdit(entryIndex, value) {
+const save = savesData[journalSelectedSaveId];
+const index = Number(entryIndex);
+if (!save || !Number.isInteger(index)) return;
+const entries = getAdventureJournalEntries().map(entry => entry.text);
+if (index < 0 || index >= entries.length) return;
+const text = valueToText(value).replace(/\s*\n+\s*/g, ' ').trim();
+if (!text || text === entries[index]) {
+renderAdventureJournal();
+return;
+}
+entries[index] = stripMemoryListPrefix(text);
+save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重大事件發生。');
+save.date = new Date().toLocaleString();
+if (journalSelectedSaveId === currentSaveId) currentAdventureLog = save.log;
+persistSingleSave(journalSelectedSaveId, '冒險日誌');
+renderAdventureJournal();
+}
+
+function deleteJournalEntryInline(entryIndex) {
+const save = savesData[journalSelectedSaveId];
+const index = Number(entryIndex);
+if (!save || !Number.isInteger(index)) return;
+const entries = getAdventureJournalEntries().map(entry => entry.text);
+if (index < 0 || index >= entries.length) return;
+if (!confirm(uiText('確定要刪除這筆冒險紀錄嗎？'))) return;
+entries.splice(index, 1);
+if (Array.isArray(save.importantJournalEntries)) {
+save.importantJournalEntries = save.importantJournalEntries
+.map(Number)
+.filter(item => Number.isInteger(item) && item !== index)
+.map(item => item > index ? item - 1 : item);
+}
+save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重大事件發生。');
+save.date = new Date().toLocaleString();
+if (journalSelectedSaveId === currentSaveId) currentAdventureLog = save.log;
+persistSingleSave(journalSelectedSaveId, '冒險日誌');
+renderAdventureJournal();
 }
 
         function changeAdventureJournalPage(delta) {
@@ -4613,58 +4652,7 @@ list.innerHTML = visibleEntries.map(entry => `
             window.scrollTo(0, document.body.scrollHeight);
         }
 
-        function openJournalEntryEditor(entryIndex) {
-            const entries = getAdventureJournalEntries();
-            const entry = entries.find(item => item.index === Number(entryIndex));
-            if (!entry) return;
-            journalEditingEntryIndex = entry.index;
-            document.getElementById('journal-edit-text').value = entry.text;
-            document.getElementById('journal-edit-modal').style.display = 'flex';
-            document.getElementById('journal-edit-text').focus();
-        }
-
-        function closeJournalEntryEditor() {
-            journalEditingEntryIndex = -1;
-            document.getElementById('journal-edit-modal').style.display = 'none';
-        }
-
-        function saveJournalEntryEdit() {
-            const save = savesData[journalSelectedSaveId];
-            const entries = getAdventureJournalEntries().map(entry => entry.text);
-            if (!save || journalEditingEntryIndex < 0 || journalEditingEntryIndex >= entries.length) return;
-            const text = valueToText(document.getElementById('journal-edit-text').value).replace(/\s*\n+\s*/g, ' ').trim();
-            if (!text) { alert('這筆紀錄不能是空白；若要移除請按「刪除此筆」。'); return; }
-            entries[journalEditingEntryIndex] = stripMemoryListPrefix(text);
-            save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重大事件發生。');
-            save.date = new Date().toLocaleString();
-            if (journalSelectedSaveId === currentSaveId) currentAdventureLog = save.log;
-            persistSingleSave(journalSelectedSaveId, '冒險日誌');
-            closeJournalEntryEditor();
-            renderAdventureJournal();
-        }
-
-        function deleteJournalEntryEdit() {
-            const save = savesData[journalSelectedSaveId];
-            const entries = getAdventureJournalEntries().map(entry => entry.text);
-if (!save || journalEditingEntryIndex < 0 || journalEditingEntryIndex >= entries.length) return;
-if (!confirm('確定要刪除這一筆冒險紀錄嗎？')) return;
-const deletedIndex = journalEditingEntryIndex;
-entries.splice(journalEditingEntryIndex, 1);
-if (Array.isArray(save.importantJournalEntries)) {
-save.importantJournalEntries = save.importantJournalEntries
-.map(Number)
-.filter(index => index !== deletedIndex)
-.map(index => index > deletedIndex ? index - 1 : index);
-}
-save.log = formatBulletListText(entries, '• 故事剛開始，目前尚無重大事件發生。');
-            save.date = new Date().toLocaleString();
-            if (journalSelectedSaveId === currentSaveId) currentAdventureLog = save.log;
-            persistSingleSave(journalSelectedSaveId, '冒險日誌');
-            closeJournalEntryEditor();
-            renderAdventureJournal();
-        }
-
-function chunkAdventureLog(log, maxChars = 7000) {
+        function chunkAdventureLog(log, maxChars = 7000) {
  const entries = splitAdventureLog(log);
  const chunks = [];
             let currentChunk = [];
@@ -5191,6 +5179,57 @@ savesData[currentSaveId].scenario = currentScenario;
         window.addEventListener('pagehide', flushLifecycleGameSave);
         window.addEventListener('pageshow', retryPendingIndexedWrites);
 
+        function createBlankScenario(name = '新情境') {
+            return { name, lore: '', npcRoles: '', playerRole: '', transitionRule: '' };
+        }
+
+        function refreshGameLocationSelect() {
+            const locSelect = document.getElementById('btn-location');
+            if (!locSelect) return;
+            locSelect.innerHTML = '';
+            (currentScenario.scenarios || []).forEach((sc, i) => {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.innerText = `📍 ${sc.name || '未命名'}`;
+                if (i === currentScenarioIndex) opt.selected = true;
+                locSelect.appendChild(opt);
+            });
+        }
+
+        function addScenarioToCurrentGame(scenario) {
+            if (!Array.isArray(currentScenario.scenarios)) currentScenario.scenarios = [];
+            currentScenario.scenarios.push(scenario);
+            const newIndex = currentScenario.scenarios.length - 1;
+            chatScripts[newIndex] = [];
+            refreshGameLocationSelect();
+            return newIndex;
+        }
+
+        function openStatusScenarioEditor(scenarioIndex) {
+            activeStatusTab = 'settings';
+            openStatusModal();
+            switchStatusTab('settings');
+            requestAnimationFrame(() => {
+                const input = document.getElementById(`edit-scen-name-${scenarioIndex}`);
+                const card = input?.closest('details');
+                if (card) {
+                    card.open = true;
+                    card.scrollIntoView({ block: 'start', behavior: 'smooth' });
+                }
+                if (input) {
+                    input.focus();
+                    input.select();
+                }
+            });
+        }
+
+        function addMidGameScenarioAndEdit() {
+            if (document.getElementById('status-modal')?.style.display === 'block') syncDomToCurrentScenario();
+            const newIndex = addScenarioToCurrentGame(createBlankScenario());
+            changeScenario(newIndex);
+            openStatusScenarioEditor(newIndex);
+        }
+
         function openMidGameScenarioModal() {
             document.getElementById('mid-scen-name').value = '';
             document.getElementById('mid-scen-lore').value = '';
@@ -5208,15 +5247,7 @@ savesData[currentSaveId].scenario = currentScenario;
             const transitionRule = document.getElementById('mid-scen-transition').value.trim();
             
             const newScen = { name, lore, npcRoles, playerRole, transitionRule };
-            currentScenario.scenarios.push(newScen);
-            const newIndex = currentScenario.scenarios.length - 1;
-            chatScripts[newIndex] = []; 
-            
-            const locSelect = document.getElementById('btn-location');
-            const opt = document.createElement('option');
-            opt.value = newIndex;
-            opt.innerText = `📍 ${name}`;
-            locSelect.appendChild(opt);
+            const newIndex = addScenarioToCurrentGame(newScen);
             
             document.getElementById('midgame-scen-modal').style.display = 'none';
             changeScenario(newIndex); 
