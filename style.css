@@ -367,6 +367,15 @@ z-index: 10;
 .purple-accent { color: #fff; font-weight: 900; background: #9b59b6; padding: 2px 6px; border-radius: 4px; border: none; }
 
         select.btn-location, .game-model-select { white-space: nowrap; flex-shrink: 0; background: var(--card-bg); padding: 6px 12px; border-radius: 8px; border: 2px solid var(--border-dark); font-size: 12px; font-weight: 800; color: var(--text-main); cursor: pointer; }
+#btn-location.btn-location {
+  width: 150px;
+  max-width: 40vw;
+  height: 26px;
+  padding: 3px 30px 3px 10px;
+  box-sizing: border-box;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 
         .game-model-select { max-width: 130px; text-overflow: ellipsis; overflow: hidden; }
 
@@ -451,6 +460,7 @@ z-index: 10;
             margin: 0;
         }
         input[type=number] {
+            appearance: textfield;
             -moz-appearance: textfield;
         }
 
@@ -835,13 +845,13 @@ font-size: 12px;
 }
 
 .game-model-select {
-width: 86px;
-max-width: 86px;
-min-height: 30px;
-padding: 4px 8px;
-border-width: 2px;
-border-radius: 8px;
-font-size: 11px;
+  width: 100px;       /* 左右長度 */
+  max-width: 100px;   /* 跟 width 一樣 */
+  min-height: 26px;   /* 上下高度 */
+  padding: 4px 8px;   /* 內距 */
+  border-width: 2px;
+  border-radius: 8px;
+  font-size: 11px;
 }
         #status-summary-display {
             border-top: 3px solid var(--border-dark);

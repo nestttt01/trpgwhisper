@@ -3294,7 +3294,7 @@ function selectDesktopPreset(id) {
                         <div class="scenario-label">玩家在此的專屬身份/狀態</div>
                         <input type="text" class="scenario-input" id="scen-player-${index}" value="${escapeStatusHtml(scen.playerRole)}">
                         <div class="scenario-label">轉場規則（選填）</div>
-                        <textarea class="scenario-input" id="scen-transition-${index}" placeholder="例如：切回此情境時視為夢醒。" oninput="autoResize(this)">${escapeStatusHtml(scen.transitionRule || '')}</textarea>
+<textarea class="scenario-input" id="scen-transition-${index}" placeholder="${escapeStatusHtml(uiText('例如：切回此情境時視為夢醒。'))}" oninput="autoResize(this)">${escapeStatusHtml(scen.transitionRule || '')}</textarea>
                     </div>
                 `;
                 container.appendChild(details);
@@ -4143,7 +4143,7 @@ updateSetupCurrentPresetLabel();
                         <div class="scenario-label">玩家在此的身分/狀態</div>
                         <input type="text" id="edit-scen-player-${idx}" class="scenario-input" value="${escapeStatusHtml(sc.playerRole || '')}">
                         <div class="scenario-label">轉場規則（選填）</div>
-                        <textarea id="edit-scen-transition-${idx}" class="scenario-input" placeholder="例如：從遊戲世界切回時視為登出。" oninput="autoResize(this)">${escapeStatusHtml(sc.transitionRule || '')}</textarea>
+<textarea id="edit-scen-transition-${idx}" class="scenario-input" placeholder="${escapeStatusHtml(uiText('例如：切回此情境時視為夢醒。'))}" oninput="autoResize(this)">${escapeStatusHtml(sc.transitionRule || '')}</textarea>
                     </div>
                 </details>`;
             });

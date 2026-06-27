@@ -46,7 +46,7 @@
             <div class="scenario-label">玩家專屬身分</div>
             <input type="text" id="mid-scen-player" class="scenario-input">
             <div class="scenario-label">轉場規則（選填）</div>
-            <textarea id="mid-scen-transition" class="scenario-input" placeholder="例如：從遊戲世界切回時視為登出並回到語音通話。" oninput="autoResize(this)"></textarea>
+            <textarea id="mid-scen-transition" class="scenario-input" placeholder="例如：切回此情境時視為夢醒。" oninput="autoResize(this)"></textarea>
             <button class="btn u-inline-007" onclick="confirmMidGameScenario()">確認建立並傳送</button>
             <button class="btn u-inline-008" onclick="document.getElementById('midgame-scen-modal').style.display='none'">取消</button>
         </div>
@@ -131,7 +131,7 @@
                             <div>
                                 <div class="memory-field-title">重點劇情</div>
                                 <p class="memory-field-hint">用 3～8 條保留目前劇情主線、最近重大轉折與當前場景狀況。</p>
-                                <textarea id="ui-story-summary" placeholder="例如：&#10;• 秀芙與三高已確認戀人關係&#10;• 目前準備進入週六現實約會" oninput="autoResize(this)" onblur="normalizeMemoryTextarea(this)"></textarea>
+                                <textarea id="ui-story-summary" placeholder="例如：&#10;• 玩家與 NPC 已確認合作關係&#10;• 目前準備前往下一個場景" oninput="autoResize(this)" onblur="normalizeMemoryTextarea(this)"></textarea>
                             </div>
                             <div class="memory-task-block">
                                 <div class="memory-field-title">任務清單</div>
@@ -145,7 +145,7 @@
                             <div>
                                 <div class="memory-field-title">整體角色關係圖</div>
                                 <p class="memory-field-hint">只記角色彼此之間的全局關係、重大承諾、界線與張力；每位 NPC 此刻對玩家的態度放在「設定 → 動態狀態」。</p>
-                                <textarea id="ui-relationship-summary" placeholder="例如：&#10;• 秀芙與三高已成為戀人&#10;• SY 知道兩人關係升溫" oninput="autoResize(this)" onblur="normalizeMemoryTextarea(this)"></textarea>
+                                <textarea id="ui-relationship-summary" placeholder="例如：&#10;• 玩家與 NPC 已建立信任&#10;• NPC 知道玩家正在承擔風險" oninput="autoResize(this)" onblur="normalizeMemoryTextarea(this)"></textarea>
                             </div>
                         </div>
                     </div>
