@@ -370,7 +370,7 @@ z-index: 10;
 #btn-location.btn-location {
   width: 150px;
   max-width: 40vw;
-  height: 26px;
+  height: 27px;
   padding: 3px 30px 3px 10px;
   box-sizing: border-box;
   overflow: hidden;
@@ -2364,7 +2364,7 @@ margin: 0; padding: 0; background: transparent;
 
 .game-difficulty-row { grid-template-columns: 1fr; gap: 6px; }
 
-input:not([type="checkbox"]):not([type="radio"]), textarea, select { font-size: 16px !important; }
+input:not([type="checkbox"]):not([type="radio"]), textarea, select:not(#btn-location) { font-size: 14px !important; }
             #player-input { font-size: 16px !important; }
             html, body { width: 100%; max-width: 100%; overflow-x: hidden !important; }
             #game-container, #status-bar, .top-row, .scroll-row, #dialogue-box, #input-area,
@@ -2689,4 +2689,10 @@ overflow-wrap: anywhere;
 #setup-screen #save-menu-screen .save-menu-toolbar {
 margin: -35px 0 10px;
 }
+}
+#inline-journal-toggle-btn.is-open {
+  background: var(--accent-neon);
+  color: var(--border-dark);
+  box-shadow: 4px 4px 0 var(--border-dark);
+  transform: translate(-2px, -2px);
 }
