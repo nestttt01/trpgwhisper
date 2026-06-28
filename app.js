@@ -3045,27 +3045,29 @@ const lockButton = document.getElementById('desktop-preset-lock-btn');
 if (lockButton) lockButton.textContent = scenarioPresets[activePresetId]?.isLocked ? '🔒' : '🔓';
 const bindingNote = document.getElementById('desktop-preset-binding-note');
 if (bindingNote) {
-const sourceScenarios = Array.isArray(editingScenarios)
-? editingScenarios
-: (scenarioPresets[activePresetId]?.scenarios || []);
-const scenarioNames = sourceScenarios
-.map((scenario, index) => valueToText(scenario?.name, `${uiText('情境')} ${index + 1}`))
-.filter(Boolean);
-let bindingText = uiText('尚未建立情境');
-if (scenarioNames.length === 1) {
-bindingText = scenarioNames[0];
-} else if (scenarioNames.length > 1) {
-bindingText = `${scenarioNames[0]} +${scenarioNames.length - 1}`;
-}
-bindingNote.textContent = `${uiText('綁定情境')}：${bindingText}`;
+bindingNote.textContent = `${uiText('綁定紀錄')}：${getPresetBoundSaveName(activePresetId)}`;
 }
 renderPresetDeleteList();
 }
 
+function getSaveDisplayName(save) {
+return valueToText(save?.title, save?.date || uiText('未命名紀錄'));
+}
+
+function getPresetBoundSaveName(presetId) {
+const boundSaves = getPresetBoundSaves(presetId);
+if (!boundSaves.length) return uiText('無');
+return getSaveDisplayName(boundSaves[0][1]);
+}
+
 function getPresetDeleteBlockReason(id) {
 if (scenarioPresets[id]?.isLocked) return uiText('已上鎖');
-const boundSaves = getPresetBoundSaves(id);
-if (boundSaves.length) return `${uiText('綁定')} ${boundSaves.length} ${uiText('份紀錄')}`;
+return '';
+}
+
+function getPresetDeleteNote(id) {
+const boundSaveName = getPresetBoundSaveName(id);
+if (boundSaveName !== uiText('無')) return `${uiText('綁定紀錄')}：${boundSaveName}`;
 return '';
 }
 
@@ -3076,6 +3078,7 @@ if (!list) return;
 list.innerHTML = '';
 Object.entries(scenarioPresets || {}).forEach(([id, preset]) => {
 const reason = getPresetDeleteBlockReason(id);
+const note = getPresetDeleteNote(id);
 const row = document.createElement('label');
 row.className = `desktop-preset-delete-row${reason ? ' disabled' : ''}`;
 const checkbox = document.createElement('input');
@@ -3086,7 +3089,7 @@ checkbox.disabled = Boolean(reason);
 checkbox.onchange = syncPresetDeleteSelectAll;
 const name = document.createElement('span');
 name.className = 'desktop-preset-delete-name';
-name.textContent = `${valueToText(preset?.presetName, '未命名配置')}${reason ? `（${reason}）` : ''}`;
+name.textContent = `${valueToText(preset?.presetName, '未命名配置')}${reason ? `（${reason}）` : note ? `（${note}）` : ''}`;
 row.title = name.textContent;
 row.appendChild(checkbox);
 row.appendChild(name);
@@ -3135,18 +3138,52 @@ return;
 const names = deletableIds.map(id => `• ${valueToText(scenarioPresets[id]?.presetName, '未命名配置')}`).join('\n');
 const confirmMessage = `${uiText('確定要刪除 {count} 個配置嗎？').replace('{count}', deletableIds.length)}\n${names}`;
 if (!confirm(confirmMessage)) return;
+const boundSaveEntries = [];
+for (const id of deletableIds) {
+const boundSaves = getPresetBoundSaves(id);
+if (!boundSaves.length) continue;
+const saveName = getSaveDisplayName(boundSaves[0][1]);
+const boundMessage = uiText('此配置目前綁定「{saveName}」遊戲紀錄。刪除配置會一起刪除此紀錄，確定要刪除嗎？')
+.replace('{saveName}', saveName);
+if (!confirm(boundMessage)) return;
+boundSaves.forEach(([saveId, save]) => boundSaveEntries.push([saveId, save]));
+}
 const previousPresets = getJsonClone(scenarioPresets);
+const previousSaves = boundSaveEntries.map(([saveId, save]) => [saveId, save]);
 deletableIds.forEach(id => delete scenarioPresets[id]);
+boundSaveEntries.forEach(([saveId]) => {
+delete savesData[saveId];
+localStorage.removeItem(getInputDraftStorageKey(saveId));
+if (currentSaveId === saveId) currentSaveId = null;
+window.journeySelectedSaveIds?.delete(String(saveId));
+});
 if (!scenarioPresets[activePresetId]) activePresetId = Object.keys(scenarioPresets)[0] || 'default';
 if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
 scenarioPresets = previousPresets;
+previousSaves.forEach(([saveId, save]) => { savesData[saveId] = save; });
 renderPresetDeleteList();
+return;
+}
+let saveDeleteFailed = false;
+boundSaveEntries.forEach(([saveId, save]) => {
+if (!removePersistedSave(saveId, '刪除遊戲存檔')) {
+savesData[saveId] = save;
+saveDeleteFailed = true;
+}
+});
+if (saveDeleteFailed) {
+scenarioPresets = previousPresets;
+previousSaves.forEach(([saveId, save]) => { savesData[saveId] = save; });
+persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
+renderPresetDeleteList();
+renderSaveList();
 return;
 }
 localStorage.setItem('sanko_active_preset_id', activePresetId);
 renderPresetSelector();
 loadPresetToForm(activePresetId);
 renderDesktopGameSettings();
+renderSaveList();
 alert(uiText('已刪除 {count} 個配置。').replace('{count}', deletableIds.length));
 }
 
@@ -3676,26 +3713,49 @@ clearEditScenarioDirty();
             });
         }
 
-        function deleteCurrentPreset() {
-            if (Object.keys(scenarioPresets).length <= 1) { alert("系統至少需要保留一組配置喔！"); return; }
-            const pOld = scenarioPresets[activePresetId];
-            if (pOld && pOld.isLocked) {
-                alert("🔒 此配置已受玩家保護，為防誤刪無法進行操作！\n若確定要刪除，請先點擊上方解鎖。");
-                return;
-            }
-            const boundSaves = getPresetBoundSaves(activePresetId);
-            if (boundSaves.length) {
- const saveNames = boundSaves.slice(0, 6).map(([, save]) => `• ${valueToText(save.title, save.date || uiText('未命名紀錄'))}`);
-                const more = boundSaves.length > 6 ? `\n…以及另外 ${boundSaves.length - 6} 份紀錄` : '';
-                alert(`無法刪除「${valueToText(pOld?.presetName, '此配置')}」。\n\n目前仍有 ${boundSaves.length} 份遊戲紀錄綁定這個配置：\n${saveNames.join('\n')}${more}\n\n請先在對應遊戲中使用「另存新配置」切換綁定，再回來刪除。`);
-                return;
-            }
-            if (confirm(`確定要刪除「${scenarioPresets[activePresetId].presetName}」這個配置嗎？`)) {
-                delete scenarioPresets[activePresetId]; activePresetId = Object.keys(scenarioPresets)[0];
-                renderPresetSelector(); loadPresetToForm(activePresetId);
-                persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
-            }
-        }
+function deleteCurrentPreset() {
+if (Object.keys(scenarioPresets).length <= 1) { alert("系統至少需要保留一組配置喔！"); return; }
+const pOld = scenarioPresets[activePresetId];
+if (pOld && pOld.isLocked) {
+alert("🔒 此配置已受玩家保護，為防誤刪無法進行操作！\n若確定要刪除，請先點擊上方解鎖。");
+return;
+}
+const boundSaves = getPresetBoundSaves(activePresetId);
+const presetName = valueToText(pOld?.presetName, uiText('未命名配置'));
+const confirmMessage = boundSaves.length
+? uiText('此配置目前綁定「{saveName}」遊戲紀錄。刪除配置會一起刪除此紀錄，確定要刪除嗎？')
+.replace('{saveName}', getSaveDisplayName(boundSaves[0][1]))
+: uiText('確定要刪除「{presetName}」這個配置嗎？').replace('{presetName}', presetName);
+if (!confirm(confirmMessage)) return;
+const deletedPresetId = activePresetId;
+const previousPreset = pOld;
+const removedSaves = boundSaves.map(([saveId, save]) => [saveId, save]);
+delete scenarioPresets[deletedPresetId];
+removedSaves.forEach(([saveId]) => {
+delete savesData[saveId];
+localStorage.removeItem(getInputDraftStorageKey(saveId));
+if (currentSaveId === saveId) currentSaveId = null;
+window.journeySelectedSaveIds?.delete(String(saveId));
+});
+activePresetId = Object.keys(scenarioPresets)[0];
+if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
+scenarioPresets[deletedPresetId] = previousPreset;
+removedSaves.forEach(([saveId, save]) => { savesData[saveId] = save; });
+return;
+}
+let saveDeleteFailed = false;
+removedSaves.forEach(([saveId, save]) => {
+if (!removePersistedSave(saveId, '刪除遊戲存檔')) {
+savesData[saveId] = save;
+saveDeleteFailed = true;
+}
+});
+if (saveDeleteFailed) return;
+renderPresetSelector();
+loadPresetToForm(activePresetId);
+renderSaveList();
+updateSetupCurrentPresetLabel();
+}
 
         function restoreDefaultPreset() {
             if(confirm("確定要清空當前所有輸入框的資料嗎？這將讓你獲得一張白紙來重新填寫！\n(尚未點擊儲存前，原本的配置不會被覆蓋)")) {
@@ -3809,33 +3869,82 @@ renderDesktopGameSettings();
 alert(uiText('當前配置變更已成功儲存！基礎屬性已被鎖定！'));
         }
 
-        function saveAsNewPreset() {
-            const newId = 'preset_' + Date.now(); 
-            const currentName = document.getElementById('input-preset-name').value.trim(); 
-            const defaultName = currentName ? currentName + ' (另存)' : '未命名配置 (另存)';
-            
- const userInput = prompt(uiText('另存配置：請輸入新的配置檔名'), defaultName);
-            if (userInput === null) return; 
-            
-            const newPresetName = userInput.trim() || defaultName;
-            document.getElementById('input-preset-name').value = newPresetName;
+function saveAsNewPreset() {
+let newId = 'preset_' + Date.now();
+while (scenarioPresets[newId]) newId = `preset_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+const currentName = document.getElementById('input-preset-name').value.trim(); 
+const defaultName = currentName ? currentName + ' (另存)' : '未命名配置 (另存)';
 
-            const p = gatherPresetData(newId, newPresetName); 
-            p.isLocked = false; 
-            p.statsLocked = true;
-            const previousActiveId = activePresetId;
-            scenarioPresets[newId] = p;
-            activePresetId = newId;
-            if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
-                delete scenarioPresets[newId];
-                activePresetId = previousActiveId;
-                return;
-            }
+const userInput = prompt(uiText('另存配置：請輸入新的配置檔名'), defaultName);
+if (userInput === null) return; 
+
+const newPresetName = userInput.trim() || defaultName;
+const p = gatherPresetData(newId, newPresetName);
+p.isLocked = false;
+p.statsLocked = true;
+scenarioPresets[newId] = p;
+if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
+delete scenarioPresets[newId];
+return;
+}
+renderPresetSelector();
+renderPresetDeleteList();
+alert(uiText('已另存配置「{presetName}」。').replace('{presetName}', newPresetName));
+}
+
+function saveAsNewGameFile() {
+if (!currentSaveId || !savesData[currentSaveId]) return;
+const sourceSave = savesData[currentSaveId];
+const defaultName = `${getSaveDisplayName(sourceSave)} (另存)`;
+const userInput = prompt(uiText('另存新檔：請輸入新的紀錄檔名'), defaultName);
+if (userInput === null) return;
+const newSaveName = userInput.trim() || defaultName;
+try {
+const statusModal = document.getElementById('status-modal');
+if (statusModal && getComputedStyle(statusModal).display !== 'none') syncDomToCurrentScenario();
+saveCurrentProgress();
+const sourcePresetId = currentScenario?.sourcePresetId
+|| (currentScenario?.id && scenarioPresets[currentScenario.id] ? currentScenario.id : '')
+|| activePresetId;
+const baselinePreset = scenarioPresets[sourcePresetId] || null;
+let newPresetId = 'preset_' + Date.now();
+while (scenarioPresets[newPresetId]) newPresetId = `preset_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+const newPreset = createPresetSnapshotFromScenario(currentScenario, baselinePreset);
+newPreset.id = newPresetId;
+newPreset.presetName = `${newSaveName} 專屬配置`;
+newPreset.isLocked = false;
+newPreset.statsLocked = true;
+scenarioPresets[newPresetId] = newPreset;
+if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
+delete scenarioPresets[newPresetId];
+return;
+}
+let newSaveId = Date.now().toString();
+while (savesData[newSaveId]) newSaveId = `${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
+const copiedSave = clonePersistentValue(savesData[currentSaveId]);
+copiedSave.title = newSaveName;
+copiedSave.date = new Date().toLocaleString();
+copiedSave.scenario = clonePersistentValue(currentScenario);
+copiedSave.scenario.id = newPresetId;
+copiedSave.scenario.sourcePresetId = newPresetId;
+savesData[newSaveId] = copiedSave;
+if (!persistSingleSave(newSaveId, '遊戲存檔')) {
+delete savesData[newSaveId];
+delete scenarioPresets[newPresetId];
+persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置');
+return;
+}
+activePresetId = newPresetId;
 localStorage.setItem('sanko_active_preset_id', activePresetId);
-currentScenario = clonePersistentValue(p);
-currentScenario.sourcePresetId = newId;
-renderPresetSelector(); loadPresetToForm(newId); alert(uiText('已另存新檔為「{name}」！基礎屬性已被鎖定！').replace('{name}', newPresetName));
-        }
+loadGame(newSaveId);
+renderPresetSelector();
+renderSaveList();
+updateSetupCurrentPresetLabel();
+} catch (error) {
+console.error(error);
+alert(`另存新檔失敗：${error.message || error}`);
+}
+}
 
 function cancelEdit() {
 if (document.getElementById('edit-scenario-screen')?.classList.contains('random-generator-inline-open')) closeRandomGenerator();
@@ -3970,45 +4079,10 @@ updateSetupCurrentPresetLabel();
         }
 
         function saveAsNewPresetFromModal() {
-            try {
-                syncDomToCurrentScenario(); 
-                const currentName = currentScenario.presetName || "未命名配置";
-                const defaultName = currentName + ' (新進度另存)';
-                const userInput = prompt("請為這份新的系統大廳配置命名：", defaultName);
-                if (userInput === null) return; 
-                
-                const newPresetName = userInput.trim() || defaultName;
-                const newId = 'preset_' + Date.now();
-                
-                let newPreset = createPresetSnapshotFromScenario(currentScenario);
-                newPreset.id = newId;
-                newPreset.presetName = newPresetName;
-                newPreset.isLocked = false;
-                newPreset.statsLocked = true;
-                
-                scenarioPresets[newId] = newPreset;
-                if (!persistJson('sanko_scenario_presets_v2', scenarioPresets, '角色配置')) {
-                    delete scenarioPresets[newId];
-                    return;
-                }
-                
- // 將當前遊戲數據綁定到新配置 ID
- activePresetId = newId;
- localStorage.setItem('sanko_active_preset_id', activePresetId);
- currentScenario.sourcePresetId = newId;
- currentScenario.presetName = newPresetName;
- 
- saveCurrentProgress(); 
- renderPresetSelector();
- updateSetupCurrentPresetLabel();
- alert(`已將目前的角色核心設定與情境資料另存為新配置「${newPresetName}」！\n動態狀態與冒險進度只保留在目前存檔中。`);
-            } catch (e) {
-                console.error(e);
-                alert("儲存時發生錯誤：" + e.message);
-            }
-        }
+ saveAsNewGameFile();
+}
 
-        function openStatusModal() {
+function openStatusModal() {
             if(!currentSaveId) return;
             currentStorySummary = formatBulletListText(currentStorySummary, '', true);
             currentOpenTasks = serializeTaskChecklist(currentOpenTasks);
@@ -4201,7 +4275,7 @@ updateSetupCurrentPresetLabel();
                 let sourceId = currentScenario.sourcePresetId || currentScenario.id;
                 if (sourceId && scenarioPresets[sourceId]) {
                     if (scenarioPresets[sourceId].isLocked) {
-                        alert(`【系統提醒】\n因為大廳的配置 [${scenarioPresets[sourceId].presetName}] 已上鎖 (🔒)，\n本次變更僅儲存於「當前遊戲紀錄」中，不會覆蓋回大廳。\n(若要覆蓋回大廳，請先至大廳解鎖，或使用另存新配置)`);
+                        alert(`【系統提醒】\n因為大廳的配置 [${scenarioPresets[sourceId].presetName}] 已上鎖 (🔒)，\n本次變更僅儲存於「當前遊戲紀錄」中，不會覆蓋回大廳。\n(若要備份目前設定，請使用另存配置；若要覆蓋回大廳，請先至大廳解鎖)`);
                     } else {
                         let syncPreset = createPresetSnapshotFromScenario(currentScenario, scenarioPresets[sourceId]);
                         syncPreset.id = sourceId;
@@ -4412,7 +4486,10 @@ saveCurrentProgress();
                     journalEmbedded = true;
                     document.getElementById('status-page-log')?.classList.add('journal-inline-open');
                     const toggleButton = document.getElementById('inline-journal-toggle-btn');
-                    if (toggleButton) toggleButton.textContent = '收起完整冒險日誌';
+                    if (toggleButton) {
+                        toggleButton.textContent = '收起完整冒險日誌';
+                        toggleButton.classList.add('is-open');
+                    }
 const closeButton = document.getElementById('journal-close-btn');
 if (closeButton) closeButton.textContent = '收起';
 }
@@ -4459,7 +4536,10 @@ document.getElementById('journal-screen-home')?.after(journalScreen);
 journalEmbedded = false;
                 document.getElementById('status-page-log')?.classList.remove('journal-inline-open');
                 const toggleButton = document.getElementById('inline-journal-toggle-btn');
-                if (toggleButton) toggleButton.textContent = '開啟完整冒險日誌';
+                if (toggleButton) {
+                    toggleButton.textContent = '開啟完整冒險日誌';
+                    toggleButton.classList.remove('is-open');
+                }
                 const closeButton = document.getElementById('journal-close-btn');
                 if (closeButton) closeButton.textContent = '返回';
                 return;
