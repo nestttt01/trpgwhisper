@@ -266,6 +266,21 @@
 <button type="button" class="setup-side-tab setup-side-language" data-side-label="語言切換" data-no-i18n onclick="cycleUiLanguageFromHome()">語言切換</button>
 </nav>
 
+<div id="home-update-widget" class="home-update-widget">
+<button id="home-update-tab" class="home-update-tab" type="button" onclick="toggleHomeUpdateNotes()" aria-label="更新內容" aria-expanded="false"></button>
+<aside id="home-update-drawer" class="home-update-drawer" aria-label="更新內容">
+<button class="home-update-close" type="button" onclick="toggleHomeUpdateNotes(false)" aria-label="關閉更新內容">×</button>
+<p class="home-update-kicker">v1.4 更新</p>
+<h3>更新內容</h3>
+<ul>
+<li>角色配置與遊戲紀錄綁定後，角色資料會雙向同步。</li>
+<li>遊戲內角色面板與角色配置頁共用好感度等角色設定。</li>
+<li>匯出記憶紀錄會保存遊戲紀錄、角色配置、情境配置與角色頭像，不包含 API Key。</li>
+<li>修正選擇存檔畫面部分文字切換語言時未更新的問題。</li>
+</ul>
+</aside>
+</div>
+
 <main class="setup-home-panel" aria-label="TRPG模擬器首頁">
 <section class="setup-home-view active" data-home-view="main">
 <img id="setup-pic" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=" title="點擊上傳首頁照片" onclick="document.getElementById('pic-input').click();">

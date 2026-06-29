@@ -25,9 +25,19 @@ window.onerror = function(message, source, lineno, colno, error) {
             if (showHomeInfoView('api')) return;
             document.getElementById('api-guide-modal').style.display = 'flex';
         }
-        function closeApiGuideModal() {
-            document.getElementById('api-guide-modal').style.display = 'none';
-        }
+function closeApiGuideModal() {
+document.getElementById('api-guide-modal').style.display = 'none';
+}
+
+function toggleHomeUpdateNotes(force) {
+const widget = document.getElementById('home-update-widget');
+const tab = document.getElementById('home-update-tab');
+if (!widget) return;
+const nextOpen = typeof force === 'boolean' ? force : !widget.classList.contains('open');
+widget.classList.toggle('open', nextOpen);
+if (tab) tab.setAttribute('aria-expanded', String(nextOpen));
+}
+
 function showHomeInfoView(viewName = 'main', options = {}) {
 const setupScreen = document.getElementById('setup-screen');
 if (!setupScreen || getComputedStyle(setupScreen).display === 'none') return false;
@@ -35,9 +45,10 @@ if (!window.matchMedia('(min-width: 1100px)').matches) return false;
 const requested = ['main', 'api', 'guide', 'saves', 'journal'].includes(viewName) ? viewName : 'main';
 const activeView = document.querySelector('.setup-home-view.active')?.dataset.homeView || 'main';
 const nextView = !options.force && activeView === requested && requested !== 'main' ? 'main' : requested;
-            document.querySelectorAll('.setup-home-view').forEach(view => {
-                view.classList.toggle('active', view.dataset.homeView === nextView);
-            });
+if (nextView !== 'main') toggleHomeUpdateNotes(false);
+document.querySelectorAll('.setup-home-view').forEach(view => {
+view.classList.toggle('active', view.dataset.homeView === nextView);
+});
             document.querySelectorAll('.setup-side-tab[data-home-tab]').forEach(tab => {
                 tab.classList.toggle('active', tab.dataset.homeTab === nextView);
             });
