@@ -277,7 +277,8 @@ syncEditingDataFromDOM(); editingScenarios.splice(index, 1); markEditScenarioDir
         function loadPresetToForm(id) {
             activePresetId = id; const p = scenarioPresets[id] || defaultPreset;
             document.getElementById('input-preset-name').value = p.presetName || ''; 
-            document.getElementById('input-player-name').value = p.playerName || ''; 
+            document.getElementById('input-player-name').value = p.playerName || '';
+            const coreRulesInput = document.getElementById('input-core-rules'); if (coreRulesInput) coreRulesInput.value = p.coreRules || ''; 
             document.getElementById('preview-player').src = p.playerAvatar || emptyAvatar;
             setLanguageModeControls(p.languageMode || 'zh-tw');
             document.getElementById('input-game-difficulty').value = normalizeGameDifficulty(p.gameDifficulty);
@@ -443,6 +444,7 @@ function gatherPresetData(idToSave, nameToSave) {
  return {
  id: idToSave, presetName: nameToSave, 
  playerName: document.getElementById('input-player-name')?.value.trim() || previousPreset.playerName || '',
+ coreRules: document.getElementById('input-core-rules')?.value.trim() || previousPreset.coreRules || '',
  languageMode: document.getElementById('input-language-mode')?.value || 'zh-tw',
  gameDifficulty: normalizeGameDifficulty(document.getElementById('input-game-difficulty')?.value),
  playerAvatar: document.getElementById('preview-player')?.src || previousPreset.playerAvatar || emptyAvatar,
@@ -618,6 +620,8 @@ updateSetupCurrentPresetLabel();
             if (ePapp) currentScenario.playerDetails.app = ePapp.value;
             const ePbg = document.getElementById('edit-p-bg');
             if (ePbg) currentScenario.playerDetails.bg = ePbg.value;
+            const eCoreRules = document.getElementById('edit-core-rules');
+            if (eCoreRules) currentScenario.coreRules = eCoreRules.value;
             currentScenario.playerDynamic = syncDynamicStateFromDom('edit-p-state', currentScenario.playerDynamic);
 
             // 同步 NPCs
@@ -652,6 +656,8 @@ updateSetupCurrentPresetLabel();
                 if(eSNpcs) sc.npcRoles = eSNpcs.value;
                 const eSPlayer = document.getElementById(`edit-scen-player-${idx}`);
                 if(eSPlayer) sc.playerRole = eSPlayer.value;
+                const eSObjective = document.getElementById(`edit-scen-objective-${idx}`);
+                if(eSObjective) sc.objective = eSObjective.value;
                 const eSTransition = document.getElementById(`edit-scen-transition-${idx}`);
                 if(eSTransition) sc.transitionRule = eSTransition.value;
             });

@@ -149,6 +149,8 @@ margin: 0 28px 10px 0;
 font-size: 18px;
 text-align: left;
 text-shadow: 2px 2px 0 var(--accent-neon);
+font-family: "TRPG Cubic Pixel", -apple-system, "Segoe UI", "Microsoft JhengHei", sans-serif;
+letter-spacing: 1px;
 }
 
 .home-update-drawer ul {
@@ -2788,10 +2790,18 @@ html { background-color: var(--bg-main); }
    數值越小越透明，可自行微調 74% / 66%。
    ============================================================ */
 :root[data-bg-mode="image"] {
-    --bg-panel-glass: var(--paper-bg);
-    --bg-panel-glass: color-mix(in srgb, var(--paper-bg) 74%, transparent);
-    --bg-card-glass: var(--card-bg);
-    --bg-card-glass: color-mix(in srgb, var(--card-bg) 66%, transparent);
+--bg-panel-glass: var(--paper-bg);
+--bg-panel-glass: color-mix(in srgb, var(--paper-bg) 74%, transparent);
+--bg-card-glass: var(--card-bg);
+--bg-card-glass: color-mix(in srgb, var(--card-bg) 66%, transparent);
+--bg-tab-glass: var(--text-sub);
+--bg-tab-glass: color-mix(in srgb, var(--text-sub) 74%, transparent);
+--bg-dark-tab-glass: var(--border-dark);
+--bg-dark-tab-glass: color-mix(in srgb, var(--border-dark) 74%, transparent);
+--bg-accent-tab-glass: var(--accent-neon);
+--bg-accent-tab-glass: color-mix(in srgb, var(--accent-neon) 74%, transparent);
+--bg-tab-shadow: var(--accent-gray);
+--bg-tab-shadow: color-mix(in srgb, var(--accent-gray) 48%, transparent);
 }
 
 /* 大面板 / 視窗 */
@@ -2833,8 +2843,63 @@ html { background-color: var(--bg-main); }
 :root[data-bg-mode="image"] #desktop-config-overview,
 :root[data-bg-mode="image"] #edit-scenario-screen[data-editor-section] #desktop-config-editor,
 :root[data-bg-mode="image"] #game-container {
-    background: var(--paper-bg);
-    background: var(--bg-panel-glass);
+background: var(--paper-bg);
+background: var(--bg-panel-glass);
+}
+
+/* 背景圖模式：所有側邊標籤同步版本更新標籤的透明感；一般模式維持實心。 */
+:root[data-bg-mode="image"] .home-update-tab {
+background: var(--text-sub);
+background-color: var(--text-sub);
+background: var(--bg-tab-glass);
+background-color: var(--bg-tab-glass);
+box-shadow: 4px 4px 0 var(--bg-tab-shadow);
+}
+
+:root[data-bg-mode="image"] .setup-side-tab,
+:root[data-bg-mode="image"] .desktop-config-tab,
+:root[data-bg-mode="image"] #floating-menu-btn {
+background: var(--border-dark);
+background-color: var(--border-dark);
+background: var(--bg-dark-tab-glass);
+background-color: var(--bg-dark-tab-glass);
+box-shadow: -5px 5px 0 var(--bg-tab-shadow);
+}
+
+:root[data-bg-mode="image"] .setup-side-tab.setup-home-tab,
+:root[data-bg-mode="image"] .desktop-config-tab.desktop-config-home-tab,
+:root[data-bg-mode="image"] .core-rules-tab {
+background: var(--accent-neon);
+background-color: var(--accent-neon);
+background: var(--bg-accent-tab-glass);
+background-color: var(--bg-accent-tab-glass);
+box-shadow: -5px 5px 0 var(--bg-tab-shadow);
+}
+
+:root[data-bg-mode="image"] .home-update-tab:hover,
+:root[data-bg-mode="image"] .home-update-tab:focus-visible,
+:root[data-bg-mode="image"] .home-update-widget.open .home-update-tab {
+background: var(--bg-tab-glass);
+background-color: var(--bg-tab-glass);
+box-shadow: 5px 5px 0 var(--bg-tab-shadow);
+}
+
+:root[data-bg-mode="image"] #floating-menu-btn:hover,
+:root[data-bg-mode="image"] .setup-side-tab.setup-home-tab:hover,
+:root[data-bg-mode="image"] .desktop-config-tab.desktop-config-home-tab:hover,
+:root[data-bg-mode="image"] .core-rules-tab:hover,
+:root[data-bg-mode="image"] .core-rules-tab:focus-visible,
+:root[data-bg-mode="image"] .core-rules-widget.open .core-rules-tab {
+background: var(--bg-accent-tab-glass);
+background-color: var(--bg-accent-tab-glass);
+box-shadow: -8px 7px 0 var(--bg-tab-shadow);
+}
+
+:root[data-bg-mode="image"] #game-container .core-rules-tab,
+:root[data-bg-mode="image"] #game-container .core-rules-tab:hover,
+:root[data-bg-mode="image"] #game-container .core-rules-tab:focus-visible,
+:root[data-bg-mode="image"] #game-container .core-rules-widget.open .core-rules-tab {
+box-shadow: -2px 2px 0 var(--bg-tab-shadow);
 }
 
 :root[data-bg-mode="image"] .desktop-overview-card,
@@ -2875,3 +2940,91 @@ html { background-color: var(--bg-main); }
     background: var(--paper-bg);
     background: var(--bg-panel-glass);
 }
+
+/* === 核心準則側邊標籤：尺寸同更新內容、配色同首頁鍵；只在角色設定頁與遊戲頁出現 === */
+.core-rules-widget { position: absolute; left: 0; bottom: 74px; width: 0; height: 46px; z-index: 40; display: none; }
+#game-container .core-rules-widget,
+#desktop-config-overview .core-rules-widget { display: block; }
+#edit-scenario-screen[data-workspace="scenarios"] #desktop-config-overview .core-rules-widget,
+#edit-scenario-screen[data-workspace="game"] #desktop-config-overview .core-rules-widget { display: none; }
+.core-rules-tab { position: absolute; left: 0; bottom: 0; width: 34px; max-width: none; height: 46px; padding: 0; border: 2px solid var(--border-dark); border-right: 0; border-radius: 12px 0 0 12px; background: var(--accent-neon); background-color: var(--accent-neon); box-shadow: -5px 5px 0 var(--accent-gray); cursor: pointer; transform: translateX(-100%); transition: transform 0.16s ease, box-shadow 0.16s ease, background 0.16s ease; }
+.core-rules-tab:hover, .core-rules-tab:focus-visible, .core-rules-widget.open .core-rules-tab { background: var(--accent-neon); box-shadow: -8px 7px 0 var(--accent-gray); outline: none; transform: translate(calc(-100% - 2px), 0); }
+.core-rules-drawer { position: absolute; left: 8px; bottom: 0; width: min(var(--core-rules-drawer-width, 320px), calc(100vw - 64px)); max-height: min(60vh, calc(100dvh - 120px)); padding: 16px 16px 18px; border: 3px solid var(--accent-neon); border-radius: 16px; background: var(--paper-bg); box-shadow: 6px 6px 0 rgba(40,40,40,0.12); color: var(--text-main); opacity: 0; pointer-events: none; transform: translateY(8px) scale(0.98); transition: opacity 0.16s ease, transform 0.16s ease; overflow-y: auto; overscroll-behavior: contain; }
+.core-rules-widget.open-inside .core-rules-drawer { left: 8px; right: auto; }
+.core-rules-widget.open-outside .core-rules-drawer { left: auto; right: 42px; }
+.core-rules-widget.open .core-rules-drawer { opacity: 1; pointer-events: auto; transform: translateY(0) scale(1); }
+.core-rules-close { position: absolute; top: 6px; right: 10px; width: 24px; height: 24px; border: 0; background: transparent; color: var(--text-sub); font-size: 24px; font-weight: 900; line-height: 1; cursor: pointer; }
+.core-rules-kicker { margin: 0 28px 6px 0; color: var(--text-sub); font-size: 12px; font-weight: 900; letter-spacing: 1px; }
+.core-rules-editor { width: 100%; box-sizing: border-box; min-height: 130px; max-height: 38vh; resize: vertical; background: var(--card-bg); border: 2px solid var(--border-dark); border-radius: 8px; padding: 10px; color: var(--text-main); font-size: 14px; font-weight: 600; }
+@media (max-width: 699px) {
+#game-container .core-rules-widget {
+position: absolute;
+left: auto;
+right: -5px;
+top: calc(50% + 56px);
+bottom: auto;
+width: 24px;
+height: 34px;
+z-index: 55;
+}
+#desktop-config-overview .core-rules-widget {
+left: 12px;
+bottom: 12px;
+width: 34px;
+height: 46px;
+}
+#desktop-config-overview .core-rules-tab {
+width: 34px;
+height: 46px;
+border-radius: 12px;
+border-right: 2px solid var(--border-dark);
+}
+.core-rules-tab,
+.core-rules-tab:hover,
+.core-rules-tab:focus-visible,
+.core-rules-widget.open .core-rules-tab {
+left: 0;
+width: 24px;
+height: 34px;
+border: 2px solid var(--border-dark);
+border-radius: 8px 0 0 8px;
+border-right: 0;
+box-shadow: -2px 2px 0 var(--accent-gray);
+transform: none;
+}
+#game-container .core-rules-widget.open .core-rules-tab {
+box-shadow: -2px 2px 0 var(--accent-gray);
+transform: none;
+}
+  .core-rules-drawer,
+  .core-rules-widget.open-inside .core-rules-drawer,
+  .core-rules-widget.open-outside .core-rules-drawer {
+    position: fixed;
+    left: max(12px, env(safe-area-inset-left));
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(140px + env(safe-area-inset-bottom));
+    width: auto;
+    max-height: min(56vh, calc(100dvh - 180px));
+  }
+  .core-rules-editor { font-size: 16px; }
+}
+:root[data-bg-mode="image"] .core-rules-drawer {
+background: rgba(238, 238, 238, 0.94);
+background: color-mix(in srgb, var(--paper-bg) 94%, transparent);
+backdrop-filter: blur(8px);
+}
+
+/* 手機版角色配置頁專用核心準則入口（桌機隱藏；只在手機 + 角色設定 workspace 顯示） */
+.core-rules-config-mobile { display: none; }
+@media (max-width: 699px) {
+  #edit-scenario-screen .core-rules-config-mobile { position: fixed; left: 12px; bottom: 12px; width: 34px; height: 46px; z-index: 45; display: block; }
+  #edit-scenario-screen[data-workspace="scenarios"] .core-rules-config-mobile,
+  #edit-scenario-screen[data-workspace="game"] .core-rules-config-mobile { display: none; }
+  .core-rules-config-mobile .core-rules-tab { left: 0; width: 34px; height: 46px; border: 2px solid var(--border-dark); border-radius: 12px; box-shadow: -2px 2px 0 var(--accent-gray); transform: none; }
+}
+
+/* 更新內容抽屜：更早的更新紀錄（可展開） */
+.home-update-history { margin-top: 10px; border-top: 1px dashed var(--border-dark); padding-top: 8px; }
+.home-update-history > summary { cursor: pointer; color: var(--text-sub); font-size: 12px; font-weight: 800; }
+.home-update-history[open] > summary { margin-bottom: 4px; }
+.home-update-history .home-update-kicker { margin-top: 4px; }

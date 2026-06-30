@@ -209,6 +209,15 @@
         <p class="u-inline-019">💡 劇情重複或場景錯亂怎麼辦？</p>
         <p class="u-inline-022">先確認摘要與冒險日誌是否正確。如果 AI 仍然混淆，可以開啟「神」模式，直接說明目前場景、在場角色與接下來希望聚焦的方向。</p>
 
+        <p class="u-inline-019">💡 核心準則（AI 不可違反的鐵則）</p>
+        <p class="u-inline-022">角色設定頁與遊戲頁都有「核心準則」小標籤。寫進去的設定（例如世界觀「這世界沒有魔法」，或人物鐵律「主角必須一直戴著面具」），AI 每回合都會優先讀取、不會遺忘也不可違反。它跟著配置保存，兩邊同步。</p>
+
+        <p class="u-inline-019">💡 本場目標（給情境一個方向）</p>
+        <p class="u-inline-022">情境設定裡每個情境可選填「本場目標」。填了之後 DM 會讓劇情自然朝目標推進、鋪陳線索與機會，但不會硬拉玩家或無視你的選擇；留空則自由發展。</p>
+
+        <p class="u-inline-019">💡 玩久了 AI 變笨、接不上怎麼辦？</p>
+        <p class="u-inline-022">即使規則調得再細，故事拉長後 AI 仍可能變遲鈍或銜接不順，這是模型本身的能力限制。建議：（一）長篇、複雜或重視連貫的故事，盡量選較強的模型（清單中標 ★ 的優先項，例如 Gemini Pro／Flash、Claude Sonnet／Opus、GPT-4.1）；輕量模型（Lite、Haiku）雖然快又省，但較容易忘記與跳針。（二）善用「整理摘要／整理紀錄」壓縮記憶，並把關鍵設定寫進「核心準則」或角色面板。（三）模型可在遊戲中隨時切換，不必重開。</p>
+
     </div>
 </div>
             <div class="u-inline-024">
@@ -229,10 +238,10 @@
                 <p class="u-inline-020">本遊戲需要使用你自己的 API Key 才能呼叫 AI。請先在首頁選擇供應商、貼上對應金鑰並完成驗證；金鑰不會包含在遊戲備份中，共用裝置也不建議開啟保存功能。</p>
 
                 <p class="u-inline-019">1. API Key 是什麼？</p>
-                <p class="u-inline-020">API Key 是 AI 服務用來辨識使用者與計算用量的金鑰，不是遊戲帳號或遊戲密碼。請向 Google AI Studio 或 OpenRouter 申請，並妥善保管；不要把金鑰貼到公開貼文、截圖或傳給其他人。</p>
+                <p class="u-inline-020">API Key 是 AI 服務用來辨識使用者與計算用量的金鑰，不是遊戲帳號或遊戲密碼。請向 Google AI Studio、OpenRouter 或 Anthropic Console 申請，並妥善保管；不要把金鑰貼到公開貼文、截圖或傳給其他人。</p>
 
-                <p class="u-inline-019">2. Google Gemini 與 OpenRouter</p>
-                <p class="u-inline-020">選擇 Google Gemini 時，請使用 Google AI Studio 提供的金鑰；選擇 OpenRouter 時，請使用 OpenRouter 金鑰。兩種金鑰不能互換。OpenRouter 可提供多家模型，Gemini 則直接使用 Google 模型；實際可用清單會在驗證後載入。</p>
+                <p class="u-inline-019">2. Google Gemini、OpenRouter 與 Anthropic</p>
+                <p class="u-inline-020">選擇 Google Gemini 用 Google AI Studio 的金鑰；選擇 OpenRouter 用 OpenRouter 金鑰（可跨多家模型）；選擇 Anthropic（Claude）用 Anthropic 官方金鑰（直接使用 Claude 模型）。三種金鑰不能互換，可用模型清單會在驗證後載入。</p>
 
                 <p class="u-inline-019">3. 模型怎麼選？</p>
                 <p class="u-inline-020">輕量模型通常回覆較快、用量較省，適合測試設定或日常遊玩；較大型模型通常更擅長長篇劇情、人物語氣與複雜指令。清單中的 ★ 代表較適合目前遊戲用途的優先選項。模型表現與費用可能不同，請以供應商顯示的資訊為準。</p>
@@ -274,13 +283,22 @@
 <h3>更新內容</h3>
 <ul>
 <li>新增 Anthropic (Claude) 供應商：首頁可選 Anthropic，貼上官方金鑰即可遊玩。</li>
+<li>新增「核心準則」：可設定 AI 每回合必讀、不可違反的鐵則（世界觀或人物設定），角色設定頁與遊戲頁皆可調整、兩邊同步。</li>
+<li>新增情境「本場目標」：每個情境可選填目標，DM 會自然朝它推進，但不會硬拉玩家。</li>
 <li>強化 AI 場景記憶：每個情境會記住目前地點、時間與在場角色，減少切換或多回合後 AI 忘記時空與 NPC 的情況。</li>
+<li>強化錯誤提示：AI 無法回覆時會標出供應商、原因與診斷資訊，更好判斷問題。</li>
+</ul>
+<details class="home-update-history">
+<summary>查看更早的更新紀錄</summary>
+<p class="home-update-kicker">v1.5 更新</p>
+<ul>
 <li>角色配置與遊戲紀錄綁定後，角色資料會雙向同步。</li>
 <li>遊戲內角色面板與角色配置頁共用好感度等角色設定。</li>
 <li>匯出記憶紀錄會保存遊戲紀錄、角色配置、情境配置與角色頭像，不包含 API Key。</li>
 <li>修正選擇存檔畫面部分文字切換語言時未更新的問題。</li>
 <li>新增純色／自訂背景切換功能，使用自訂背景時面板會自動轉為半透明。</li>
 </ul>
+</details>
 </aside>
 </div>
 
@@ -381,11 +399,11 @@
 <div class="setup-info-grid">
 <article>
 <h3>1. API 金鑰</h3>
-<p>API Key 是 AI 服務用來辨識使用者與計算用量的金鑰，不是遊戲帳號或遊戲密碼。請向 Google AI Studio 或 OpenRouter 申請，並妥善保管。</p>
+<p>API Key 是 AI 服務用來辨識使用者與計算用量的金鑰，不是遊戲帳號或遊戲密碼。請向 Google AI Studio、OpenRouter 或 Anthropic Console 申請，並妥善保管。</p>
 </article>
 <article>
-<h3>2. Gemini 與 OpenRouter</h3>
-<p>選擇 Google Gemini 時，請使用 Google AI Studio 提供的金鑰；選擇 OpenRouter 時，請使用 OpenRouter 金鑰。兩種金鑰不能互換。</p>
+<h3>2. Gemini、OpenRouter 與 Anthropic</h3>
+<p>選擇 Google Gemini 用 Google AI Studio 的金鑰；選擇 OpenRouter 用 OpenRouter 金鑰（可跨多家模型）；選擇 Anthropic（Claude）用 Anthropic 官方金鑰（直接使用 Claude 模型）。三種金鑰不能互換，可用模型清單會在驗證後載入。</p>
 </article>
 <article>
 <h3>3. 模型怎麼選？</h3>
@@ -460,6 +478,18 @@
 <h3>💡 劇情重複或場景錯亂怎麼辦？</h3>
 <p>先確認摘要與冒險日誌是否正確。如果 AI 仍然混淆，可以開啟「神」模式，直接說明目前場景、在場角色與接下來希望聚焦的方向。</p>
 </article>
+<article>
+<h3>💡 核心準則（AI 不可違反的鐵則）</h3>
+<p>角色設定頁與遊戲頁都有「核心準則」小標籤。寫進去的設定（例如世界觀「這世界沒有魔法」，或人物鐵律「主角必須一直戴著面具」），AI 每回合都會優先讀取、不會遺忘也不可違反。它跟著配置保存，兩邊同步。</p>
+</article>
+<article>
+<h3>💡 本場目標（給情境一個方向）</h3>
+<p>情境設定裡每個情境可選填「本場目標」。填了之後 DM 會讓劇情自然朝目標推進、鋪陳線索與機會，但不會硬拉玩家或無視你的選擇；留空則自由發展。</p>
+</article>
+<article>
+<h3>💡 玩久了 AI 變笨、接不上怎麼辦？</h3>
+<p>即使規則調得再細，故事拉長後 AI 仍可能變遲鈍或銜接不順，這是模型本身的能力限制。建議：（一）長篇、複雜或重視連貫的故事，盡量選較強的模型（清單中標 ★ 的優先項，例如 Gemini Pro／Flash、Claude Sonnet／Opus、GPT-4.1）；輕量模型（Lite、Haiku）雖然快又省，但較容易忘記與跳針。（二）善用「整理摘要／整理紀錄」壓縮記憶，並把關鍵設定寫進「核心準則」或角色面板。（三）模型可在遊戲中隨時切換，不必重開。</p>
+</article>
 </div>
 </div>
 </section>
@@ -473,8 +503,26 @@
 </div>
 </div>
 
-    <div id="edit-scenario-screen">
-        <aside id="desktop-config-overview" aria-label="角色配置總覽">
+<div id="edit-scenario-screen">
+ <div class="core-rules-widget core-rules-config-mobile">
+<button class="core-rules-tab" type="button" onclick="toggleCoreRulesDrawer(this)" aria-label="核心準則" aria-expanded="false"></button>
+<aside class="core-rules-drawer" aria-label="核心準則">
+<button class="core-rules-close" type="button" onclick="toggleCoreRulesDrawer(this, false)" aria-label="關閉核心準則">×</button>
+<p class="core-rules-kicker">核心準則</p>
+<div class="core-rules-hint" style="font-size:11px;color:var(--text-sub);margin:0 0 8px;line-height:1.5;">AI 每回合必讀、不會遺忘也不可違反的設定。可寫世界觀（例：這世界沒有魔法），或人物鐵律（例：主角必須一直戴著面具）。</div>
+<textarea class="core-rules-editor" oninput="onCoreRulesInput(this)"></textarea>
+</aside>
+</div>
+<aside id="desktop-config-overview" aria-label="角色配置總覽">
+<div class="core-rules-widget">
+<button class="core-rules-tab" type="button" onclick="toggleCoreRulesDrawer(this)" aria-label="核心準則" aria-expanded="false"></button>
+<aside class="core-rules-drawer" aria-label="核心準則">
+<button class="core-rules-close" type="button" onclick="toggleCoreRulesDrawer(this, false)" aria-label="關閉核心準則">×</button>
+<p class="core-rules-kicker">核心準則</p>
+<div class="core-rules-hint" style="font-size:11px;color:var(--text-sub);margin:0 0 8px;line-height:1.5;">AI 每回合必讀、不會遺忘也不可違反的設定。可寫世界觀（例：這世界沒有魔法），或人物鐵律（例：主角必須一直戴著面具）。</div>
+<textarea class="core-rules-editor" oninput="onCoreRulesInput(this)"></textarea>
+</aside>
+</div>
             <div class="desktop-config-tabs" aria-label="配置分類">
                 <button type="button" class="desktop-config-tab desktop-config-home-tab" onclick="cancelEdit()" aria-label="儲存並回到首頁" title="儲存並回到首頁"><img src="assets/icons/home.svg" alt="" aria-hidden="true"></button>
                 <button type="button" class="desktop-config-tab active" data-config-section="characters" onclick="switchDesktopConfigWorkspace('characters')">角色設定</button>
@@ -639,6 +687,8 @@
                     </div>
                 </details>
 
+                <input type="hidden" id="input-core-rules">
+
                 <div class="language-setting-row interface-language-setting">
                     <div class="scenario-label">介面語言</div>
                     <select data-ui-language-select class="language-mode-select" onchange="setUiLanguage(this.value)">
@@ -763,6 +813,15 @@
     </div>
 
  <div id="game-container">
+<div class="core-rules-widget">
+<button class="core-rules-tab" type="button" onclick="toggleCoreRulesDrawer(this)" aria-label="核心準則" aria-expanded="false"></button>
+<aside class="core-rules-drawer" aria-label="核心準則">
+<button class="core-rules-close" type="button" onclick="toggleCoreRulesDrawer(this, false)" aria-label="關閉核心準則">×</button>
+<p class="core-rules-kicker">核心準則</p>
+<div class="core-rules-hint" style="font-size:11px;color:var(--text-sub);margin:0 0 8px;line-height:1.5;">AI 每回合必讀、不會遺忘也不可違反的設定。可寫世界觀（例：這世界沒有魔法），或人物鐵律（例：主角必須一直戴著面具）。</div>
+<textarea class="core-rules-editor" oninput="onCoreRulesInput(this)"></textarea>
+</aside>
+</div>
         
         <div id="floating-menu-btn" onclick="toggleStatusPanel()" role="button" tabindex="0" aria-label="開啟或收回角色面板">角色面板</div>
 

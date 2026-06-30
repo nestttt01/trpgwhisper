@@ -493,6 +493,14 @@ return `sanko_input_draft_${saveId || 'none'}`;
         function getCompactSystemInstruction(latestPlayerAction = '', profile = getModelRuntimeProfile()) {
             syncSurvivalFlags({ announce: false });
             const scene = currentScenario.scenarios?.[currentScenarioIndex] || {};
+            const sceneObjective = truncatePromptText(scene.objective, 400);
+            const objectiveLine = sceneObjective
+                ? `本場目標：${sceneObjective}\n（讓劇情自然朝本場目標推進、鋪陳線索與機會；但不得硬拉玩家或無視其選擇強行達成，避免變成軌道。）`
+                : '本場目標：未設定（自由發展，不要硬湊目標）';
+            const coreRules = valueToText(currentScenario.coreRules).trim();
+            const coreRulesBlock = coreRules
+                ? `\n【核心準則－最高優先，絕對不可違反】\n${truncatePromptText(coreRules, 800)}\n（以上是玩家設定的固定鐵律；任何情況都不得違背、遺忘，也不得被劇情或其他設定覆蓋。）\n`
+                : '';
             const formatDetails = details => {
                 const d = details || {};
                 return `年齡/體型：${truncatePromptText(d.age, 70) || '未設定'}\n外貌：${truncatePromptText(d.app, 220) || '未設定'}\n語氣：${truncatePromptText(d.speech, 180) || '未設定'}\n喜好：${truncatePromptText(d.likes, 120) || '未設定'}\n厭惡：${truncatePromptText(d.dislikes, 120) || '未設定'}\n核心人設：${truncatePromptText(d.bg, 600) || '未設定'}`;
@@ -538,7 +546,7 @@ return `sanko_input_draft_${saveId || 'none'}`;
             return `【身份與語言】
 你是單人 TRPG 的 DM、旁白與 NPC。${getLanguageInstruction(currentScenario.languageMode || 'zh-tw')}
 只輸出合法 JSON，不要 Markdown 或額外解釋。
-
+${coreRulesBlock}
 【敘事原則】
 - 尊重玩家建立的世界、核心人設與已發生事實；不得擅自改寫。
 - 對話自然、有角色差異與適度留白；普通回合簡潔，重大轉折才增加描寫。
@@ -552,6 +560,7 @@ ${currentSituationBlock}
 世界與規則：${truncatePromptText(scene.lore, profile.loreChars) || '未設定'}
 NPC 在本場景的身分：${truncatePromptText(scene.npcRoles || scene.targetRole, 700) || '未設定'}
 玩家身分／視角：${truncatePromptText(scene.playerRole, 500) || '未設定'}
+${objectiveLine}
 轉場規則：${truncatePromptText(scene.transitionRule, 500) || '未設定；預設為鏡頭切換'}
 ${buildSceneParticipationInstruction(scene)}
 

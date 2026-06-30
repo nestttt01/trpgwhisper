@@ -1,4 +1,4 @@
-// === [app.js 拆分] app-config-ui.js：原 app.js 第 2921–3436 行｜桌機角色配置 UI/配置概覽/NPC 與情境列表｜需依 index.html 既有順序與其他 app-*.js 一同載入，勿單獨重排。 ===
+﻿// === [app.js 拆分] app-config-ui.js：原 app.js 第 2921–3436 行｜桌機角色配置 UI/配置概覽/NPC 與情境列表｜需依 index.html 既有順序與其他 app-*.js 一同載入，勿單獨重排。 ===
 function openEditScenario() {
 document.getElementById('setup-screen').style.display = 'none';
 document.getElementById('edit-scenario-screen').style.display = 'flex';
@@ -36,6 +36,7 @@ switchDesktopConfigWorkspace('characters');
             if (screen.classList.contains('random-generator-inline-open')) closeRandomGenerator();
             if (isDesktopConfigLayout() && screen.style.display === 'flex') syncEditingDataFromDOM();
             desktopConfigWorkspace = ['characters', 'scenarios', 'game'].includes(section) ? section : 'characters';
+            screen.dataset.workspace = desktopConfigWorkspace;
             screen.classList.remove('desktop-editor-open');
             screen.classList.toggle('game-workspace-active', desktopConfigWorkspace === 'game');
             delete screen.dataset.editorSection;
@@ -52,6 +53,7 @@ switchDesktopConfigWorkspace('characters');
             if (!screen) return;
             const workspace = section === 'scenario' ? 'scenarios' : (section === 'game' ? 'game' : 'characters');
             desktopConfigWorkspace = workspace;
+            screen.dataset.workspace = workspace;
             setDesktopConfigTab(workspace);
             document.querySelectorAll('.desktop-workspace-view').forEach(view => {
                 view.classList.toggle('active', view.dataset.workspaceView === workspace);
@@ -463,6 +465,8 @@ function selectDesktopPreset(id) {
                         <textarea class="scenario-input" id="scen-npcRoles-${index}" oninput="autoResize(this)">${escapeStatusHtml(scen.npcRoles || '')}</textarea>
                         <div class="scenario-label">玩家在此的專屬身份/狀態</div>
                         <input type="text" class="scenario-input" id="scen-player-${index}" value="${escapeStatusHtml(scen.playerRole)}">
+                        <div class="scenario-label">本場目標（選填，DM 會朝此推進）</div>
+<textarea class="scenario-input" id="scen-objective-${index}" placeholder="${escapeStatusHtml(uiText('例如：讓玩家在天黑前找到出口。'))}" oninput="autoResize(this)">${escapeStatusHtml(scen.objective || '')}</textarea>
                         <div class="scenario-label">轉場規則（選填）</div>
 <textarea class="scenario-input" id="scen-transition-${index}" placeholder="${escapeStatusHtml(uiText('例如：切回此情境時視為夢醒。'))}" oninput="autoResize(this)">${escapeStatusHtml(scen.transitionRule || '')}</textarea>
                     </div>
@@ -472,6 +476,63 @@ function selectDesktopPreset(id) {
             initTextareas();
             forceOpenScenIndex = -1;
             renderDesktopPresetOverview();
+        }
+
+        let coreRulesSaveTimer = null;
+function updateCoreRulesDrawerDirection(widget) {
+if (!widget) return;
+widget.classList.remove('open-inside', 'open-outside');
+const rect = widget.getBoundingClientRect();
+const viewportWidth = window.innerWidth || document.documentElement.clientWidth || 0;
+const outsideRoom = rect.left;
+const insideRoom = viewportWidth - rect.left;
+const outsideFitWidth = Math.min(320, Math.max(0, outsideRoom - 48));
+const insideFitWidth = Math.min(320, Math.max(240, insideRoom - 24));
+const shouldOpenOutside = window.matchMedia('(min-width: 700px)').matches
+&& outsideFitWidth >= 240;
+widget.style.setProperty('--core-rules-drawer-width', `${shouldOpenOutside ? outsideFitWidth : insideFitWidth}px`);
+widget.classList.add(shouldOpenOutside ? 'open-outside' : 'open-inside');
+}
+        function toggleCoreRulesDrawer(btn, force) {
+            const widget = btn && btn.closest ? btn.closest('.core-rules-widget') : document.querySelector('.core-rules-widget');
+            if (!widget) return;
+            const willOpen = typeof force === 'boolean' ? force : !widget.classList.contains('open');
+if (willOpen) {
+updateCoreRulesDrawerDirection(widget);
+} else {
+setTimeout(() => {
+if (!widget.classList.contains('open')) {
+widget.classList.remove('open-inside', 'open-outside');
+widget.style.removeProperty('--core-rules-drawer-width');
+}
+}, 180);
+}
+widget.classList.toggle('open', willOpen);
+            const tab = widget.querySelector('.core-rules-tab');
+            if (tab) tab.setAttribute('aria-expanded', String(willOpen));
+            if (willOpen) {
+                const editor = widget.querySelector('.core-rules-editor');
+                if (editor) {
+                    const inGame = Boolean(widget.closest('#game-container'));
+                    editor.value = inGame
+                        ? ((typeof currentScenario === 'object' && currentScenario && currentScenario.coreRules) || '')
+                        : (document.getElementById('input-core-rules')?.value || '');
+                    setTimeout(() => editor.focus(), 50);
+                }
+            }
+        }
+
+        function onCoreRulesInput(el) {
+            const widget = el.closest('.core-rules-widget');
+            const inGame = Boolean(widget && widget.closest('#game-container'));
+            if (inGame) {
+                if (typeof currentScenario === 'object' && currentScenario) currentScenario.coreRules = el.value;
+                clearTimeout(coreRulesSaveTimer);
+                coreRulesSaveTimer = setTimeout(() => { if (typeof saveCurrentProgress === 'function') saveCurrentProgress(); }, 600);
+            } else {
+                const hidden = document.getElementById('input-core-rules');
+                if (hidden) hidden.value = el.value;
+            }
         }
 
         function syncEditingDataFromDOM() {
@@ -498,8 +559,8 @@ scen.name = n.value;
 scen.lore = document.getElementById(`scen-lore-${index}`).value;
                     scen.npcRoles = document.getElementById(`scen-npcRoles-${index}`).value;
                     scen.playerRole = document.getElementById(`scen-player-${index}`).value;
+                    scen.objective = document.getElementById(`scen-objective-${index}`).value;
                     scen.transitionRule = document.getElementById(`scen-transition-${index}`).value;
 }
 });
 }
-

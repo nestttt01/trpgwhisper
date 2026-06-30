@@ -115,9 +115,9 @@
                             'Content-Type': 'application/json'
                         },
                         body: JSON.stringify({
+                            // 新一代 Claude（Opus 4.7/4.8）已停用 temperature，送出即回 400；一律不帶，改用模型預設取樣。
                             model: selectedModel,
                             max_tokens: maxTokens,
-                            temperature,
                             messages: [{ role: 'user', content: fullPrompt }]
                         })
                     }
