@@ -170,7 +170,7 @@ event.returnValue = '';
             const bilingual = ['ja-zh', 'en-zh'].includes(currentScenario?.languageMode);
             if (apiProvider === 'anthropic') {
                 return {
-                    id: 'anthropic', normalMaxTokens: bilingual ? 1800 : 1500,
+                    id: 'anthropic', normalMaxTokens: bilingual ? 2200 : 1800,
                     repairMaxTokens: 900, summaryMaxTokens: 1600, journalMaxTokens: 2400,
                     recentTurns: 8, recentChars: 6000, promptChars: 28000,
                     loreChars: 3000, npcLimit: 8, memoryNotes: 10
@@ -178,7 +178,7 @@ event.returnValue = '';
             }
             if (apiProvider === 'openrouter' && /(?:^|\/)gpt-4[.-]?1(?:$|[-:])/.test(modelId)) {
                 return {
-                    id: 'gpt-4.1', normalMaxTokens: bilingual ? 1400 : 1100,
+                    id: 'gpt-4.1', normalMaxTokens: bilingual ? 1800 : 1500,
                     repairMaxTokens: 800, summaryMaxTokens: 1400, journalMaxTokens: 2200,
                     recentTurns: 6, recentChars: 3600, promptChars: 15500,
                     loreChars: 1800, npcLimit: 6, memoryNotes: 8
@@ -186,14 +186,14 @@ event.returnValue = '';
             }
             if (apiProvider === 'openrouter') {
                 return {
-                    id: 'openrouter', normalMaxTokens: bilingual ? 1500 : 1250,
+                    id: 'openrouter', normalMaxTokens: bilingual ? 1800 : 1500,
                     repairMaxTokens: 850, summaryMaxTokens: 1500, journalMaxTokens: 2200,
                     recentTurns: 6, recentChars: 4200, promptChars: 18000,
                     loreChars: 2200, npcLimit: 7, memoryNotes: 8
                 };
             }
             return {
-                id: 'gemini', normalMaxTokens: bilingual ? 1800 : 1600,
+                id: 'gemini', normalMaxTokens: bilingual ? 2000 : 1700,
                 repairMaxTokens: 900, summaryMaxTokens: 1600, journalMaxTokens: 2400,
                 recentTurns: 8, recentChars: 6000, promptChars: 28000,
                 loreChars: 3000, npcLimit: 8, memoryNotes: 10
