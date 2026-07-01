@@ -825,4 +825,3 @@ if (npcLifeEvents.length) applyAutomaticMemoryUpdate({ story_summary: npcLifeEve
                 saveCurrentProgress();
             }
         }
-
